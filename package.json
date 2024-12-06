@@ -1,0 +1,41 @@
+{
+  "name": "heredot",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^22.9.0",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.13",
+    "dotenv": "^16.4.5",
+    "es-toolkit": "^1.29.0",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "1.4.5-lts.1",
+    "nodemon": "^3.1.7",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "pg": "^8.13.1",
+    "pm2": "^5.4.3",
+    "timezone": "link:dayjs/plugin/timezone",
+    "utc": "link:dayjs/plugin/utc",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/multer": "^1.4.12",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/pg": "^8.11.10",
+    "@types/winston": "^2.4.4"
+  }
+}

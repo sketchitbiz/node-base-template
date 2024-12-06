@@ -1,0 +1,47 @@
+import { logResponse } from "./Logger.js";
+import crypto from "crypto";
+
+/**
+ * Convert snake_case to camelCase
+ * @param {Object | Array} data
+ */
+export function snakeToCamel(data) {
+  if (data === null || data === undefined) {
+    return data;
+  }
+
+  if (Array.isArray(data)) {
+    return data.map((item) => snakeToCamel(item));
+  }
+
+  if (typeof data === 'object') {
+    const camelCaseData = {};
+    for (const key in data) {
+      const value = data[key];
+      const camelCaseKey = key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+      // 값이 객체나 배열인 경우 재귀적으로 처리
+      camelCaseData[camelCaseKey] = snakeToCamel(value);
+    }
+    return camelCaseData;
+  }
+
+  return data;
+}
+
+/**
+ * Send response
+ * @param {import('express').Response}res
+ * @param {ServerResponse} result
+ */
+export function sendResponse(res, result) {
+  logResponse({}, res, result);
+  res.status(result.statusCode).json([result]);
+}
+
+export function hashPassword(password, salt) {
+  return crypto.createHash('sha512').update(password + salt).digest('hex');
+}
+
+export function generateSalt() {
+  return crypto.randomBytes(16).toString('base64');
+}

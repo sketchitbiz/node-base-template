@@ -1,0 +1,16 @@
+[ INFO ] [ 2024-11-18 05:29:48 PM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-11-18 05:30:54 PM ] [ Rocket Up Server ]  - Response /login 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+{
+  "statusCode": 200,
+  "message": "success",
+  "data": null,
+  "error": null
+}

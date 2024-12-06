@@ -1,0 +1,1048 @@
+[ INFO ] [ 2024-12-06 10:26:43 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:26:43 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:27:18 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:27:18 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:33:01 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:33:01 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:34:14 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:34:14 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:35:16 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:35:16 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:35:36 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:35:36 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:35:40 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:35:40 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:36:43 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:36:43 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:36:47 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:36:47 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:36:53 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:36:53 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:37:12 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:37:12 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:37:23 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:37:23 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:37:37 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:37:37 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:37:44 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:37:44 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:38:18 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:38:18 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:38:35 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:38:35 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:39:50 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:39:50 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:43:38 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:43:38 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ ERROR ] [ 2024-12-06 10:44:30 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:44:30 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "upgrade-insecure-requests": "1",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "sec-fetch-user": "?1",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "priority": "u=0, i"
+  },
+  "host": "localhost",
+  "url": "/users/a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05",
+  "method": "GET",
+  "params": {},
+  "query": {}
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:44:30 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ ERROR ] [ 2024-12-06 10:44:30 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:44:30 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "upgrade-insecure-requests": "1",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "sec-fetch-user": "?1",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "priority": "u=0, i"
+  },
+  "host": "localhost",
+  "url": "/errorPage",
+  "method": "GET",
+  "params": {},
+  "query": {}
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:44:30 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ ERROR ] [ 2024-12-06 10:44:31 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:44:31 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "*/*",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "service-worker": "script",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "sec-fetch-dest": "serviceworker",
+    "sec-fetch-mode": "same-origin",
+    "sec-fetch-site": "same-origin",
+    "priority": "u=4",
+    "pragma": "no-cache",
+    "cache-control": "no-cache"
+  },
+  "host": "localhost",
+  "url": "/flutter_service_worker.js?v=419815348",
+  "method": "GET",
+  "params": {},
+  "query": {
+    "v": "419815348"
+  }
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:44:31 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ INFO ] [ 2024-12-06 10:45:28 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:45:28 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:45:54 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:45:54 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:46:01 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:46:01 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ ERROR ] [ 2024-12-06 10:46:22 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:46:22 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "upgrade-insecure-requests": "1",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "sec-fetch-user": "?1",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "priority": "u=0, i"
+  },
+  "host": "localhost",
+  "url": "/users/a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05",
+  "method": "GET",
+  "params": {},
+  "query": {}
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:46:22 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ ERROR ] [ 2024-12-06 10:46:22 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:46:22 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "upgrade-insecure-requests": "1",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "sec-fetch-user": "?1",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "priority": "u=0, i"
+  },
+  "host": "localhost",
+  "url": "/errorPage",
+  "method": "GET",
+  "params": {},
+  "query": {}
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:46:22 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ ERROR ] [ 2024-12-06 10:46:23 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:46:23 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "*/*",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "service-worker": "script",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "sec-fetch-dest": "serviceworker",
+    "sec-fetch-mode": "same-origin",
+    "sec-fetch-site": "same-origin",
+    "priority": "u=4",
+    "pragma": "no-cache",
+    "cache-control": "no-cache"
+  },
+  "host": "localhost",
+  "url": "/flutter_service_worker.js?v=419815348",
+  "method": "GET",
+  "params": {},
+  "query": {
+    "v": "419815348"
+  }
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:46:23 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ INFO ] [ 2024-12-06 10:46:31 AM ] [ Rocket Up Server ]  - Response /a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ INFO ] [ 2024-12-06 10:46:47 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:46:47 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:47:18 AM ] [ Rocket Up Server ]  - Response /a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ INFO ] [ 2024-12-06 10:47:56 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:47:56 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ DEBUG ] [ 2024-12-06 10:48:15 AM ] [ Rocket Up Server ]  - [object Object]
+[ INFO ] [ 2024-12-06 10:53:25 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:53:25 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ DEBUG ] [ 2024-12-06 10:53:28 AM ] [ Rocket Up Server ]  - [object Object]
+[ INFO ] [ 2024-12-06 10:53:28 AM ] [ Rocket Up Server ]  - Response /a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+{
+  "statusCode": 200,
+  "message": "success",
+  "data": {
+    "uid": "a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05",
+    "name": "송대현",
+    "cellphone": "01032460226",
+    "email": "daehyeon@heredotcorp.com",
+    "lastLoginProvider": "KAKAO",
+    "lastLoginTime": null,
+    "createdTime": "2024-12-04 17:08:50",
+    "updateId": "a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05",
+    "updateTime": "2024-12-05 15:04:12",
+    "type": "C",
+    "marketingAgreeYn": "Y",
+    "mergedYn": "N"
+  },
+  "error": null
+}
+[ ERROR ] [ 2024-12-06 10:53:29 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:53:29 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "*/*",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "service-worker": "script",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "sec-fetch-dest": "serviceworker",
+    "sec-fetch-mode": "same-origin",
+    "sec-fetch-site": "same-origin",
+    "priority": "u=4",
+    "pragma": "no-cache",
+    "cache-control": "no-cache"
+  },
+  "host": "localhost",
+  "url": "/flutter_service_worker.js?v=419815348",
+  "method": "GET",
+  "params": {},
+  "query": {
+    "v": "419815348"
+  }
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:53:29 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ INFO ] [ 2024-12-06 10:54:10 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:54:10 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:54:58 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:54:58 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ INFO ] [ 2024-12-06 10:55:11 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:55:11 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ ERROR ] [ 2024-12-06 10:55:24 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:55:24 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "*/*",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "service-worker": "script",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "sec-fetch-dest": "serviceworker",
+    "sec-fetch-mode": "same-origin",
+    "sec-fetch-site": "same-origin",
+    "priority": "u=4",
+    "pragma": "no-cache",
+    "cache-control": "no-cache"
+  },
+  "host": "localhost",
+  "url": "/flutter_service_worker.js?v=419815348",
+  "method": "GET",
+  "params": {},
+  "query": {
+    "v": "419815348"
+  }
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:55:24 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ DEBUG ] [ 2024-12-06 10:55:24 AM ] [ Rocket Up Server ]  - [object Object]
+[ INFO ] [ 2024-12-06 10:55:27 AM ] [ Rocket Up Server ]  - Response /a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+{
+  "statusCode": 200,
+  "message": "success",
+  "data": [
+    {
+      "uid": "a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05",
+      "name": "송대현",
+      "cellphone": "01032460226",
+      "email": "daehyeon@heredotcorp.com",
+      "lastLoginProvider": "KAKAO",
+      "lastLoginTime": null,
+      "createdTime": "2024-12-04 17:08:50",
+      "updateId": "a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05",
+      "updateTime": "2024-12-05 15:04:12",
+      "type": "C",
+      "marketingAgreeYn": "Y",
+      "mergedYn": "N"
+    }
+  ],
+  "error": null
+}
+[ ERROR ] [ 2024-12-06 10:55:27 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:55:27 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "connection": "keep-alive",
+    "referer": "http://localhost/api/users/a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05",
+    "sec-fetch-dest": "image",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "priority": "u=6"
+  },
+  "host": "localhost",
+  "url": "/favicon.ico",
+  "method": "GET",
+  "params": {},
+  "query": {}
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:55:27 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ ERROR ] [ 2024-12-06 10:55:27 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:55:27 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "referer": "http://localhost/api/users/a6b3c5b0-2d45-4857-9daf-c1eb3fd70e05",
+    "connection": "keep-alive",
+    "sec-fetch-dest": "image",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "priority": "u=6"
+  },
+  "host": "localhost",
+  "url": "/errorPage",
+  "method": "GET",
+  "params": {},
+  "query": {}
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:55:27 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ ERROR ] [ 2024-12-06 10:55:43 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:55:43 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "*/*",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "service-worker": "script",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "sec-fetch-dest": "serviceworker",
+    "sec-fetch-mode": "same-origin",
+    "sec-fetch-site": "same-origin",
+    "priority": "u=4",
+    "pragma": "no-cache",
+    "cache-control": "no-cache"
+  },
+  "host": "localhost",
+  "url": "/flutter_service_worker.js?v=419815348",
+  "method": "GET",
+  "params": {},
+  "query": {
+    "v": "419815348"
+  }
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:55:43 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ DEBUG ] [ 2024-12-06 10:55:43 AM ] [ Rocket Up Server ]  - [object Object]
+[ ERROR ] [ 2024-12-06 10:55:49 AM ] [ Rocket Up Server ]  - Error:  invalid input syntax for type uuid: "a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052" 
+{
+  "length": 169,
+  "name": "error",
+  "severity": "ERROR",
+  "code": "22P02",
+  "where": "unnamed portal parameter $1 = '...'",
+  "file": "uuid.c",
+  "line": "133",
+  "routine": "string_to_uuid",
+  "stack": "error: invalid input syntax for type uuid: \"a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052\"\n    at /Users/songdaehyeon/Documents/Code/heredot/node_modules/.pnpm/pg@8.13.1/node_modules/pg/lib/client.js:535:17\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async QueryBuilder.findOne (file:///Users/songdaehyeon/Documents/Code/heredot/util/Query.js:310:22)\n    at async UserService.findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserService.js:25:20)\n    at async findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserController.js:20:20)"
+}
+[Body]
+undefined
+[ INFO ] [ 2024-12-06 10:55:51 AM ] [ Rocket Up Server ]  - Response /a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+{
+  "statusCode": 500,
+  "message": "invalid input syntax for type uuid: \"a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052\"",
+  "data": [
+    null
+  ],
+  "error": {
+    "name": "error",
+    "message": "invalid input syntax for type uuid: \"a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052\"",
+    "stack": "error: invalid input syntax for type uuid: \"a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052\"\n    at /Users/songdaehyeon/Documents/Code/heredot/node_modules/.pnpm/pg@8.13.1/node_modules/pg/lib/client.js:535:17\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async QueryBuilder.findOne (file:///Users/songdaehyeon/Documents/Code/heredot/util/Query.js:310:22)\n    at async UserService.findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserService.js:25:20)\n    at async findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserController.js:20:20)"
+  }
+}
+[ ERROR ] [ 2024-12-06 10:55:51 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:55:51 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "connection": "keep-alive",
+    "referer": "http://localhost/api/users/a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052",
+    "sec-fetch-dest": "image",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "priority": "u=6"
+  },
+  "host": "localhost",
+  "url": "/favicon.ico",
+  "method": "GET",
+  "params": {},
+  "query": {}
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:55:51 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ INFO ] [ 2024-12-06 10:56:27 AM ] [ Rocket Up Server ]  - Database connected
+[ INFO ] [ 2024-12-06 10:56:27 AM ] [ Rocket Up Server ]  - Server is running on port 80
+[ ERROR ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "*/*",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "service-worker": "script",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "sec-fetch-dest": "serviceworker",
+    "sec-fetch-mode": "same-origin",
+    "sec-fetch-site": "same-origin",
+    "priority": "u=4",
+    "pragma": "no-cache",
+    "cache-control": "no-cache"
+  },
+  "host": "localhost",
+  "url": "/flutter_service_worker.js?v=419815348",
+  "method": "GET",
+  "params": {},
+  "query": {
+    "v": "419815348"
+  }
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ DEBUG ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - [object Object]
+[ ERROR ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - Error:  invalid input syntax for type uuid: "a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052" 
+{
+  "length": 169,
+  "name": "error",
+  "severity": "ERROR",
+  "code": "22P02",
+  "where": "unnamed portal parameter $1 = '...'",
+  "file": "uuid.c",
+  "line": "133",
+  "routine": "string_to_uuid",
+  "stack": "error: invalid input syntax for type uuid: \"a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052\"\n    at /Users/songdaehyeon/Documents/Code/heredot/node_modules/.pnpm/pg@8.13.1/node_modules/pg/lib/client.js:535:17\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async QueryBuilder.findOne (file:///Users/songdaehyeon/Documents/Code/heredot/util/Query.js:310:22)\n    at async UserService.findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserService.js:25:20)\n    at async findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserController.js:20:20)"
+}
+[Body]
+undefined
+[ INFO ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - Response /a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+{
+  "statusCode": 500,
+  "message": "fail",
+  "data": [
+    null
+  ],
+  "error": {
+    "name": "error",
+    "message": "invalid input syntax for type uuid: \"a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052\"",
+    "stack": "error: invalid input syntax for type uuid: \"a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052\"\n    at /Users/songdaehyeon/Documents/Code/heredot/node_modules/.pnpm/pg@8.13.1/node_modules/pg/lib/client.js:535:17\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async QueryBuilder.findOne (file:///Users/songdaehyeon/Documents/Code/heredot/util/Query.js:310:22)\n    at async UserService.findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserService.js:25:20)\n    at async findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserController.js:20:20)"
+  }
+}
+[ ERROR ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "connection": "keep-alive",
+    "referer": "http://localhost/api/users/a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052",
+    "sec-fetch-dest": "image",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "priority": "u=6"
+  },
+  "host": "localhost",
+  "url": "/favicon.ico",
+  "method": "GET",
+  "params": {},
+  "query": {}
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ ERROR ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "referer": "http://localhost/api/users/a6b3c5b0-2d45-4857-9daf-c1eb3fd70e052",
+    "connection": "keep-alive",
+    "sec-fetch-dest": "image",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "priority": "u=6"
+  },
+  "host": "localhost",
+  "url": "/errorPage",
+  "method": "GET",
+  "params": {},
+  "query": {}
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:56:37 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ ERROR ] [ 2024-12-06 10:56:51 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:56:51 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "*/*",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "service-worker": "script",
+    "connection": "keep-alive",
+    "cookie": "JSESSIONID=37B27465CCAC9C52AD759C0A642D47BA",
+    "sec-fetch-dest": "serviceworker",
+    "sec-fetch-mode": "same-origin",
+    "sec-fetch-site": "same-origin",
+    "priority": "u=4",
+    "pragma": "no-cache",
+    "cache-control": "no-cache"
+  },
+  "host": "localhost",
+  "url": "/flutter_service_worker.js?v=419815348",
+  "method": "GET",
+  "params": {},
+  "query": {
+    "v": "419815348"
+  }
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:56:51 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
+[ DEBUG ] [ 2024-12-06 10:56:51 AM ] [ Rocket Up Server ]  - [object Object]
+[ ERROR ] [ 2024-12-06 10:56:58 AM ] [ Rocket Up Server ]  - Error:  no data 
+{
+  "statusCode": 404,
+  "customMessage": "사용자를 찾을 수 없습니다.",
+  "name": "NotFoundError",
+  "stack": "NotFoundError: no data\n    at UserService.findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserService.js:28:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserController.js:20:20)"
+}
+[Body]
+undefined
+[ INFO ] [ 2024-12-06 10:56:58 AM ] [ Rocket Up Server ]  - Response /a6b3c5b0-2d45-4857-9daf-c1eb3fd70e01 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+{
+  "statusCode": 404,
+  "message": "no data",
+  "data": [
+    null
+  ],
+  "error": {
+    "name": "NotFoundError",
+    "message": "사용자를 찾을 수 없습니다.",
+    "stack": "NotFoundError: no data\n    at UserService.findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserService.js:28:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async findUserByUid (file:///Users/songdaehyeon/Documents/Code/heredot/features/user/UserController.js:20:20)"
+  }
+}
+[ ERROR ] [ 2024-12-06 10:56:58 AM ] [ Rocket Up Server ]  - undefined 
+{
+  "errno": -2,
+  "code": "ENOENT",
+  "syscall": "stat",
+  "path": "/Users/songdaehyeon/Documents/Code/heredot/public/index.html",
+  "expose": false,
+  "statusCode": 404,
+  "status": 404
+}
+[Body]
+undefined
+[ ERROR ] [ 2024-12-06 10:56:58 AM ] [ Rocket Up Server ]  - Request 
+{
+  "headers": {
+    "host": "localhost",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+    "accept-language": "ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "connection": "keep-alive",
+    "referer": "http://localhost/api/users/a6b3c5b0-2d45-4857-9daf-c1eb3fd70e01",
+    "sec-fetch-dest": "image",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "priority": "u=6"
+  },
+  "host": "localhost",
+  "url": "/favicon.ico",
+  "method": "GET",
+  "params": {},
+  "query": {}
+}
+[Body]
+{}
+[ ERROR ] [ 2024-12-06 10:56:58 AM ] [ Rocket Up Server ]  - Response 
+{
+  "headers": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*"
+  },
+  "statusCode": 200
+}
+[Body]
+null
