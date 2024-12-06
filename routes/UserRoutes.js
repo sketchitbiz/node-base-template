@@ -12,3 +12,4 @@ export function UserRoutes(app) {
 
   app.use('/users', userRouter);
 }
+ 
