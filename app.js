@@ -9,9 +9,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DatabaseManager } from "./database/DatabaseManager.js";
 import { sendResponse } from "./util/Functions.js";
-import { logError, logger } from "./util/Logger.js";
+import { logger } from "./util/Logger.js";
 import { ServerResponse } from "./util/types/ServerResponse.js";
 import { UserRoutes } from "./routes/UserRoutes.js";
+import { errorHandlingMiddleware } from "./util/Middlewares.js";
 
 // dotenv 설정
 config();
@@ -65,20 +66,13 @@ app.get('/img/:path', async (req, res) => {
   }
 });
 
-// 에러 핸들러
+// 에러 페이지
 app.get('/errorPage', (req, res) => {
   res.sendFile(path.join(parent, 'index.html'));
 });
 
-app.use((err, req, res, next) => {
-  logError(err, req, res, null);
-
-  if (req.url !== '/errorPage') {
-    res.redirect('/errorPage');
-  } else {
-    res.sendFile(path.join(parent, '/index.html'));
-  }
-});
+// 에러 핸들러
+app.use(errorHandlingMiddleware);
 
 app.listen(80, async () => {
   await DatabaseManager.instance.connect();

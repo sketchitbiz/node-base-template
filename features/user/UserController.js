@@ -1,5 +1,7 @@
 import { UserService } from "./UserService.js";
 import { sendResponse } from "../../util/Functions.js";
+import { logger } from "../../util/Logger.js";
+import { ServerResponse } from "../../util/types/ServerResponse.js";
 
 export class UserController {
 
@@ -14,11 +16,19 @@ export class UserController {
    * 사용자 조회
    * @param {import('express').Request} req
    * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
    */
-  findUserByUid = async (req, res) => {
-    const uid = req.params.uid;
-    const result = await this.userService.findUserByUid(uid);
+  findUserByUid = async (req, res, next) => {
 
-    sendResponse(res, result);
+    try {
+      const uid = req.params.uid;
+      const user = await this.userService.findUserByUid(uid);
+
+      const response = ServerResponse.data(user);
+      sendResponse(res, response);
+    } catch (e) {
+      logger.error(`Error: `, e);
+      next(e);
+    }
   }
 }
