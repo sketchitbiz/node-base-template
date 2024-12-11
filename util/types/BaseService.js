@@ -10,8 +10,12 @@ export class BaseService {
   }
 
 
+  /**
+   * 새로운 클라이언트 반환
+   * @returns {Promise<import('pg').PoolClient>}
+   */
   get client() {
-    return this.#databaseManager.createClient();
+    return this.#databaseManager.newClient;
   }
 
 

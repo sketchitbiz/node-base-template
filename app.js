@@ -8,13 +8,13 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DatabaseManager } from "./database/DatabaseManager.js";
-import { sendResponse } from "./util/Functions.js";
+import { sendErrorResponse, sendResponse } from "./util/Functions.js";
 import { logger } from "./util/Logger.js";
 import { ServerResponse } from "./util/types/ServerResponse.js";
 import { UserRoutes } from "./routes/UserRoutes.js";
-import { errorHandlingMiddleware } from "./util/Middlewares.js";
 import passport from "passport";
 import { jwtStrategy } from "./util/Jwt.js";
+import { BaseError } from "./util/types/Error.js";
 
 // dotenv 설정
 config();
@@ -66,7 +66,11 @@ app.get('/img/:path', async (req, res) => {
 
 // 에러 페이지
 app.get('/errorPage', (req, res) => {
-  res.sendFile(path.join(parent, 'index.html'));
+  try {
+    res.sendFile(path.join(parent, 'index.html'));
+  } catch (e) {
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 // Flutter 라우팅 ================================================================================
@@ -75,8 +79,21 @@ app.get('*', (req, res) => {
 });
 
 
-// 에러 핸들러
-app.use(errorHandlingMiddleware);
+app.use((err, req, res) => {
+  logger.error('Error:', err);
+
+  if (err instanceof BaseError) {
+    sendErrorResponse(res, err);
+    return;
+  }
+
+  if (req.url !== '/errorPage') {
+    res.redirect('/errorPage');
+
+  } else {
+    res.sendFile(path.join(parent, 'index.html'));
+  }
+});
 
 app.listen(80, async () => {
   await DatabaseManager.instance.connect();

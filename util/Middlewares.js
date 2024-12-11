@@ -1,8 +1,4 @@
-import { logError, logRequest } from "./Logger.js";
-import { sendResponse } from "./Functions.js";
-import { ServerResponse } from "./types/ServerResponse.js";
-import path from "node:path";
-import { parent } from "../app.js";
+import { logRequest } from "./Logger.js";
 
 /**
  * 기본 정보를 설정하는 미들웨어
@@ -25,23 +21,22 @@ export function setBasicInfo(req, res, next) {
  * @param {import('express').Response}res
  * @param {import('express').NextFunction}next
  */
-export const errorHandlingMiddleware = (err, req, res, next) => {
-  logError(err, req, res, null);
-  const response = ServerResponse.fromError(err);
-
-  // API 요청인지 확인 (Accept 헤더나 경로를 기반으로)
-  const isApiRequest = req.path.startsWith('/api') ||
-    req.accepts('json') ||
-    req.xhr;
-
-  if (isApiRequest) {
-    return sendResponse(res, response);
-  }
-
-  // API 요청이 아닌 경우
-  if (req.path !== '/errorPage') {
-    return res.redirect('/errorPage');
-  } else {
-    return res.sendFile(path.join(parent, '/index.html'));
-  }
-};
+// export const errorHandlingMiddleware = (err, req, res, next) => {
+//   logError(err, req, res, null);
+//   const response = ServerResponse.fromError(err);
+//
+//   // API 요청인지 확인 (Accept 헤더나 경로를 기반으로)
+//   const isApiRequest = req.path.startsWith('/api') ||
+//     req.headers["content-type"] === 'application/json' ||
+//     req.xhr;
+//
+//   if (isApiRequest) {
+//     sendResponse(res, response);
+//     return;
+//   }
+//
+//   // API 요청이 아닌 경우
+//   if (req.path !== '/errorPage') {
+//     return res.redirect('/errorPage');
+//   }
+// };

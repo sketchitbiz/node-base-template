@@ -18,7 +18,7 @@ export class ServerResponse {
   /** @type {T | null} */
   data;
 
-  /** @type {any| null} */
+  /** @type {Error| null} */
   error;
 
   /**
@@ -36,8 +36,10 @@ export class ServerResponse {
 
     if (Array.isArray(params.data)) {
       this.data = params.data;
+    } else if (params.data === null || params.data === undefined) {
+      this.data = null;
     } else {
-      this.data = [params.data] ?? null;
+      this.data = [params.data];
     }
 
     this.error = params.error ?? null;
@@ -66,27 +68,25 @@ export class ServerResponse {
    */
   static fromError(error) {
 
-    if (error instanceof DatabaseError) {
+    if (error instanceof BaseError) {
       return new ServerResponse({
-        statusCode : 500,
-        message : 'fail',
+        statusCode : error.statusCode ?? 500,
+        message : error.message ?? 'fail',
         error : {
           name : error.name,
-          message : error.message,
+          message : error.customMessage ?? error.message,
           stack : error.stack
         }
       });
+    } else {
+      return new ServerResponse({
+        statusCode : 500,
+        data : null,
+        message : 'fail',
+        error
+      });
     }
 
-    return new ServerResponse({
-      statusCode : error.statusCode ?? 500,
-      message : error.message ?? 'fail',
-      error : {
-        name : error.name,
-        message : error.customMessage ?? error.message,
-        stack : error.stack
-      }
-    });
   }
 
   /**

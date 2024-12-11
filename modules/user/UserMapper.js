@@ -1,5 +1,5 @@
 import { BaseMapper } from '../../util/types/BaseMapper.js';
-import { User } from "./User.js";
+import { UserMst } from "./UserMst.js";
 
 /**
  *
@@ -11,7 +11,7 @@ export class UserMapper extends BaseMapper {
   /**
    * @param {import('pg').PoolClient} client
    * @param {number} uid
-   * @returns {Promise<User|null>}
+   * @returns {Promise<UserMst|null>}
    *
    */
   async findUserByUid(client, uid) {
@@ -21,7 +21,7 @@ export class UserMapper extends BaseMapper {
       .from('link9.user_mst um')
       .where('um.uid = $uid')
       .setFields({ uid });
-    
+
     return query.findOne();
   }
 }

@@ -14,6 +14,8 @@ const { Pool, types } = pg;
 
 export class DatabaseManager {
   static #instance;
+
+  /** @type {import('pg').Pool} */
   #pool;
 
   constructor() {
@@ -42,6 +44,14 @@ export class DatabaseManager {
       DatabaseManager.#instance = new DatabaseManager();
     }
     return DatabaseManager.#instance;
+  }
+
+  /**
+   * 새로운 클라이언트 반환
+   * @returns {Promise<import('pg').PoolClient>}
+   */
+  get newClient() {
+    return this.#pool.connect();
   }
 
   /**

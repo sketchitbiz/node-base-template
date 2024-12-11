@@ -1,5 +1,6 @@
-import { logResponse } from "./Logger.js";
+import { logger, logResponse } from "./Logger.js";
 import crypto from "crypto";
+import { ServerResponse } from "./types/ServerResponse.js";
 
 /**
  * Convert snake_case to camelCase
@@ -36,6 +37,12 @@ export function snakeToCamel(data) {
 export function sendResponse(res, result) {
   logResponse({}, res, result);
   res.status(result.statusCode).json([result]);
+}
+
+export function sendErrorResponse(res, error) {
+  logger.error(`Error: `, error);
+  const response = ServerResponse.fromError(error);
+  sendResponse(res, response);
 }
 
 export function hashPassword(password, salt) {
