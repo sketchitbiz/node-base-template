@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { UserController } from "../features/user/UserController.js";
+import { UserController } from "../modules/user/UserController.js";
 import passport from "passport";
 import { generateJwt } from "../util/Jwt.js";
 

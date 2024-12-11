@@ -44,43 +44,68 @@ export class DatabaseManager {
     return DatabaseManager.#instance;
   }
 
-
-  createClient() {
-    return this.#pool.connect();
-  }
-
-
   /**
-   *
-   * 트랜잭션
-   * @template T
-   * @param { TransactionCallback } callback
-   * @returns {Promise<T>} - The result of the callback function.
-   * @throws {Error} - Throws an error if the transaction fails and is rolled back.
+   * 트랜잭션 시작
+   * @returns {Promise<import('pg').PoolClient>}
    */
-  async withTransaction(callback) {
+  async begin() {
     const client = await this.#pool.connect();
     try {
       await client.query('BEGIN');
-      const result = await callback(client);
-      await client.query('COMMIT');
-      return result;
+      return client;
     } catch (error) {
-      await client.query('ROLLBACK');
-      // return BaseResult.error({ statusCode : 500, message : error.message, error });
+      client.release();
       throw error;
+    }
+  }
+
+  /**
+   * 트랜잭션 커밋
+   * @param {import('pg').PoolClient} client
+   * @returns {Promise<void>}
+   */
+  async commit(client) {
+    try {
+      await client.query('COMMIT');
     } finally {
       client.release();
     }
   }
 
-  async getClient() {
-    return this.#pool.connect();
+  /**
+   * 트랜잭션 롤백
+   * @param {import('pg').PoolClient} client
+   * @returns {Promise<void>}
+   */
+  async rollback(client) {
+    try {
+      await client.query('ROLLBACK');
+    } finally {
+      client.release();
+    }
+  }
+
+  /**
+   * 트랜잭션 실행
+   * @template T
+   * @param {TransactionCallback} callback
+   * @returns {Promise<T>}
+   * @throws {Error}
+   */
+  async transaction(callback) {
+    const client = await this.begin();
+    try {
+      const result = await callback(client);
+      await this.commit(client);
+      return result;
+    } catch (error) {
+      await this.rollback(client);
+      throw error;
+    }
   }
 
   async connect() {
     await this.#pool.connect();
     logger.info('Database connected');
   }
-
 }

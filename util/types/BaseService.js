@@ -23,5 +23,5 @@ export class BaseService {
    * @param callback
    * @returns {Promise<T>}
    */
-  withTransaction = (callback) => this.#databaseManager.withTransaction(callback);
+  withTransaction = (callback) => this.#databaseManager.transaction(callback);
 }
