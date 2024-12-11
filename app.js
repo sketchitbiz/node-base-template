@@ -13,6 +13,8 @@ import { logger } from "./util/Logger.js";
 import { ServerResponse } from "./util/types/ServerResponse.js";
 import { UserRoutes } from "./routes/UserRoutes.js";
 import { errorHandlingMiddleware } from "./util/Middlewares.js";
+import passport from "passport";
+import { jwtStrategy } from "./util/Jwt.js";
 
 // dotenv 설정
 config();
@@ -41,20 +43,16 @@ const corsOption = { origin : '*' };
 app.use(cors(corsOption));
 app.use(express.static(parent));
 
+// passport 설정
+passport.initialize();
+passport.use('jwt', jwtStrategy);
+
 // 라우팅
 const apiRouter = express.Router();
 new UserRoutes(apiRouter);
 app.use('/api', apiRouter);
 
-
-// Flutter 라우팅 ================================================================================
-app.get('*', (req, res) => {
-  res.sendFile(path.join(parent, 'index.html'));
-});
-
 // 그외 정적 파일 서빙 ================================================================================
-
-
 app.get('/img/:path', async (req, res) => {
   let filePath = req.params['path'];
 
@@ -70,6 +68,12 @@ app.get('/img/:path', async (req, res) => {
 app.get('/errorPage', (req, res) => {
   res.sendFile(path.join(parent, 'index.html'));
 });
+
+// Flutter 라우팅 ================================================================================
+app.get('*', (req, res) => {
+  res.sendFile(path.join(parent, 'index.html'));
+});
+
 
 // 에러 핸들러
 app.use(errorHandlingMiddleware);

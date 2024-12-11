@@ -6,6 +6,7 @@ import { QueryBuilder } from '../Query.js';
 export class BaseMapper {
 
   /**
+   * @protected
    * @param {import('pg').PoolClient} client
    * @returns {QueryBuilder}
    */

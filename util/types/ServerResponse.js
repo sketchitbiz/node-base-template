@@ -106,5 +106,4 @@ export class ServerResponse {
   static conflict({ message, customMessage }) {
     return ServerResponse.fromError(new ConflictError({ message, customMessage }));
   }
-
 }

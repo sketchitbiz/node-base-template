@@ -1,7 +1,6 @@
 import { logError, logRequest } from "./Logger.js";
 import { sendResponse } from "./Functions.js";
 import { ResponseMessage } from "./types/ResponseMessage.js";
-import { verifyJwt } from "./Jwt.js";
 import { ServerResponse } from "./types/ServerResponse.js";
 import path from "node:path";
 import { parent } from "../app.js";

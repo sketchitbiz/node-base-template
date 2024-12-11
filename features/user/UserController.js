@@ -19,7 +19,6 @@ export class UserController {
    * @param {import('express').NextFunction} next
    */
   findUserByUid = async (req, res, next) => {
-
     try {
       const uid = req.params.uid;
       const user = await this.userService.findUserByUid(uid);

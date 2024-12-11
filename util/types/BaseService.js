@@ -18,6 +18,7 @@ export class BaseService {
   /**
    * 트랜잭션
    * @template T
+   * @protected
    * @param {TransactionCallback} callback
    * @param callback
    * @returns {Promise<T>}

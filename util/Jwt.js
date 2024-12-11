@@ -1,55 +1,50 @@
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
+import { UnauthorizedError } from "./types/Error.js";
+import { ResponseMessage } from "./types/ResponseMessage.js";
 
 config();
 
 /** @type {import('jsonwebtoken').SignOptions} */
 const webTokenOption = {
-  algorithm: process.env.JWT_ALGORITHM, // 해싱 알고리즘
-  expiresIn: process.env.JWT_ACCESS_EXPIRES_IN, // 토큰 유효 기간
-  issuer: process.env.JWT_ISSUER // 발행
+  algorithm : 'HS256', // 해싱 알고리즘
+  expiresIn : '1 day', // 토큰 유효 기간
+  issuer : 'issuer', // 발행
+  audience : 'audience', // 수취
 };
-
-const appTokenOption = {
-  algorithm: process.env.JWT_ALGORITHM, // 해싱 알고리즘
-  issuer: process.env.JWT_ISSUER // 발행
-}
 
 /**
  * 토큰 발행
  *
- * @param {string} uid
- * @returns {{appToken: string, webToken: string}}
+ * @param {string} userId
+ * @returns {string}
  */
-export const generateJwt = (uid) => {
-  const payload = { uid };
+export const generateJwt = (userId) => {
+  const payload = { userId };
 
-  const webToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, webTokenOption);
-  const appToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, appTokenOption);
-
-  return { webToken, appToken };
+  return jwt.sign(payload, 'secret', webTokenOption);
 }
+
 
 /**
- * jwt 검증
- * @param {string} token
- * @param {'web' | 'app'} platform
- * @returns {string | null}
+ * jwt 전략
+ * @type {Strategy}
  */
-export function verifyJwt(token, platform) {
-  try {
-    let payload;
-    if (platform === 'web') {
-      payload = jwt.verify(token, process.env.JWT_SECRET_KEY, webTokenOption);
-    } else {
-      payload = jwt.verify(token, process.env.JWT_SECRET_KEY, appTokenOption);
-    }
+export const jwtStrategy = new JwtStrategy({
+  algorithms : 'HS256',
+  passReqToCallback : true,
+  secretOrKey : 'secret',
+  jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearerToken() || ExtractJwt.fromHeader('access_token'),
+  audience : 'audience',
+  issuer : 'issuer',
+}, async (req, payload, done) => {
+  // NOTE: 프로젝트마다 payload의 key값이 다를 수 있음
+  const userId = payload.userId;
 
-    return payload.uid;
-  } catch (e) {
-    return null;
+  if (!userId) {
+    return done(new UnauthorizedError({ message : ResponseMessage.tokenInvalid, customMessage : "유효하지 않는 토큰입니다." }),);
+  } else {
+    done(null, userId);
   }
-}
-
-export function verifyAppJwt(token) {
-}
+});
