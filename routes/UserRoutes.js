@@ -1,19 +1,19 @@
 import { Router } from 'express';
-import { UserController } from "../modules/user/UserController.js";
 import passport from "passport";
+import { UserController } from "../modules/user/UserController.js";
 import { generateJwt } from "../util/Jwt.js";
 
 /**
- * @param {express.Express | Router} app
+ * @param {Express | Router} app
  */
 export function UserRoutes(app) {
   const userRouter = Router();
   const userController = new UserController();
 
-  userRouter.get('/test', passport.authenticate('jwt', { session : false }), (req, res) => {
-    console.log(`userId: ${ req.user }`);
+  userRouter.get('/test', passport.authenticate('jwt', { session: false }), (req, res) => {
+    console.log(`userId: ${req.user}`);
 
-    res.json({ message : 'success' });
+    res.json({ message: 'success' });
   });
 
   userRouter.post('/genToken', (req, res) => {

@@ -20,12 +20,12 @@ export class DatabaseManager {
 
   constructor() {
     this.#pool = new Pool({
-      user : process.env.DB_USER,
-      host : process.env.DB_HOST,
-      database : process.env.DB_NAME,
-      password : process.env.DB_PASSWORD,
-      port : process.env.DB_PORT,
-      max : 40,
+      user: process.env.DB_USER,
+      host: process.env.DB_HOST,
+      database: process.env.DB_NAME,
+      password: process.env.DB_PASSWORD,
+      port: process.env.DB_PORT,
+      max: 40,
     });
 
     // datetime 변환
@@ -39,6 +39,14 @@ export class DatabaseManager {
     });
   }
 
+
+  /**
+   * 인스턴스 조회
+   *
+   * @static
+   * @readonly
+   * @type {DatabaseManager}
+   */
   static get instance() {
     if (!DatabaseManager.#instance) {
       DatabaseManager.#instance = new DatabaseManager();
