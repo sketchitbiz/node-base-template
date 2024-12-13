@@ -7,6 +7,11 @@ export class BaseService {
 
   constructor() {
     this.#databaseManager = DatabaseManager.instance;
+
+    // 프록시 적용
+    // if (this.constructor !== BaseService) {
+    //   Object.setPrototypeOf(this.constructor.prototype, createTransactionalService(this.constructor));
+    // }
   }
 
 

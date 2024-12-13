@@ -21,7 +21,7 @@ export function UserRoutes(app) {
     res.json({ token });
   });
 
-  userRouter.get('/:uid', userController.findUserByUid);
+  userRouter.get('/:uid', userController.findUserByUid.bind(userController));
 
   app.use('/users', userRouter);
 }

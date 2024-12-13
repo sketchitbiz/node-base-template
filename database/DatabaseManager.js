@@ -69,6 +69,7 @@ export class DatabaseManager {
   async begin() {
     const client = await this.#pool.connect();
     try {
+      logger.debug('BEGIN');
       await client.query('BEGIN');
       return client;
     } catch (error) {
@@ -84,6 +85,7 @@ export class DatabaseManager {
    */
   async commit(client) {
     try {
+      logger.debug('COMMIT');
       await client.query('COMMIT');
     } finally {
       client.release();
@@ -97,6 +99,7 @@ export class DatabaseManager {
    */
   async rollback(client) {
     try {
+      logger.debug('ROLLBACK');
       await client.query('ROLLBACK');
     } finally {
       client.release();
@@ -111,6 +114,7 @@ export class DatabaseManager {
    * @throws {Error}
    */
   async transaction(callback) {
+
     const client = await this.begin();
     try {
       const result = await callback(client);

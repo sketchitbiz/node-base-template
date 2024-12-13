@@ -1,6 +1,6 @@
-import { UserService } from "./UserService.js";
 import { sendErrorResponse, sendResponse } from "../../util/Functions.js";
 import { ServerResponse } from "../../util/types/ServerResponse.js";
+import { UserService } from "./UserService.js";
 
 export class UserController {
 
@@ -17,7 +17,7 @@ export class UserController {
    * @param {import('express').Response} res
    * @param {import('express').NextFunction} next
    */
-  findUserByUid = async (req, res) => {
+  async findUserByUid(req, res) {
     try {
       const uid = req.params.uid;
       const user = await this.userService.findUserByUid(uid);
