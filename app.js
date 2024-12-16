@@ -7,14 +7,15 @@ import express from 'express';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DatabaseManager } from "./database/DatabaseManager.js";
-import { sendErrorResponse, sendResponse } from "./util/Functions.js";
-import { logger } from "./util/Logger.js";
-import { ServerResponse } from "./util/types/ServerResponse.js";
-import { UserRoutes } from "./routes/UserRoutes.js";
 import passport from "passport";
+import { DatabaseManager } from "./database/DatabaseManager.js";
+import { RedisManager } from './database/RedisManager.js';
+import { UserRoutes } from "./routes/UserRoutes.js";
+import { sendErrorResponse, sendResponse } from "./util/Functions.js";
 import { jwtStrategy } from "./util/Jwt.js";
+import { logger } from "./util/Logger.js";
 import { BaseError } from "./util/types/Error.js";
+import { ServerResponse } from "./util/types/ServerResponse.js";
 
 // dotenv 설정
 config();
@@ -37,9 +38,9 @@ app.use(express.static(path.join(parent, 'images')));
 
 // Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended : true }));
+app.use(express.urlencoded({ extended: true }));
 /** @type {import('cors').CorsOptions} */
-const corsOption = { origin : '*' };
+const corsOption = { origin: '*' };
 app.use(cors(corsOption));
 app.use(express.static(parent));
 
@@ -97,5 +98,6 @@ app.use((err, req, res) => {
 
 app.listen(80, async () => {
   await DatabaseManager.instance.connect();
+  RedisManager.getInstance();
   logger.info('Server is running on port 80');
 });

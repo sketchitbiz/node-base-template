@@ -20,7 +20,7 @@ export class UserController {
   async findUserByUid(req, res) {
     try {
       const uid = req.params.uid;
-      const user = await this.userService.findUserByUid(uid);
+      const user = await this.userService.findUserByUid({ uid });
 
       const response = ServerResponse.data(user);
       sendResponse(res, response);

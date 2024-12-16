@@ -10,7 +10,7 @@ export class BaseMapper {
    * @param {import('pg').PoolClient} client
    * @returns {QueryBuilder}
    */
-  createQueryBuilder(client) {
+  _createQueryBuilder(client) {
     return new QueryBuilder(client);
   }
 }

@@ -38,10 +38,10 @@ export function addFileCountQuery(params) {
 
   let query = `coalesce(`
   query += `( SELECT count(*) FROM common.attach_file_info`
-  query += ` WHERE attach_file_type = ${ params.fileType }`
+  query += ` WHERE attach_file_type = ${params.fileType}`
 
   if (params.contentsNo) {
-    query += ` AND contents_no = ${ params.contentsNo }`
+    query += ` AND contents_no = ${params.contentsNo}`
   }
   query += `), 0) AS file_cnt`
 
@@ -55,14 +55,14 @@ export function addFileCountQuery(params) {
  * @returns {string}
  */
 export function addCreatorFileQuery(params) {
-  let query = `coalesce((SELECT count(*) FROM common.attach_file_info WHERE attach_file_type = '${ params.fileType }' AND created_id = ${ params.userId } `
+  let query = `coalesce((SELECT count(*) FROM common.attach_file_info WHERE attach_file_type = '${params.fileType}' AND created_id = ${params.userId} `
 
   if (params.limit) {
-    query += ` LIMIT ${ params.limit }`
+    query += ` LIMIT ${params.limit}`
   }
 
   query += `), 0) as file_cnt`
-  query += ` ,'${ params.fileType }' AS file_type`
+  query += ` ,'${params.fileType}' AS file_type`
 
   return query;
 }
@@ -75,17 +75,17 @@ export function addCreatorFileQuery(params) {
 export function addFileQuery(params) {
   let query = `(SELECT json_agg(sub_image) FROM (SELECT s.attach_file_no, s.origin_file_name, s.file_path, s.created_time` +
     `, s.update_time FROM common.attach_file_info s` +
-    ` WHERE s.attach_file_type = '${ params.fileType }'`;
+    ` WHERE s.attach_file_type = '${params.fileType}'`;
 
   if (params.userId) {
-    query += ` AND s.created_id = ${ params.userId }`; // userId 조건 추가
+    query += ` AND s.created_id = ${params.userId}`; // userId 조건 추가
   }
 
   if (params.contentsNo) {
-    query += ` AND s.contents_no = ${ params.contentsNo }`; // contentsNo 조건 추가
+    query += ` AND s.contents_no = ${params.contentsNo}`; // contentsNo 조건 추가
   }
 
-  query += `) sub_image ) AS ${ params.fieldName }`; // 쿼리 마무리
+  query += `) sub_image ) AS ${params.fieldName}`; // 쿼리 마무리
 
   return query;
 }
@@ -98,9 +98,9 @@ export function addFileQuery(params) {
  * @returns {string}
  */
 export function addAllCountQuery({ table, where }) {
-  let query = `(SELECT count(*) FROM ${ table }`
+  let query = `(SELECT count(*) FROM ${table}`
   if (where) {
-    query += ` WHERE ${ where }`
+    query += ` WHERE ${where}`
   }
   query += `) AS all_cnt`;
 
@@ -115,9 +115,9 @@ export function addAllCountQuery({ table, where }) {
  * @returns {string}
  */
 export function addTotalCountQuery(params) {
-  let query = `(SELECT count(*) FROM ${ params.table }`
+  let query = `(SELECT count(*) FROM ${params.table}`
   if (params.where) {
-    query += ` WHERE ${ params.where }`
+    query += ` WHERE ${params.where}`
   }
   query += `) AS total_cnt`;
 
@@ -130,7 +130,7 @@ export function addTotalCountQuery(params) {
  * @returns {string}
  */
 export function addRowNoQuery(sort) {
-  return `row_number() over(${ sort }) as no`;
+  return `row_number() over(${sort}) as no`;
 }
 
 
@@ -269,19 +269,20 @@ export class QueryBuilder {
 
     for (const key of paramList) {
       const value = this.#fields[key];
-      const index = `$${ paramIndex++ }`;
+      const index = `$${paramIndex}`;
       const newStatement = statement.replace(new RegExp(`\\$${key}`, 'g'), index);
 
       // replace가 실제로 변경을 했는지 확인
       if (newStatement !== statement) {
         statement = newStatement;
+        paramIndex++;
         values.push(value);
       }
     }
 
     return {
-      name : this.#name,
-      text : statement,
+      name: this.#name,
+      text: statement,
       values
     }
   }
@@ -294,7 +295,7 @@ export class QueryBuilder {
    */
   async findMany() {
     const query = this.#build();
-    logger.debug(query);
+    logger.debug(`Query: ${query.name}`, query);
 
     const { rows } = await this.#client.query(query);
     if (rows.length === 0) {
@@ -310,7 +311,7 @@ export class QueryBuilder {
    */
   async findOne() {
     const query = this.#build();
-    logger.debug(query);
+    logger.debug(`Query: ${query.name}`, query);
 
     const { rows } = await this.#client.query(query);
     if (rows.length === 0) {
@@ -327,7 +328,7 @@ export class QueryBuilder {
    */
   async exec() {
     const query = this.#build();
-    logger.debug(query);
+    logger.debug(`Query: ${query.name}}`, query);
 
     const { rows } = await this.#client.query(query);
     if (rows.length === 0) {
