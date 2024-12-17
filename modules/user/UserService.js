@@ -1,8 +1,9 @@
-import { createTransactionalService } from "../../util/TransactionProxy.js";
+import { createTransactionalService } from "../../database/TransactionProxy.js";
 import { BaseService } from "../../util/types/BaseService.js";
 import { NotFoundError } from "../../util/types/Error.js";
 import { UserMapper } from "./UserMapper.js";
 import { UserMst } from "./UserMst.js";
+
 
 class _UserService extends BaseService {
 
@@ -30,6 +31,7 @@ class _UserService extends BaseService {
     return user;
   }
 }
+
 
 /**@type {_UserService} */
 export const UserService = createTransactionalService(_UserService);

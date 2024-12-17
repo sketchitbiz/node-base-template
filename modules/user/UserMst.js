@@ -1,5 +1,13 @@
-import { CreatedUpdateTimeId } from "../../util/types/Common.js";
 
+import { CreatedUpdateTimeId } from '../../util/types/Common.js';
+
+/**
+ * user_mst
+ *
+ * @export
+ * @class UserMst
+ * @typedef {UserMst}
+ */
 export class UserMst extends CreatedUpdateTimeId {
 
   /** @type {string} */

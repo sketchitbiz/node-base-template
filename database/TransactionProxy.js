@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from "async_hooks";
+import { BaseMapper } from "../util/types/BaseMapper.js";
 
 const txContext = new AsyncLocalStorage();
 function getClient() {
@@ -53,6 +54,14 @@ export function createTransactionalService(Target) {
   };
 }
 
+
+/**
+ * BaseMapper 프록시
+ *
+ * @export
+ * @param {typeof BaseMapper} Target
+ * @returns {typeof BaseMapper}
+ */
 export function createClientImportMapper(Target) {
   return class extends Target {
     constructor(...args) {

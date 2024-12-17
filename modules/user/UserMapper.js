@@ -1,6 +1,7 @@
-import { createClientImportMapper } from '../../util/TransactionProxy.js';
+import { createClientImportMapper } from '../../database/TransactionProxy.js';
 import { BaseMapper } from '../../util/types/BaseMapper.js';
 import { UserMst } from "./UserMst.js";
+
 
 /**
  *
@@ -8,9 +9,8 @@ import { UserMst } from "./UserMst.js";
  */
 class _UserMapper extends BaseMapper {
 
-
   /**
-  //  * @param {import('pg').PoolClient} client
+   * @param {import('pg').PoolClient} client
    * @param {number} uid
    * @returns {Promise<UserMst|null>}
    *
@@ -26,7 +26,6 @@ class _UserMapper extends BaseMapper {
     return query.findOne();
   }
 }
-
 
 
 /**@type {_UserMapper} */
