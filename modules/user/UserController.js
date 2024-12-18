@@ -1,6 +1,5 @@
 import { sendErrorResponse, sendResponse } from "../../util/Functions.js";
 import { ServerResponse } from "../../util/types/ServerResponse.js";
-import { UserMstSchema } from "./UserMst.js";
 import { UserService } from "./UserService.js";
 
 export class UserController {
@@ -18,7 +17,7 @@ export class UserController {
    * @param {import('express').Response} res
    * @param {import('express').NextFunction} next
    */
-  async findUserByUid(req, res) {
+  findUserByUid = async (req, res) => {
     try {
       const uid = req.params.uid;
       const user = await this.userService.findUserByUid({ uid });
@@ -26,7 +25,7 @@ export class UserController {
       const response = ServerResponse.data(user);
       sendResponse(res, response);
     } catch (e) {
-      sendErrorResponse(res, e);
+      sendErrorResponse(res, e); 
     }
   }
 }
