@@ -1,3 +1,4 @@
+import { Dayjs } from 'dayjs';
 /** @typedef {'Y'|'N'} Yn */
 /** @typedef {'C'|'U'} UserType */
 
