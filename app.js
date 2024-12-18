@@ -8,6 +8,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import passport from "passport";
+import { collectDefaultMetrics, register } from 'prom-client';
 import { DatabaseManager } from "./database/DatabaseManager.js";
 import { RedisManager } from './database/RedisManager.js';
 import { UserRoutes } from "./routes/UserRoutes.js";
@@ -25,7 +26,22 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Seoul');
 
+// 매트릭 수집기 생성
+collectDefaultMetrics();
+
+// Express 앱 생성
 const app = express();
+
+// 메트릭 엔드포인트
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+  }
+  catch (e) {
+    res.status(500).end();
+  }
+});
 
 // static file
 const __filename = fileURLToPath(import.meta.url);

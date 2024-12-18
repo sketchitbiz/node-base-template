@@ -1,8 +1,8 @@
-import { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+const { Dayjs } = dayjs;
 /** @typedef {'Y'|'N'} Yn */
 /** @typedef {'C'|'U'} UserType */
 
-import dayjs from "dayjs";
 import Joi from "joi";
 
 /** @typedef {'KAKAO' | 'APPLE' | 'ID'} Provider */

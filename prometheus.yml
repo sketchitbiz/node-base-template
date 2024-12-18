@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s # 데이터를 15초마다 수집
+
+# 수집 정보 설정, 타겟의 엔드포인트 설정
+scrape_configs:
+  # job 이름은 시계열 데이터 수집시 `job=<job_name>`으로 라벨이 붙음
+  - job_name: "prometheus"
+
+    # 타겟의 엔드포인드
+    metrics_path: /metrics
+
+    # 위 gloabal의 설정을 오버라이딩
+    scrape_interval: 5s
+
+    static_configs:
+      - targets:
+          - "localhost:80"
