@@ -1,8 +1,9 @@
+import Joi from "joi";
 import { createTransactionalService } from "../../database/TransactionProxy.js";
 import { BaseService } from "../../util/types/BaseService.js";
 import { NotFoundError } from "../../util/types/Error.js";
 import { UserMapper } from "./UserMapper.js";
-import { UserMst } from "./UserMst.js";
+import { UserMst, UserMstSchema } from "./UserMst.js";
 
 
 class _UserService extends BaseService {
@@ -23,6 +24,7 @@ class _UserService extends BaseService {
    */
   async findUserByUid({ uid }) {
     const user = await this.userMapper.findUserByUid({ uid });
+    Joi.assert(user, UserMstSchema);
 
     if (!user) {
       throw new NotFoundError({ customMessage: '사용자를 찾을 수 없습니다.' });

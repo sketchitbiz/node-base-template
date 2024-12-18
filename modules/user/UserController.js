@@ -1,5 +1,6 @@
 import { sendErrorResponse, sendResponse } from "../../util/Functions.js";
 import { ServerResponse } from "../../util/types/ServerResponse.js";
+import { UserMstSchema } from "./UserMst.js";
 import { UserService } from "./UserService.js";
 
 export class UserController {
