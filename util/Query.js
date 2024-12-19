@@ -189,6 +189,7 @@ export class QueryBuilder {
       throw new Error('Database client is required');
     }
     this.client = client;
+    this.rawQuery = '';
     this.query = {
       name: '',
       type: null,
