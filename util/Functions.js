@@ -1,5 +1,5 @@
-import { logger, logResponse } from "./Logger.js";
 import crypto from "crypto";
+import { logger, logResponse } from "./Logger.js";
 import { ServerResponse } from "./types/ServerResponse.js";
 
 /**
@@ -24,6 +24,28 @@ export function snakeToCamel(data) {
       camelCaseData[camelCaseKey] = snakeToCamel(value);
     }
     return camelCaseData;
+  }
+
+  return data;
+}
+
+export function camelToSnake(data) {
+  if (data === null || data === undefined) {
+    return data;
+  }
+
+  if (Array.isArray(data)) {
+    return data.map((item) => camelToSnake(item));
+  }
+
+  if (typeof data === 'object') {
+    const snakeCaseData = {};
+    for (const key in data) {
+      const value = data[key];
+      const snakeCaseKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+      snakeCaseData[snakeCaseKey] = camelToSnake(value);
+    }
+    return snakeCaseData;
   }
 
   return data;

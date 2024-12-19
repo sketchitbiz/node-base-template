@@ -16,12 +16,11 @@ class _UserMapper extends BaseMapper {
    *
    */
   async findUserByUid({ client, uid }) {
-    const query = this._createQueryBuilder(client)
-      .setName('find user by id')
-      .select('um.*')
+    const query = this._createQueryBuilder(client).
+      select('um.*')
       .from('link9.user_mst um')
-      .where('um.uid = $uid')
-      .setFields({ uid });
+      .where('um.uid = :uid')
+      .setParams({ uid });
 
     return query.findOne();
   }

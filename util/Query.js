@@ -133,19 +133,52 @@ export function addRowNoQuery(sort) {
   return `row_number() over(${sort}) as no`;
 }
 
+/**
+ * @typedef {Object} Query
+ * @property {string} name - 쿼리 이름
+ * @property {string|null} type - 쿼리 타입 (예: 'SELECT')
+ * @property {string|null} table - 대상 테이블명
+ * @property {string[]} fields - 선택할 필드 목록
+ * @property {Array<{type: string, table: string, condition: string|null}>} joins - JOIN 절 정보
+ * @property {string[]} where - WHERE 조건절
+ * @property {string[]} groupBy - GROUP BY 필드 목록
+ * @property {string[]} having - HAVING 조건절
+ * @property {Array<{field: string, direction: string}>} orderBy - 정렬 정보
+ * @property {number|null} limit - LIMIT 값
+ * @property {Record<string,any>} params - 파라미터화된 값들
+ * @property {string[] | string[][]} values - INSERT 할때 넣는 값들
+ */
+
 
 /**
  * @class QueryBuilder
  */
 export class QueryBuilder {
-  /** @type {string} */
-  #name;
-  /** @type {string} */
-  #query = '';
-  /** @type {Record<string,any>} */
-  #fields;
-  /** @type {import('pg').PoolClient} */
-  #client;
+
+
+  /**
+   * @type {string}
+   * @private
+   */
+  name;
+
+  /**
+   * @type {Query}
+   * @private
+   */
+  query;
+
+  /**
+   * @type {string}
+   * @private
+   */
+  rawQuery;
+
+  /**
+   * @type {import('pg').PoolClient}
+   * @private
+   */
+  client;
 
   /**
    * @param {import('pg').PoolClient} client
@@ -155,11 +188,22 @@ export class QueryBuilder {
     if (!client) {
       throw new Error('Database client is required');
     }
-    this.#client = client;
+    this.client = client;
+    this.query = {
+      name: '',
+      type: null,
+      table: null,
+      fields: [],
+      joins: [],
+      where: [],
+      groupBy: [],
+      having: [],
+      orderBy: [],
+    };
   }
 
   get client() {
-    return this.#client;
+    return this.client;
   }
 
   /**
@@ -167,124 +211,409 @@ export class QueryBuilder {
    * @param {string} name
    */
   setName(name) {
-    this.#name = name;
+    this.query.name = name;
+    this.name = name;
     return this;
   }
 
   /**
-   * 쿼리 작성
+   * raw 쿼리 작성
    * @param {string} query
    */
   setQuery(query) {
-    this.#query += ' ' + query;
+    this.rawQuery += ' ' + query;
     return this;
   }
+
 
   /**
    * SELECT문 추가
    * @param {string} query
    */
-  select(query) {
-    this.#query += 'SELECT ' + query;
+  select(...fields) {
+    this.query.type = 'SELECT';
+    this.query.fields = fields.length > 0 ? fields : ['*'];
+    return this;
+  }
+
+  // INSERT 쿼리 시작
+  insert(table) {
+    this.query.type = 'INSERT';
+    this.query.table = table;
     return this;
   }
 
   /**
-   * UPDATE문 추가
-   * @param query
+   * INSERT 할 값 목록
+   *
+   * @param {...any} values
+   * @returns {this}
    */
-  update(query) {
-    this.#query += 'UPDATE ' + query;
+  insertValues(...values) {
+    this.query.values = values;
     return this;
   }
 
   /**
-   * DELETE문 추가
-   * @param query
+   * UPDATE 쿼리 시작
+   *
+   * @param {string} table 대상 테이블명
+   * @returns {this}
    */
-  delete(query) {
-    this.#query += 'DELETE ' + query;
+  update(table) {
+    this.query.type = 'UPDATE';
+    this.query.table = table;
     return this;
   }
 
   /**
-   * FROM문 추가
-   * @param {string} table
+   * UPDATE 할 필드 목록
+   *
+   * @param {string} field 필드명
+   * @param {any} value 값
+   * @returns {this}
+   */
+  updateSet(field, value) {
+    this.query.fields.push(`${field} = :${field}`);
+    this.query.values.push(value);
+    return this;
+  }
+
+
+  /**
+   * DELETE 쿼리 시작
+   *
+   * @param {string} table 대상 테이블명
+   * @returns {this}
+   */
+  delete(table) {
+    this.query.type = 'DELETE';
+    this.query.table = table;
+    return this;
+  }
+
+  /**
+   * FROM 절
+   *
+   * @param {string} table 테이블명
+   * @returns {this}
    */
   from(table) {
-    this.#query += ' FROM ' + table;
+    this.query.table = table;
     return this;
   }
 
   /**
-   * JOIN 문 추가
-   * @param {string} query
+   * WHERE 절
+   *
+   * @param {string} condition 조건절
+   * @returns {this}
    */
-  join(query) {
-    this.#query += ' ' + query;
+  where(condition) {
+    this.query.where.push(condition);
     return this;
   }
 
   /**
-   * WHERE 문 추가
+   * GROUP BY 절
+   *
+   * @param {...string} fields 필드 목록
+   * @returns {this}
    */
-  where(query) {
-    this.#query += ' WHERE ' + query;
+  groupBy(...fields) {
+    this.query.groupBy.push(...fields);
     return this;
   }
 
   /**
-   * 필드 추가
-   * @param {Record<string,any>} fields
+   * HAVING 절
+   *
+   * @param {string} condition 조건절
+   * @param {any} value 값
+   * @returns {this}
    */
-  setFields(fields) {
-    this.#fields = fields;
+  having(condition, value) {
+    if (value !== undefined) {
+      this.query.having.push(condition);
+      this.query.values.push(value);
+    }
     return this;
   }
 
   /**
-   * 필드 추가
-   * @param {string} field
-   * @param {any} value
+   * ORDER BY 절
+   *
+   * @param {string} field 필드명
+   * @param {string} direction 정렬 방향
+   * @returns {this}
    */
-  setField(field, value) {
-    this.#fields[field] = value;
+  orderBy(field, direction = 'ASC') {
+    this.query.orderBy.push({ field, direction: direction.toUpperCase() });
     return this;
   }
 
   /**
-   * 빌드
+   * LIMIT 절
+   *
+   * @param {number} count 제한 값
+   * @returns {this}
+   */
+  limit(count) {
+    this.query.limit = count;
+    return this;
+  }
+
+  // JOIN의 기본 메서드 - 모든 JOIN 타입을 지원
+
+  /**
+   * JOIN 추가
+   *
+   * @param {'INNER' | 'LEFT' | 'RIGHT' | 'FULL OUTER' | 'CROSS' | 'LEFT OUTER' | 'RIGHT OUTER' | 'NATURAL' | 'NATURAL LEFT' | 'NATURAL RIGHT'} joinType JOIN 타입
+   * @param {string} table JOIN 테이블
+   * @param {string|null} condition JOIN 조건
+   * @returns {this}
+   */
+  addJoin(joinType, table, condition) {
+    this.query.joins.push({
+      type: joinType.toUpperCase(),
+      table,
+      condition
+    });
+    return this;
+  }
+
+  /**
+   * INNER JOIN 추가
+   *
+   * @param {string} table JOIN 테이블
+   * @param {string|null} condition JOIN 조건
+   * @returns {this}
+   */
+  innerJoin(table, condition) {
+    return this.addJoin('INNER JOIN', table, condition);
+  }
+
+  // LEFT JOIN
+  /**
+   * LEFT JOIN 추가
+   *
+   * @param {string} table JOIN 테이블
+   * @param {string|null} condition JOIN 조건
+   * @returns {this}
+   */
+  leftJoin(table, condition) {
+    return this.addJoin('LEFT JOIN', table, condition);
+  }
+
+  // RIGHT JOIN
+  /**
+   * RIGHT JOIN 추가
+   *
+   * @param {string} table JOIN 테이블
+   * @param {string|null} condition JOIN 조건
+   * @returns {this}
+   */
+  rightJoin(table, condition) {
+    return this.addJoin('RIGHT JOIN', table, condition);
+  }
+
+  // FULL OUTER JOIN
+  /**
+   * FULL OUTER JOIN 추가
+   *
+   * @param {string} table JOIN 테이블
+   * @param {string|null} condition JOIN 조건
+   * @returns {this}
+   */
+  fullOuterJoin(table, condition) {
+    return this.addJoin('FULL OUTER JOIN', table, condition);
+  }
+
+  // CROSS JOIN
+  /**
+   * CROSS JOIN 추가
+   *
+   * @param {string} table JOIN 테이블
+   * @returns {this}
+   */
+  crossJoin(table) {
+    return this.addJoin('CROSS JOIN', table, null);
+  }
+
+  // LEFT OUTER JOIN
+  /**
+   * LEFT OUTER JOIN 추가
+   *
+   * @param {string} table JOIN 테이블
+   * @param {string|null} condition JOIN 조건
+   * @returns {this}
+   */
+  leftOuterJoin(table, condition) {
+    return this.addJoin('LEFT OUTER JOIN', table, condition);
+  }
+
+  // RIGHT OUTER JOIN
+  /**
+   * RIGHT OUTER JOIN 추가
+   *
+   * @param {string} table JOIN 테이블
+   * @param {string|null} condition JOIN 조건
+   * @returns {this}
+   */
+  rightOuterJoin(table, condition) {
+    return this.addJoin('RIGHT OUTER JOIN', table, condition);
+  }
+
+  // NATURAL JOIN
+  /**
+   * NATURAL JOIN 추가
+   *
+   * @param {string} table JOIN 테이블
+   * @returns {this}
+   */
+  naturalJoin(table) {
+    return this.addJoin('NATURAL JOIN', table, null);
+  }
+
+  // NATURAL LEFT JOIN
+  /**
+   * NATURAL LEFT JOIN 추가
+   *
+   * @param {string} table JOIN 테이블
+   * @returns {this}
+   */
+  naturalLeftJoin(table) {
+    return this.addJoin('NATURAL LEFT JOIN', table, null);
+  }
+
+  // NATURAL RIGHT JOIN
+  /**
+   * NATURAL RIGHT JOIN 추가
+   *
+   * @param {string} table JOIN 테이블
+   * @returns {this}
+   */
+  naturalRightJoin(table) {
+    return this.addJoin('NATURAL RIGHT JOIN', table, null);
+  }
+
+
+  /**
+   * 파라미터 설정
+   *
+   * @param {Record<string,any>} params 파라미터
+   * @returns {this}
+   */
+  setParams(params) {
+    this.query.params = params;
+    return this;
+  }
+
+  /**
+   * 쿼리 생성
    * @returns {import('pg').QueryConfig}
+   * @private
    */
-  #build() {
-    if (!this.#query) {
-      throw new Error('Query is required');
+  build() {
+    let query = '';
+
+    // 쿼리 타입에 따라 쿼리 생성
+    if (this.query.type === 'SELECT') {
+      query = `SELECT ${this.query.fields.join(', ')} FROM ${this.query.table}`;
+    } else if (this.query.type === 'INSERT') {
+      query = `INSERT INTO ${this.query.table} (${this.query.fields.join(', ')}) VALUES ${Array.isArray(this.query.values[0])
+        ? this.query.values.map(row => `(${row.join(', ')})`).join(', ')
+        : `(${this.query.values.join(', ')})`}`;
+    } else if (this.query.type === 'UPDATE') {
+      query = `UPDATE ${this.query.table} SET ${this.query.fields.join(', ')}`;
+    } else if (this.query.type === 'DELETE') {
+      query = `DELETE FROM ${this.query.table} WHERE ${this.query.where.join(' AND ')}`;
+    }
+
+    // JOIN 절 추가
+    if (this.query.joins.length) {
+      query += ' ' + this.query.joins
+        .map(join => {
+          if (join.condition) {
+            return `${join.type} ${join.table} ON ${join.condition}`;
+          }
+          return `${join.type} ${join.table}`;
+        })
+        .join(' ');
+    }
+
+    // WHERE 절 추가
+    if (this.query.where.length) {
+      query += ` WHERE ${this.query.where.join(' AND ')}`;
+    }
+
+    // GROUP BY 절 추가
+    if (this.query.groupBy.length) {
+      query += ` GROUP BY ${this.query.groupBy.join(', ')}`;
+    }
+
+    // HAVING 절 추가
+    if (this.query.having.length) {
+      query += ` HAVING ${this.query.having.join(' AND ')}`;
+    }
+
+    // ORDER BY 절 추가
+    if (this.query.orderBy.length) {
+      query += ` ORDER BY ${this.query.orderBy
+        .map(({ field, direction }) => `${field} ${direction}`)
+        .join(', ')}`;
+    }
+
+    // LIMIT 절 추가
+    if (this.query.limit) {
+      query += ` LIMIT ${this.query.limit}`;
     }
 
 
-    let paramIndex = 1;
+    const paramList = Object.keys(this.query.params).sort((a, b) => b.length - a.length);
+    let index = 1;
     const values = [];
-    let statement = this.#query;
-    const paramList = Object.keys(this.#fields).sort((a, b) => b.length - a.length);
 
-    for (const key of paramList) {
-      const value = this.#fields[key];
-      const index = `$${paramIndex}`;
-      const newStatement = statement.replace(new RegExp(`\\$${key}`, 'g'), index);
-
-      // replace가 실제로 변경을 했는지 확인
-      if (newStatement !== statement) {
-        statement = newStatement;
-        paramIndex++;
-        values.push(value);
+    paramList.forEach(param => {
+      const newSql = query.replace(new RegExp(`:${param}`, 'g'), `$${index}`);
+      if (newSql !== query) {
+        query = newSql;
+        values.push(this.query.params[param]);
+        index++;
       }
-    }
+    });
 
     return {
-      name: this.#name,
-      text: statement,
+      name: this.query.name,
+      text: query,
       values
-    }
+    };
+  }
+
+  /**
+   * raw 쿼리 생성
+   * @returns {import('pg').QueryConfig}
+   * @private
+   */
+  rawQueryBuild() {
+    let query = this.rawQuery;
+    const paramList = Object.keys(this.query.params).sort((a, b) => b.length - a.length);
+    let index = 1;
+    const values = [];
+
+    paramList.forEach(param => {
+      const newSql = query.replace(new RegExp(`:${param}`, 'g'), `$${index}`);
+      if (newSql !== query) {
+        query = newSql;
+        values.push(this.query.params[param]);
+        index++;
+      }
+    });
+    return {
+      name: this.query.name,
+      text: query,
+      values
+    };
   }
 
 
@@ -294,10 +623,10 @@ export class QueryBuilder {
    * @returns {Promise<T[]>}
    */
   async findMany() {
-    const query = this.#build();
+    const query = this.build();
     logger.debug(`Query: ${query.name}`, query);
 
-    const { rows } = await this.#client.query(query);
+    const { rows } = await this.client.query(query);
     if (rows.length === 0) {
       return [];
     }
@@ -310,10 +639,10 @@ export class QueryBuilder {
    * @returns {Promise<T> | null}
    */
   async findOne() {
-    const query = this.#build();
+    const query = this.build();
     logger.debug(`Query: ${query.name}`, query);
 
-    const { rows } = await this.#client.query(query);
+    const { rows } = await this.client.query(query);
     if (rows.length === 0) {
       return null;
     }
@@ -327,10 +656,61 @@ export class QueryBuilder {
    * @throws {DatabaseError}
    */
   async exec() {
-    const query = this.#build();
+    const query = this.build();
     logger.debug(`Query: ${query.name}}`, query);
 
-    const { rows } = await this.#client.query(query);
+    const { rows } = await this.client.query(query);
+    if (rows.length === 0) {
+      return true;
+    } else {
+      return snakeToCamel(rows);
+    }
+  }
+
+
+  /**
+   * raw 쿼리 다수 조회
+   * @template T
+   * @returns {Promise<T[]>}
+   */
+  async rawFindMany() {
+    const query = this.rawQueryBuild();
+    logger.debug(`Query: ${query.name}`, query);
+
+    const { rows } = await this.client.query(query);
+    if (rows.length === 0) {
+      return [];
+    }
+    return snakeToCamel(rows);
+  }
+
+
+  /**
+   * raw 쿼리 단일 조회
+   * @template T
+   * @returns {Promise<T> | null}
+   */
+  async rawFindOne() {
+    const query = this.rawQueryBuild();
+    logger.debug(`Query: ${query.name}`, query);
+
+    const { rows } = await this.client.query(query);
+    if (rows.length === 0) {
+      return null;
+    }
+    return snakeToCamel(rows[0]);
+  }
+
+
+  /**
+   * raw 쿼리 실행
+   * @returns {unknown}
+   */
+  async rawExec() {
+    const query = this.rawQueryBuild();
+    logger.debug(`Query: ${query.name}}`, query);
+
+    const { rows } = await this.client.query(query);
     if (rows.length === 0) {
       return true;
     } else {
@@ -338,3 +718,4 @@ export class QueryBuilder {
     }
   }
 }
+
