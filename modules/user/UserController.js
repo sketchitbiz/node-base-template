@@ -3,8 +3,7 @@ import { ServerResponse } from "../../util/types/ServerResponse.js";
 import { UserService } from "./UserService.js";
 
 export class UserController {
-
-  /** @type {UserService} */
+  /** @type {InstanceType<typeof UserService>} */
   userService;
 
   constructor() {
@@ -15,7 +14,6 @@ export class UserController {
    * 사용자 조회
    * @param {import('express').Request} req
    * @param {import('express').Response} res
-   * @param {import('express').NextFunction} next
    */
   findUserByUid = async (req, res) => {
     try {
@@ -25,7 +23,7 @@ export class UserController {
       const response = ServerResponse.data(user);
       sendResponse(res, response);
     } catch (e) {
-      sendErrorResponse(res, e); 
+      sendErrorResponse(res, e);
     }
-  }
+  };
 }

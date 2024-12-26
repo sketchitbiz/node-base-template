@@ -9,8 +9,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import passport from "passport";
 import { collectDefaultMetrics, register } from 'prom-client';
-import { DatabaseManager } from "./database/DatabaseManager.js";
-import { RedisManager } from './database/RedisManager.js';
+import { connect } from "./database/DatabaseManager.js";
 import { UserRoutes } from "./routes/UserRoutes.js";
 import { sendErrorResponse, sendResponse } from "./util/Functions.js";
 import { jwtStrategy } from "./util/Jwt.js";
@@ -66,7 +65,7 @@ passport.use('jwt', jwtStrategy);
 
 // 라우팅
 const apiRouter = express.Router();
-new UserRoutes(apiRouter);
+UserRoutes(apiRouter);
 app.use('/api', apiRouter);
 
 // 그외 정적 파일 서빙 ================================================================================
@@ -104,16 +103,19 @@ app.use((err, req, res) => {
     return;
   }
 
+  // @ts-ignore
   if (req.url !== '/errorPage') {
+    // @ts-ignore
     res.redirect('/errorPage');
 
   } else {
+    // @ts-ignore
     res.sendFile(path.join(parent, 'index.html'));
   }
 });
 
 app.listen(80, async () => {
-  await DatabaseManager.instance.connect();
-  RedisManager.getInstance();
+  // DB 연결
+  await connect();
   logger.info('Server is running on port 80');
 });

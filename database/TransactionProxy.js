@@ -1,5 +1,5 @@
 import { AsyncLocalStorage } from "async_hooks";
-import { BaseMapper } from "../util/types/BaseMapper.js";
+import { transaction } from './DatabaseManager.js';
 
 const txContext = new AsyncLocalStorage();
 function getClient() {
@@ -25,62 +25,66 @@ const shouldWrapTransaction = (prop) => {
 
 /**
  * 서비스 클래스에 트랜잭션 프록시를 적용
- * @param {typeof BaseService} Target - 대상 서비스 클래스
- * @returns {typeof BaseService}
+ * @param {new (...args: any[]) => any} Target - 대상 서비스 클래스
+ * @returns {new (...args: any[]) => any}
  */
 export function createTransactionalService(Target) {
   return class extends Target {
     constructor(...args) {
+      // @ts-ignore
       super(...args);
 
       return new Proxy(this, {
+        /**
+         * @param {any} target
+         * @param {string | symbol} prop
+         * @param {any} receiver
+         */
         get(target, prop, receiver) {
           const value = target[prop];
 
-          if (typeof value === 'function' && shouldWrapTransaction(prop)) {
-            // console.log(`Wrapping method: ${prop}`); // 디버깅용
+          if (typeof value === 'function' && shouldWrapTransaction(String(prop))) {
             return async function (args) {
-              // BaseService에 있는 withTransaction() 함수 호출
-              return target.withTransaction(async (client) => {
-                // txContext에 client 정보 저장후 함수 실행
+              return transaction(async (client) => {
                 return txContext.run(client, () => value.apply(target, [args]));
               });
             };
           }
-
+          return value;
         }
       });
     }
   };
 }
 
-
 /**
- * BaseMapper 프록시
- *
- * @export
- * @param {typeof BaseMapper} Target
- * @returns {typeof BaseMapper}
+ * @template {new (...args: any[]) => any} T
+ * @param {T} mapper
+ * @returns {T}
  */
-export function createClientImportMapper(Target) {
-  return class extends Target {
+export function createClientImportMapper(mapper) {
+  return class extends mapper {
     constructor(...args) {
-      super(args);
+      super(...args);
 
       return new Proxy(this, {
+        /**
+         * @param {any} target
+         * @param {string | symbol} prop
+         * @param {any} receiver
+         */
         get(target, prop, receiver) {
           const value = target[prop];
 
-          if (typeof value === 'function' && !prop.startsWith('_')) {
+          if (typeof value === 'function' && typeof prop === 'string' && !prop.startsWith('_')) {
             return async function (args) {
-              // txContext에서 client 정보 받아와서
               const client = getClient();
-              // 함수 실행하면서 client과 나머지 정보 저장
               return value.apply(target, [{ client, ...args }]);
-            }
+            };
           }
+          return value;
         }
       });
     }
-  }
+  };
 }

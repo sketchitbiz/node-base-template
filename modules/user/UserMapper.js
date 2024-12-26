@@ -10,14 +10,14 @@ import { UserMst } from "./UserMst.js";
 class _UserMapper extends BaseMapper {
 
   /**
-   * @param {import('pg').PoolClient} client
-   * @param {number} uid
+   * @param {{client?: import('pg').PoolClient, uid: string}} params
    * @returns {Promise<UserMst|null>}
-   *
    */
   async findUserByUid({ client, uid }) {
-    const query = this._createQueryBuilder(client).
-      select('um.*')
+    // @ts-ignore
+    const query = this._createQueryBuilder(client)
+      .setName('findUserByUid')
+      .select('um.*')
       .from('link9.user_mst um')
       .where('um.uid = :uid')
       .setParams({ uid });
@@ -27,5 +27,5 @@ class _UserMapper extends BaseMapper {
 }
 
 
-/**@type {_UserMapper} */
+/** @type {typeof _UserMapper} */
 export const UserMapper = createClientImportMapper(_UserMapper);

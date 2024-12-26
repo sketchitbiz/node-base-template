@@ -5,116 +5,133 @@ import { ResponseMessage } from "./ResponseMessage.js";
  * @abstract
  */
 export class BaseError extends Error {
-
   /** @type {number} */
   statusCode;
 
   /** @type {string} */
   customMessage;
 
-  /** @type {ResponseMessage} */
+  /** @type {string} */
   message;
 
+  /**
+   * @constructor
+   * @param {{message?: string, customMessage?: string, statusCode?: number}} params
+   */
   constructor({ message, customMessage, statusCode }) {
-    super(message);
-    this.statusCode = statusCode;
-    this.message = message ?? 'fail';
+    super(message || 'fail');
+    this.statusCode = statusCode || 500;
+    this.message = message || 'fail';
+    this.customMessage = customMessage || '';
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
 export class NotFoundError extends BaseError {
-
   /**
    * @constructor
-   * @param {ResponseMessage} message
-   * @param {string} customMessage
+   * @param {{message?: string, customMessage?: string}} params
    */
-  constructor({ message, customMessage }) {
-    super({ message : message ?? ResponseMessage.noData, statusCode : 404 });
+  constructor({ message, customMessage } = {}) {
+    super({
+      message: message || ResponseMessage.noData,
+      statusCode: 404,
+      customMessage
+    });
     this.name = 'NotFoundError';
-    this.customMessage = customMessage;
   }
 }
 
 export class ValidationError extends BaseError {
+  /** @type {any} */
+  data;
 
   /**
-   * @template T
    * @constructor
-   * @param {ResponseMessage}message
-   * @param customMessage
-   * @param {T | null}data
+   * @param {{message?: string, customMessage?: string, data?: any}} params
    */
-  constructor({ message, customMessage, data }) {
-    super({ message, statusCode : 400 });
+  constructor({ message, customMessage, data } = {}) {
+    super({
+      message: message || ResponseMessage.badRequest,
+      statusCode: 400,
+      customMessage
+    });
     this.name = 'ValidationError';
     this.data = data;
-    this.customMessage = customMessage;
   }
 }
 
 export class ConflictError extends BaseError {
-
   /**
    * @constructor
-   * @param {ResponseMessage} message
-   * @param {string} customMessage
+   * @param {{message?: string, customMessage?: string}} params
    */
-  constructor({ message, customMessage }) {
-    super({ message : message ?? ResponseMessage.conflict, statusCode : 409 });
+  constructor({ message, customMessage } = {}) {
+    super({
+      message: message || ResponseMessage.conflict,
+      statusCode: 409,
+      customMessage
+    });
     this.name = 'ConflictError';
-    this.customMessage = customMessage;
   }
 }
 
 export class GeneralError extends BaseError {
-
   /**
    * @constructor
-   * @param {number} statusCode
-   * @param {ResponseMessage} message
-   * @param {string} customMessage
+   * @param {{statusCode?: number, message?: string, customMessage?: string}} params
    */
-  constructor({ statusCode, message, customMessage }) {
-    super({ message : message ?? ResponseMessage.fail, statusCode : statusCode ?? 500 });
+  constructor({ statusCode, message, customMessage } = {}) {
+    super({
+      message: message || ResponseMessage.fail,
+      statusCode: statusCode || 500,
+      customMessage
+    });
     this.name = 'GeneralError';
-    this.customMessage = customMessage;
   }
 }
 
 export class BadRequestError extends BaseError {
-
   /**
    * @constructor
-   * @param {ResponseMessage} message
-   * @param {string} customMessage
+   * @param {{message?: string, customMessage?: string}} params
    */
-  constructor({ message, customMessage }) {
-    super({ message : message ?? ResponseMessage.badRequest, statusCode : 400 });
+  constructor({ message, customMessage } = {}) {
+    super({
+      message: message || ResponseMessage.badRequest,
+      statusCode: 400,
+      customMessage
+    });
     this.name = 'BadRequestError';
-    this.customMessage = customMessage;
   }
 }
 
 export class UnauthorizedError extends BaseError {
-
   /**
    * @constructor
-   * @param {ResponseMessage} message
-   * @param {string} customMessage
+   * @param {{message?: string, customMessage?: string}} params
    */
-  constructor({ message, customMessage }) {
-    super({ message : message ?? ResponseMessage.unauthorized, statusCode : 401 });
+  constructor({ message, customMessage } = {}) {
+    super({
+      message: message || ResponseMessage.unauthorized,
+      statusCode: 401,
+      customMessage
+    });
     this.name = 'UnauthorizedError';
-    this.customMessage = customMessage;
   }
 }
 
 export class ForbiddenError extends BaseError {
-  constructor({ message, customMessage }) {
-    super({ message : message ?? ResponseMessage.forbidden, statusCode : 403 });
+  /**
+   * @constructor
+   * @param {{message?: string, customMessage?: string}} params
+   */
+  constructor({ message, customMessage } = {}) {
+    super({
+      message: message || ResponseMessage.forbidden,
+      statusCode: 403,
+      customMessage
+    });
     this.name = 'ForbiddenError';
-    this.customMessage = customMessage;
   }
 }
