@@ -18,7 +18,8 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "alwaysStrict": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "allowUmdGlobalAccess": true
   },
   "include": [
     "**/*.js",

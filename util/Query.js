@@ -7,8 +7,9 @@ import { logger } from './Logger.js';
  * @typedef {Object} FileQuery
  * @property {string} fileType - 파일 타입
  * @property {number} [contentsNo] - 컨텐츠 번호
- * @property {string} [userId] - 사용자 id
+ * @property {string} [userId] - 사용자 id  
  * @property {number} limit - 갯수
+ * @property {string} fieldName - 필드명
  */
 
 /**
@@ -36,14 +37,14 @@ import { logger } from './Logger.js';
  */
 export function addFileCountQuery(params) {
 
-  let query = `coalesce(`
-  query += `( SELECT count(*) FROM common.attach_file_info`
-  query += ` WHERE attach_file_type = ${params.fileType}`
+  let query = `coalesce(`;
+  query += `( SELECT count(*) FROM common.attach_file_info`;
+  query += ` WHERE attach_file_type = ${params.fileType}`;
 
   if (params.contentsNo) {
-    query += ` AND contents_no = ${params.contentsNo}`
+    query += ` AND contents_no = ${params.contentsNo}`;
   }
-  query += `), 0) AS file_cnt`
+  query += `), 0) AS file_cnt`;
 
   return query;
 }
@@ -55,14 +56,14 @@ export function addFileCountQuery(params) {
  * @returns {string}
  */
 export function addCreatorFileQuery(params) {
-  let query = `coalesce((SELECT count(*) FROM common.attach_file_info WHERE attach_file_type = '${params.fileType}' AND created_id = ${params.userId} `
+  let query = `coalesce((SELECT count(*) FROM common.attach_file_info WHERE attach_file_type = '${params.fileType}' AND created_id = ${params.userId} `;
 
   if (params.limit) {
-    query += ` LIMIT ${params.limit}`
+    query += ` LIMIT ${params.limit}`;
   }
 
-  query += `), 0) as file_cnt`
-  query += ` ,'${params.fileType}' AS file_type`
+  query += `), 0) as file_cnt`;
+  query += ` ,'${params.fileType}' AS file_type`;
 
   return query;
 }
@@ -93,14 +94,14 @@ export function addFileQuery(params) {
 /**
  * @description 전체 카운트 쿼리 추가
  * @param {Object} params
- * @param {string} params.table - 테이블 이름
+ * @param {string} params.table - 테이�� 이름
  * @param {string} [params.where] - 조건절
  * @returns {string}
  */
 export function addAllCountQuery({ table, where }) {
-  let query = `(SELECT count(*) FROM ${table}`
+  let query = `(SELECT count(*) FROM ${table}`;
   if (where) {
-    query += ` WHERE ${where}`
+    query += ` WHERE ${where}`;
   }
   query += `) AS all_cnt`;
 
@@ -115,9 +116,9 @@ export function addAllCountQuery({ table, where }) {
  * @returns {string}
  */
 export function addTotalCountQuery(params) {
-  let query = `(SELECT count(*) FROM ${params.table}`
+  let query = `(SELECT count(*) FROM ${params.table}`;
   if (params.where) {
-    query += ` WHERE ${params.where}`
+    query += ` WHERE ${params.where}`;
   }
   query += `) AS total_cnt`;
 
@@ -157,7 +158,7 @@ export class QueryBuilder {
 
 
   /**
-   * @type {string}
+   * @type {string|undefined}
    * @private
    */
   name;
@@ -182,6 +183,7 @@ export class QueryBuilder {
 
   /**
    * @param {import('pg').PoolClient} client
+   * @constructor
    *
    */
   constructor(client) {
@@ -200,11 +202,10 @@ export class QueryBuilder {
       groupBy: [],
       having: [],
       orderBy: [],
+      limit: null,
+      params: {},
+      values: []
     };
-  }
-
-  get client() {
-    return this.client;
   }
 
   /**
@@ -229,7 +230,7 @@ export class QueryBuilder {
 
   /**
    * SELECT문 추가
-   * @param {string} query
+   * @param {string[]} fields
    */
   select(...fields) {
     this.query.type = 'SELECT';
@@ -391,7 +392,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   innerJoin(table, condition) {
-    return this.addJoin('INNER JOIN', table, condition);
+    return this.addJoin('INNER', table, condition);
   }
 
   // LEFT JOIN
@@ -403,7 +404,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   leftJoin(table, condition) {
-    return this.addJoin('LEFT JOIN', table, condition);
+    return this.addJoin('LEFT', table, condition);
   }
 
   // RIGHT JOIN
@@ -415,7 +416,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   rightJoin(table, condition) {
-    return this.addJoin('RIGHT JOIN', table, condition);
+    return this.addJoin('RIGHT', table, condition);
   }
 
   // FULL OUTER JOIN
@@ -427,7 +428,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   fullOuterJoin(table, condition) {
-    return this.addJoin('FULL OUTER JOIN', table, condition);
+    return this.addJoin('FULL OUTER', table, condition);
   }
 
   // CROSS JOIN
@@ -438,7 +439,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   crossJoin(table) {
-    return this.addJoin('CROSS JOIN', table, null);
+    return this.addJoin('CROSS', table, null);
   }
 
   // LEFT OUTER JOIN
@@ -450,7 +451,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   leftOuterJoin(table, condition) {
-    return this.addJoin('LEFT OUTER JOIN', table, condition);
+    return this.addJoin('LEFT OUTER', table, condition);
   }
 
   // RIGHT OUTER JOIN
@@ -462,7 +463,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   rightOuterJoin(table, condition) {
-    return this.addJoin('RIGHT OUTER JOIN', table, condition);
+    return this.addJoin('RIGHT OUTER', table, condition);
   }
 
   // NATURAL JOIN
@@ -473,7 +474,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   naturalJoin(table) {
-    return this.addJoin('NATURAL JOIN', table, null);
+    return this.addJoin('NATURAL', table, null);
   }
 
   // NATURAL LEFT JOIN
@@ -484,7 +485,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   naturalLeftJoin(table) {
-    return this.addJoin('NATURAL LEFT JOIN', table, null);
+    return this.addJoin('NATURAL LEFT', table, null);
   }
 
   // NATURAL RIGHT JOIN
@@ -495,7 +496,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   naturalRightJoin(table) {
-    return this.addJoin('NATURAL RIGHT JOIN', table, null);
+    return this.addJoin('NATURAL RIGHT', table, null);
   }
 
 
@@ -518,6 +519,9 @@ export class QueryBuilder {
   build() {
     let query = '';
 
+    logger.debug(`Query: ${this.query.name}`, this.query);
+
+
     // 쿼리 타입에 따라 쿼리 생성
     if (this.query.type === 'SELECT') {
       query = `SELECT ${this.query.fields.join(', ')} FROM ${this.query.table}`;
@@ -536,9 +540,9 @@ export class QueryBuilder {
       query += ' ' + this.query.joins
         .map(join => {
           if (join.condition) {
-            return `${join.type} ${join.table} ON ${join.condition}`;
+            return `${join.type} JOIN ${join.table} ON ${join.condition}`;
           }
-          return `${join.type} ${join.table}`;
+          return `${join.type} JOIN ${join.table}`;
         })
         .join(' ');
     }
@@ -584,11 +588,13 @@ export class QueryBuilder {
       }
     });
 
-    return {
+    const queryConfig = {
       name: this.query.name,
       text: query,
       values
     };
+    logger.debug(`Raw Query: ${queryConfig.name}`, queryConfig);
+    return queryConfig;
   }
 
   /**
@@ -637,7 +643,7 @@ export class QueryBuilder {
   /**
    * 단일 조회
    * @template T
-   * @returns {Promise<T> | null}
+   * @returns {Promise<T | null>}
    */
   async findOne() {
     const query = this.build();
@@ -653,7 +659,7 @@ export class QueryBuilder {
   /**
    * 실행
    * @template T
-   * @returns {Promise<T> | boolean}
+   * @returns {Promise<T | boolean>}
    * @throws {DatabaseError}
    */
   async exec() {
@@ -689,7 +695,7 @@ export class QueryBuilder {
   /**
    * raw 쿼리 단일 조회
    * @template T
-   * @returns {Promise<T> | null}
+   * @returns {Promise<T | null>}
    */
   async rawFindOne() {
     const query = this.rawQueryBuild();
@@ -705,7 +711,7 @@ export class QueryBuilder {
 
   /**
    * raw 쿼리 실행
-   * @returns {unknown}
+    * @returns {Promise<unknown>}
    */
   async rawExec() {
     const query = this.rawQueryBuild();

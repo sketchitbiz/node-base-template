@@ -2,7 +2,7 @@ import { AsyncLocalStorage } from "async_hooks";
 import { transaction } from './DatabaseManager.js';
 
 const txContext = new AsyncLocalStorage();
-function getClient() {
+export function getClient() {
   const client = txContext.getStore();
 
   if (!client) {
@@ -57,34 +57,34 @@ export function createTransactionalService(Target) {
   };
 }
 
-/**
- * @template {new (...args: any[]) => any} T
- * @param {T} mapper
- * @returns {T}
- */
-export function createClientImportMapper(mapper) {
-  return class extends mapper {
-    constructor(...args) {
-      super(...args);
+// /**
+//  * @template {new (...args: any[]) => any} T
+//  * @param {T} mapper
+//  * @returns {T}
+//  */
+// export function createClientImportMapper(mapper) {
+//   return class extends mapper {
+//     constructor(...args) {
+//       super(...args);
 
-      return new Proxy(this, {
-        /**
-         * @param {any} target
-         * @param {string | symbol} prop
-         * @param {any} receiver
-         */
-        get(target, prop, receiver) {
-          const value = target[prop];
+//       return new Proxy(this, {
+//         /**
+//          * @param {any} target
+//          * @param {string | symbol} prop
+//          * @param {any} receiver
+//          */
+//         get(target, prop, receiver) {
+//           const value = target[prop];
 
-          if (typeof value === 'function' && typeof prop === 'string' && !prop.startsWith('_')) {
-            return async function (args) {
-              const client = getClient();
-              return value.apply(target, [{ client, ...args }]);
-            };
-          }
-          return value;
-        }
-      });
-    }
-  };
-}
+//           if (typeof value === 'function' && typeof prop === 'string' && !prop.startsWith('_')) {
+//             return async function (args) {
+//               const client = getClient();
+//               return value.apply(target, [{ client, ...args }]);
+//             };
+//           }
+//           return value;
+//         }
+//       });
+//     }
+//   };
+// }

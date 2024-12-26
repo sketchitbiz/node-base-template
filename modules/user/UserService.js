@@ -30,7 +30,7 @@ class _UserService {
       return JSON.parse(cachedUser);
     }
 
-    const user = await this.userMapper.findUserByUid({ uid });
+    const user = await this.userMapper.findUserByUid(uid);
 
     if (!user) {
       throw new NotFoundError({ message: '사용자를 찾을 수 없습니다.' });
