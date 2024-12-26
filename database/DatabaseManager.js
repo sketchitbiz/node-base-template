@@ -46,7 +46,7 @@ export const begin = async () => {
     await client.query('BEGIN');
     return client;
   } catch (error) {
-    client.release();
+    await rollback(client);
     throw error;
   }
 };
@@ -60,8 +60,9 @@ export const commit = async (client) => {
   try {
     logger.debug('COMMIT');
     await client.query('COMMIT');
-  } finally {
-    client.release();
+  } catch (error) {
+    await rollback(client);
+    throw error;
   }
 };
 
@@ -74,6 +75,8 @@ export const rollback = async (client) => {
   try {
     logger.debug('ROLLBACK');
     await client.query('ROLLBACK');
+  } catch (error) {
+    logger.error(error);
   } finally {
     client.release();
   }

@@ -26,4 +26,14 @@ export class UserController {
       sendErrorResponse(res, e);
     }
   };
+
+  findAllUsers = async (req, res) => {
+    try {
+      const users = await this.userService.findAllUsers();
+      const response = ServerResponse.data(users);
+      sendResponse(res, response);
+    } catch (e) {
+      sendErrorResponse(res, e);
+    }
+  };
 }

@@ -22,4 +22,17 @@ export class UserMapper extends BaseMapper {
       .findOne()
     );
   }
+
+
+  /**
+   * 모든 사용자 조회
+   * @returns {Promise<UserMst[]>} 사용자 목록
+   */
+  async findAllUsers() {
+    return this.exec(async query => query.setName('findAllUsers')
+      .select('um.*')
+      .from('link9.user_mst um')
+      .findMany()
+    );
+  }
 }

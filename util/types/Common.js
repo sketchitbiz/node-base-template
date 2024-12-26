@@ -1,9 +1,8 @@
 import dayjs from 'dayjs';
-const { Dayjs } = dayjs;
-/** @typedef {'Y'|'N'} Yn */
-
 import Joi from "joi";
+const { Dayjs } = dayjs;
 
+/** @typedef {'Y'|'N'} Yn */
 
 /**
  * @abstract

@@ -27,5 +27,7 @@ export function UserRoutes(app) {
 
   userRouter.get('/:uid', userController.findUserByUid);
 
+  userRouter.get('/', userController.findAllUsers);
+
   app.use('/users', userRouter);
 }

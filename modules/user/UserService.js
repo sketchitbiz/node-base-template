@@ -1,3 +1,5 @@
+
+
 import { redisManager } from '../../database/RedisManager.js';
 import { createTransactionalService } from "../../database/TransactionProxy.js";
 import { NotFoundError } from "../../util/types/Error.js";
@@ -40,6 +42,25 @@ class _UserService {
     await this.redis.set(`user:${uid}`, JSON.stringify(user), 60 * 60 * 24);
 
     return user;
+  }
+
+  async findAllUsers() {
+    // redis에서 조회
+    const cachedUsers = await this.redis.get('users');
+    if (cachedUsers) {
+      return JSON.parse(cachedUsers);
+    }
+
+    const users = await this.userMapper.findAllUsers();
+
+    if (users.length === 0) {
+      throw new NotFoundError({ customMessage: "사용자가 없습니다." });
+    }
+
+    // redis에 저장
+    await this.redis.set('users', JSON.stringify(users), 60 * 60 * 24);
+
+    return users;
   }
 }
 
