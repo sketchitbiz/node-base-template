@@ -1,8 +1,9 @@
-
+import dayjs from 'dayjs';
 import Joi from 'joi';
 import { CreatedUpdateTimeAndIdSchema, CreatedUpdateTimeId, JoiDayjs, Provider, Yn } from '../../util/types/Common.js';
+const { Dayjs } = dayjs;
 
-
+/** @typedef {'U'|'C'} UserType */
 export const UserType = Object.freeze({
   U: 'U',
   C: 'C'
@@ -22,14 +23,11 @@ export const UserMstSchema = CreatedUpdateTimeAndIdSchema.keys({
 
 export const PartialUserMstSchema = UserMstSchema.fork(Object.keys(UserMstSchema.describe().keys), (schema) => schema.optional());
 
-
-
 /**
  * user_mst
  *
  * @export
  * @class UserMst
- * @typedef {UserMst}
  */
 export class UserMst extends CreatedUpdateTimeId {
 

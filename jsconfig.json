@@ -19,7 +19,9 @@
     "skipLibCheck": true,
     "alwaysStrict": true,
     "noImplicitAny": false,
-    "allowUmdGlobalAccess": true
+    "allowUmdGlobalAccess": true,
+    "noImplicitThis": false,
+    "strictPropertyInitialization": false
   },
   "include": [
     "**/*.js",

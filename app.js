@@ -1,5 +1,6 @@
 import cors from 'cors';
 import dayjs from 'dayjs';
+import locale from 'dayjs/plugin/localeData.js';
 import timezone from 'dayjs/plugin/timezone.js';
 import utc from 'dayjs/plugin/utc.js';
 import { config } from 'dotenv';
@@ -23,6 +24,8 @@ config();
 // timezone 설정
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(locale);
+dayjs.locale('ko');
 dayjs.tz.setDefault('Asia/Seoul');
 
 // 매트릭 수집기 생성

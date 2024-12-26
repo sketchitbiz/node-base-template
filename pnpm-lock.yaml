@@ -41,6 +41,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
+      locale:
+        specifier: link:dayjs/plugin/locale
+        version: link:dayjs/plugin/locale
       multer:
         specifier: 1.4.5-lts.1
         version: 1.4.5-lts.1

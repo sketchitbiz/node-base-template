@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
+import { logger } from '../util/Logger.js';
 
 /**
  * Redis 작업을 위한 인터페이스 타입
@@ -33,10 +34,10 @@ export async function createRedisConnection(config = {}) {
   });
 
   // 이벤트 리스너 설정
-  client.on('error', err => console.error(`Redis 클라이언트 에러: ${err}`));
-  client.on('connect', () => console.log('Redis 클라이언트 연결 완료'));
-  client.on('ready', () => console.log('Redis 클라이언트 준비 완료'));
-  client.on('reconnecting', () => console.log('Redis 재연결 시도 중...'));
+  client.on('error', err => logger.error(`Redis 클라이언트 에러: ${err}`));
+  client.on('connect', () => logger.info('Redis 클라이언트 연결 완료'));
+  client.on('ready', () => logger.info('Redis 클라이언트 준비 완료'));
+  client.on('reconnecting', () => logger.info('Redis 재연결 시도 중...'));
 
   // 연결 확인
   try {
@@ -66,7 +67,7 @@ export async function createRedisConnection(config = {}) {
     },
 
     discard: async (pipeline) => {
-      return await pipeline.discard();
+      return pipeline.discard();
     },
 
     set: async (key, value, expireSeconds) => {

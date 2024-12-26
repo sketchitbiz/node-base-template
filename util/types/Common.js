@@ -1,11 +1,9 @@
 import dayjs from 'dayjs';
 const { Dayjs } = dayjs;
 /** @typedef {'Y'|'N'} Yn */
-/** @typedef {'C'|'U'} UserType */
 
 import Joi from "joi";
 
-/** @typedef {'KAKAO' | 'APPLE' | 'ID'} Provider */
 
 /**
  * @abstract

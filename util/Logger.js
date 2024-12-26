@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import express from 'express';
 import winston from 'winston';
 import winstonDaily from 'winston-daily-rotate-file';
 
@@ -6,9 +7,9 @@ const { combine, label, timestamp, printf, colorize } = winston.format;
 
 /**
  * HTTP Logger Request 포맷팅
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {any} responseBody
+ * @param {express.Request} [req]
+ * @param {express.Response} [res]
+ * @param {any} [responseBody]
  * @return {object}
  */
 export function formatHttpLoggerResponse(req, res, responseBody) {
@@ -28,22 +29,41 @@ export function formatHttpLoggerResponse(req, res, responseBody) {
       statusCode: res.statusCode,
       body: responseBody ?? null
     } : undefined
-  }
+  };
 }
 
+
+/**
+ * 요청 로그 출력
+ * @param {express.Request} req
+ */
 export function logRequest(req) {
-  const { Request, Response } = formatHttpLoggerResponse(req);
+  const { Request } = formatHttpLoggerResponse(req);
 
   logger.info(`Request ${Request.url}`, Request);
   // logger.info('Response', Response);
 }
 
+
+/**
+ * 응답 로그 출력
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {any} resBody
+ */
 export function logResponse(req, res, resBody) {
   const { Response } = formatHttpLoggerResponse(req, res, resBody);
 
   logger.info(`Response ${res.req.baseUrl + res.req.url}`, Response);
 }
 
+/**
+ * 에러 로그 출력
+ * @param {string} message
+ * @param {express.Request} [req]
+ * @param {express.Response} [res]
+ * @param {any} [resBody]
+ */
 export function logError(message, req, res, resBody) {
   const { Request, Response } = formatHttpLoggerResponse(req, res, resBody);
 
@@ -66,7 +86,7 @@ const Level = { // 숫자가 낮을수록 우선순위가 높다.
   verbose: 5,
   silly: 6,
   custom: 7
-}
+};
 
 const colors = { // 각각의 레벨에 대한 색상을 지정해줍니다.
   error: 'red',
@@ -78,7 +98,7 @@ const colors = { // 각각의 레벨에 대한 색상을 지정해줍니다.
   silly: 'grey',
   custom: 'yellow',
   no: 'white'
-}
+};
 
 winston.addColors(colors);
 
@@ -89,6 +109,7 @@ const consoleFormat = winston.format.combine(
   printf(info => {
     let { level, message, label, timestamp, ...other } = info;
 
+    // @ts-ignore
     timestamp = colorize().colorize('no', `[ ${new Date(timestamp).toLocaleString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
@@ -98,7 +119,9 @@ const consoleFormat = winston.format.combine(
       second: '2-digit',
       hour12: true
     })} ]`);
+    // timestamp = colorize().colorize('no', `[ ${dayjs().tzformat('YYYY-MM-DD HH:mm:ss A')} ]`);
     label = colorize().colorize('no', `[ ${label}] `);
+    // @ts-ignore
     message = colorize().colorize(level, message);
     let { body, ...others } = other;
     body = JSON.stringify(body, null, 2);
