@@ -1,5 +1,5 @@
-import { BadRequestError, BaseError, ConflictError, ValidationError } from "./Error.js";
 import pg from "pg";
+import { BadRequestError, BaseError, ConflictError, ValidationError } from "./Error.js";
 
 const { DatabaseError } = pg;
 
@@ -15,7 +15,7 @@ export class ServerResponse {
   /** @type {string} */
   message;
 
-  /** @type {T | null} */
+  /** @type {T | T[] | null} */
   data;
 
   /** @type {Error| null} */
@@ -23,12 +23,12 @@ export class ServerResponse {
 
   /**
    *
-   * @param {Partial<ServerResponse>} params
+   * @param {Partial<ServerResponse<T>>} params
    */
   constructor(params) {
 
     if (!params.statusCode || !params.message) {
-      throw new ValidationError({ customMessage : 'statusCode, message는 필수입니다.' });
+      throw new ValidationError({ customMessage: 'statusCode, message는 필수입니다.' });
     }
 
     this.statusCode = params.statusCode;
@@ -46,20 +46,20 @@ export class ServerResponse {
   }
 
   static success() {
-    return new ServerResponse({ statusCode : 200, message : 'success', data : null, error : null });
+    return new ServerResponse({ statusCode: 200, message: 'success', data: null, error: null });
   }
 
   static noData(message) {
-    return new ServerResponse({ statusCode : 404, message : message ?? 'no data', data : null, error : null });
+    return new ServerResponse({ statusCode: 404, message: message ?? 'no data', data: null, error: null });
   }
 
   /**
-   *
+   * @template T
    * @param {T} data
-   * @returns {ServerResponse}
+   * @returns {ServerResponse<T>}
    */
   static data(data) {
-    return new ServerResponse({ statusCode : 200, message : 'success', data, error : null });
+    return new ServerResponse({ statusCode: 200, message: 'success', data, error: null });
   }
 
   /**
@@ -70,19 +70,19 @@ export class ServerResponse {
 
     if (error instanceof BaseError) {
       return new ServerResponse({
-        statusCode : error.statusCode ?? 500,
-        message : error.message ?? 'fail',
-        error : {
-          name : error.name,
-          message : error.customMessage ?? error.message,
-          stack : error.stack
+        statusCode: error.statusCode ?? 500,
+        message: error.message ?? 'fail',
+        error: {
+          name: error.name,
+          message: error.customMessage ?? error.message,
+          stack: error.stack
         }
       });
     } else {
       return new ServerResponse({
-        statusCode : 500,
-        data : null,
-        message : 'fail',
+        statusCode: 500,
+        data: null,
+        message: 'fail',
         error
       });
     }
@@ -90,8 +90,7 @@ export class ServerResponse {
   }
 
   /**
-   * @param {string} message
-   * @param {string} customMessage
+   * @param {{message: string, customMessage?: string}} params
    * @returns {ServerResponse}
    */
   static badRequest({ message, customMessage }) {
@@ -99,8 +98,7 @@ export class ServerResponse {
   }
 
   /**
-   * @param {string} message
-   * @param {string} customMessage
+   * @param {{message: string, customMessage?: string}} params
    * @returns {ServerResponse}
    */
   static conflict({ message, customMessage }) {

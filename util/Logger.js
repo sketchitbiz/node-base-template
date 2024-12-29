@@ -7,7 +7,7 @@ const { combine, label, timestamp, printf, colorize } = winston.format;
 
 /**
  * HTTP Logger Request 포맷팅
- * @param {express.Request} [req]
+ * @param {express.Request |null} [req]
  * @param {express.Response} [res]
  * @param {any} [responseBody]
  * @return {object}
@@ -47,7 +47,7 @@ export function logRequest(req) {
 
 /**
  * 응답 로그 출력
- * @param {express.Request} req
+ * @param {express.Request | null} req
  * @param {express.Response} res
  * @param {any} resBody
  */

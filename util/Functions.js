@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import { hash } from 'bcrypt';
 import { logger, logResponse } from "./Logger.js";
 import { ServerResponse } from "./types/ServerResponse.js";
 
@@ -57,7 +57,7 @@ export function camelToSnake(data) {
  * @param {ServerResponse} result
  */
 export function sendResponse(res, result) {
-  logResponse({}, res, result);
+  logResponse(null, res, result);
   res.status(result.statusCode).json([result]);
 }
 
@@ -67,10 +67,14 @@ export function sendErrorResponse(res, error) {
   sendResponse(res, response);
 }
 
-export function hashPassword(password, salt) {
-  return crypto.createHash('sha512').update(password + salt).digest('hex');
-}
 
-export function generateSalt() {
-  return crypto.randomBytes(16).toString('base64');
+/**
+ * 비밀번호 해싱
+ *
+ * @export
+ * @param {string} password
+ * @returns {Promise<string>}
+ */
+export function hashPassword(password) {
+  return hash(password, 10);
 }

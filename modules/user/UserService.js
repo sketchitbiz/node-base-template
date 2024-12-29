@@ -48,7 +48,9 @@ class _UserService {
     // redis에서 조회
     const cachedUsers = await this.redis.get('users');
     if (cachedUsers) {
-      return JSON.parse(cachedUsers);
+      /** @type {UserMst[]} */
+      const users = JSON.parse(cachedUsers);
+      return users;
     }
 
     const users = await this.userMapper.findAllUsers();

@@ -13,6 +13,7 @@
   "dependencies": {
     "@types/ioredis": "^5.0.0",
     "@types/node": "^22.10.2",
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
@@ -36,6 +37,7 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/joi": "^17.2.3",
