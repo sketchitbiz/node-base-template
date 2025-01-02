@@ -25,6 +25,7 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: Number(process.env.DB_PORT),
   max: 40,
+  min: 10
 });
 
 /**
@@ -63,6 +64,8 @@ export const commit = async (client) => {
   } catch (error) {
     await rollback(client);
     throw error;
+  } finally {
+    client.release();
   }
 };
 

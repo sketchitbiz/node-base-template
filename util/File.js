@@ -50,6 +50,7 @@ export const upload = multer({
       // 파일명 생성
       const filename = file.fieldname + '_' + file.originalname;
       // 파일 확장자 지정
+      //@ts-ignore
       file.ext = ext.substring(1);
       // 파일명 지정
       callback(null, filename);
@@ -75,8 +76,11 @@ export const htmlFile = () => {
         // let filename = req.body.file_nm[req.files.length-1];
         let filename = decodeURI(files.originalname);
         done(null, filename);
+        //@ts-ignore
         req.files.at(req.files.length - 1).file_nm = files.originalname;
+        //@ts-ignore
         req.files.at(req.files.length - 1).origin_file_nm = files.originalname;
+        //@ts-ignore
         req.files.at(req.files.length - 1).ext = ext.substring(1);
       },
     }),
@@ -86,8 +90,8 @@ export const htmlFile = () => {
       fieldSize: 1000 * 1000 * 1000,
       fileSize: 10 * 1000 * 1000 * 1000
     }
-  })
-}
+  });
+};
 
 
 /**
@@ -99,7 +103,8 @@ export function moveFile(file) {
   let oldPath = file.path;
   let newPath = path.join(parent, 'images', file.filename);
 
-  let result;
+  /** @type {boolean | Error} */
+  let result = false;
   fs.rename(oldPath, newPath, err => {
     if (err) {
       logger.error("Error on move file: ", err);

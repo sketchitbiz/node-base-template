@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
+import jwt from 'jsonwebtoken';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { UnauthorizedError } from "./types/Error.js";
 import { ResponseMessage } from "./types/ResponseMessage.js";
@@ -8,10 +8,10 @@ config();
 
 /** @type {import('jsonwebtoken').SignOptions} */
 const webTokenOption = {
-  algorithm : 'HS256', // 해싱 알고리즘
-  expiresIn : '1 day', // 토큰 유효 기간
-  issuer : 'issuer', // 발행
-  audience : 'audience', // 수취
+  algorithm: 'HS256', // 해싱 알고리즘
+  expiresIn: '1 day', // 토큰 유효 기간
+  issuer: 'issuer', // 발행
+  audience: 'audience', // 수취
 };
 
 /**
@@ -24,26 +24,26 @@ export const generateJwt = (userId) => {
   const payload = { userId };
 
   return jwt.sign(payload, 'secret', webTokenOption);
-}
+};
 
 
 /**
  * jwt 전략
- * @type {Strategy}
+ * @type {import('passport-jwt').Strategy}
  */
 export const jwtStrategy = new JwtStrategy({
-  algorithms : 'HS256',
-  passReqToCallback : true,
-  secretOrKey : 'secret',
-  jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearerToken() || ExtractJwt.fromHeader('access_token'),
-  audience : 'audience',
-  issuer : 'issuer',
+  algorithms: ['HS256'],
+  passReqToCallback: true,
+  secretOrKey: 'secret',
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken() || ExtractJwt.fromHeader('access_token'),
+  audience: 'audience',
+  issuer: 'issuer',
 }, async (req, payload, done) => {
   // NOTE: 프로젝트마다 payload의 key값이 다를 수 있음
   const userId = payload.userId;
 
   if (!userId) {
-    return done(new UnauthorizedError({ message : ResponseMessage.tokenInvalid, customMessage : "유효하지 않는 토큰입니다." }),);
+    return done(new UnauthorizedError({ message: ResponseMessage.tokenInvalid, customMessage: "유효하지 않는 토큰입니다." }),);
   } else {
     done(null, userId);
   }

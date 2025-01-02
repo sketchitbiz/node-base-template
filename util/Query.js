@@ -549,7 +549,7 @@ export class QueryBuilder {
 
     // WHERE 절 추가
     if (this.query.where.length) {
-      query += ` WHERE ${this.query.where.join(' AND ')}`;
+      query += ` WHERE ${this.query.where.join(' ')}`;
     }
 
     // GROUP BY 절 추가
@@ -559,7 +559,7 @@ export class QueryBuilder {
 
     // HAVING 절 추가
     if (this.query.having.length) {
-      query += ` HAVING ${this.query.having.join(' AND ')}`;
+      query += ` HAVING ${this.query.having.join(' ')}`;
     }
 
     // ORDER BY 절 추가
@@ -589,7 +589,6 @@ export class QueryBuilder {
     });
 
     const queryConfig = {
-      name: this.query.name,
       text: query,
       values
     };
@@ -616,8 +615,12 @@ export class QueryBuilder {
         index++;
       }
     });
+
+    logger.debug(`Raw Query: ${this.query.name}`, {
+      text: query,
+      values
+    });
     return {
-      name: this.query.name,
       text: query,
       values
     };
