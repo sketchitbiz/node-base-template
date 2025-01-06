@@ -1,7 +1,8 @@
 import { config } from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
-import { UnauthorizedError } from "./types/Error.js";
+import { UserMapper } from '../modules/user/UserMapper.js';
+import { NotFoundError } from "./types/Error.js";
 import { ResponseMessage } from "./types/ResponseMessage.js";
 
 config();
@@ -42,9 +43,11 @@ export const jwtStrategy = new JwtStrategy({
   // NOTE: 프로젝트마다 payload의 key값이 다를 수 있음
   const userId = payload.userId;
 
-  if (!userId) {
-    return done(new UnauthorizedError({ message: ResponseMessage.tokenInvalid, customMessage: "유효하지 않는 토큰입니다." }),);
+  const userMapper = new UserMapper();
+  const user = await userMapper.findUserByUid(userId);
+  if (!user) {
+    return done(new NotFoundError({ message: ResponseMessage.noUser, customMessage: "존재하지 않는 유저입니다." }),);
   } else {
-    done(null, userId);
+    done(null, user);
   }
 });

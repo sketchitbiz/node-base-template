@@ -103,7 +103,29 @@ export async function createRedisConnection(config = {}) {
     getClient: () => client
   };
 
-  return redisInterface;
+  return new Proxy(redisInterface, {
+    get(target, prop, receiver) {
+      const originalMethod = target[prop];
+
+      if (typeof originalMethod === 'function') {
+        return async function (...args) {
+          const methodName = prop.toString();
+          logger.debug(`Redis: ${methodName} 실행`, { args });
+
+          try {
+            const result = await originalMethod.apply(this, args);
+            logger.debug(`Redis: ${methodName} 결과`, { result });
+            return result;
+          } catch (error) {
+            logger.error(`Redis: ${methodName} 에러`, { error, args });
+            throw error;
+          }
+        };
+      }
+
+      return originalMethod;
+    }
+  });
 }
 
 /** @type {RedisInterface} */

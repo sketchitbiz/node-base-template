@@ -728,4 +728,3 @@ export class QueryBuilder {
     }
   }
 }
-
