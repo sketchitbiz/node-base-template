@@ -72,6 +72,18 @@ class _UserService {
 
     return this.userMapper.findAllUsers();
   }
+
+  
+  /**
+   * 이메일로 사용자 조회
+   *
+   * @async
+   * @param {string} email
+   * @returns {Promise<UserMst | null>}
+   */
+  async findUserByEmail(email) {
+    return this.userMapper.findUserByEmail(email);
+  }
 }
 
 /** @type {typeof _UserService} */

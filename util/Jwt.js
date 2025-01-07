@@ -44,7 +44,7 @@ export const jwtStrategy = new JwtStrategy({
   const userId = payload.userId;
 
   const userMapper = new UserMapper();
-  const user = await userMapper.findUserByUid(userId);
+  const user = await userMapper.findUserByEmail(userId);
   if (!user) {
     return done(new NotFoundError({ message: ResponseMessage.noUser, customMessage: "존재하지 않는 유저입니다." }),);
   } else {

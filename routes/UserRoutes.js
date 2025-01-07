@@ -27,6 +27,7 @@ export function UserRoutes(app) {
 
   userRouter.get('/', userController.findAllUsers);
   userRouter.post('/', userController.createUser);
+  userRouter.post('/login', userController.login);
 
 
   app.use('/users', userRouter);

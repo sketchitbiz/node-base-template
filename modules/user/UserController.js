@@ -1,14 +1,48 @@
 import { sendErrorResponse, sendResponse } from "../../util/Functions.js";
+import { ValidationError } from '../../util/types/Error.js';
+import { ResponseMessage } from '../../util/types/ResponseMessage.js';
 import { ServerResponse } from "../../util/types/ServerResponse.js";
+import { AuthService } from '../auth/AuthService.js';
 import { UserService } from "./UserService.js";
 
 export class UserController {
   /** @type {InstanceType<typeof UserService>} */
   userService;
 
+  /** @type {InstanceType<typeof AuthService>} */
+  authService;
+
   constructor() {
     this.userService = new UserService();
+    this.authService = new AuthService();
   }
+
+  /**
+   * 사용자 로그인
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
+  login = async (req, res) => {
+    try {
+
+      const missingFields = [];
+      if (!req.body.email) {
+        missingFields.push('email');
+      }
+      if (!req.body.password) {
+        missingFields.push('password');
+      }
+      if (missingFields.length > 0) {
+        throw new ValidationError({ message: ResponseMessage.badRequest, customMessage: `Missing fields: ${missingFields.join(', ')}` });
+      }
+
+      const user = await this.authService.login(req.body);
+      const response = ServerResponse.data(user);
+      sendResponse(res, response);
+    } catch (e) {
+      sendErrorResponse(res, e);
+    }
+  };
 
   /**
    * 사용자 생성

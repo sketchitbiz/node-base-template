@@ -61,4 +61,38 @@ export class UserMapper extends BaseMapper {
       .findMany()
     );
   }
+
+  /**
+   * 이메일로 사용자 조회
+   *
+   * @async
+   * @param {string} email
+   * @returns {Promise<UserMst | null>}
+   */
+  async findUserByEmail(email) {
+    return this.exec(async query => query.setName('findUserByEmail')
+      .select('um.*')
+      .from('public.user_mst um')
+      .where('um.email = :email')
+      .setParams({ email })
+      .findOne()
+    );
+  }
+
+  /**
+   * 인덱스로 사용자 조회
+   *
+   * @async
+   * @param {number} index
+   * @returns {Promise<UserMst | null>}
+   */
+  async findUserByIndex(index) {
+    return this.exec(async query => query.setName('findUserByIndex')
+      .select('um.*')
+      .from('public.user_mst um')
+      .where('um.index = :index')
+      .setParams({ index })
+      .findOne()
+    );
+  }
 }

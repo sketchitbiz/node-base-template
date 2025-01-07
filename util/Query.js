@@ -619,6 +619,7 @@ export class QueryBuilder {
 
 
     const queryConfig = {
+      name: this.query.name,
       text: query,
       values
     };
@@ -647,10 +648,12 @@ export class QueryBuilder {
     });
 
     logger.debug(`Raw Query: ${this.query.name}`, {
+      name: this.query.name,
       text: query,
       values
     });
     return {
+      name: this.query.name,
       text: query,
       values
     };
