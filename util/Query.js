@@ -140,6 +140,7 @@ export function addRowNoQuery(sort) {
  * @property {string|null} type - 쿼리 타입 (예: 'SELECT')
  * @property {string|null} table - 대상 테이블명
  * @property {string[]} fields - 선택할 필드 목록
+ * @property {boolean} returning - 반환 여부
  * @property {Array<{type: string, table: string, condition: string|null}>} joins - JOIN 절 정보
  * @property {string[]} where - WHERE 조건절
  * @property {string[]} groupBy - GROUP BY 필드 목록
@@ -193,6 +194,7 @@ export class QueryBuilder {
     this.client = client;
     this.rawQuery = '';
     this.query = {
+      returning: false,
       name: '',
       type: null,
       table: null,
@@ -238,10 +240,27 @@ export class QueryBuilder {
     return this;
   }
 
-  // INSERT 쿼리 시작
-  insert(table) {
+  /**
+   * INSERT 쿼리 시작
+   *
+   * @param {string} table 대상 테이블명
+   * @returns {this}
+   */
+  insert(table, returning = false) {
     this.query.type = 'INSERT';
     this.query.table = table;
+    this.query.returning = returning;
+    return this;
+  }
+
+  /**
+   * INSERT 할 필드 목록
+   *
+   * @param {...string} fields
+   * @returns {this}
+   */
+  insertFields(...fields) {
+    this.query.fields = fields;
     return this;
   }
 
@@ -262,9 +281,10 @@ export class QueryBuilder {
    * @param {string} table 대상 테이블명
    * @returns {this}
    */
-  update(table) {
+  update(table, returning = false) {
     this.query.type = 'UPDATE';
     this.query.table = table;
+    this.query.returning = returning;
     return this;
   }
 
@@ -276,8 +296,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   updateSet(field, value) {
-    this.query.fields.push(`${field} = :${field}`);
-    this.query.values.push(value);
+    this.query.fields.push(`${field} = :${value}`);
     return this;
   }
 
@@ -529,8 +548,16 @@ export class QueryBuilder {
       query = `INSERT INTO ${this.query.table} (${this.query.fields.join(', ')}) VALUES ${Array.isArray(this.query.values[0])
         ? this.query.values.map(row => `(${row.join(', ')})`).join(', ')
         : `(${this.query.values.join(', ')})`}`;
+
+      if (this.query.returning) {
+        query += ` RETURNING *`;
+      }
     } else if (this.query.type === 'UPDATE') {
       query = `UPDATE ${this.query.table} SET ${this.query.fields.join(', ')}`;
+
+      if (this.query.returning) {
+        query += ` RETURNING *`;
+      }
     } else if (this.query.type === 'DELETE') {
       query = `DELETE FROM ${this.query.table} WHERE ${this.query.where.join(' AND ')}`;
     }
@@ -574,19 +601,22 @@ export class QueryBuilder {
       query += ` LIMIT ${this.query.limit}`;
     }
 
-
-    const paramList = Object.keys(this.query.params).sort((a, b) => b.length - a.length);
-    let index = 1;
     const values = [];
+    if (this.query.type === 'SELECT') {
+      const paramList = Object.keys(this.query.params).sort((a, b) => b.length - a.length);
+      let index = 1;
 
-    paramList.forEach(param => {
-      const newSql = query.replace(new RegExp(`:${param}`, 'g'), `$${index}`);
-      if (newSql !== query) {
-        query = newSql;
-        values.push(this.query.params[param]);
-        index++;
-      }
-    });
+      paramList.forEach(param => {
+        const newSql = query.replace(new RegExp(`:${param}`, 'g'), `$${index}`);
+        if (newSql !== query) {
+          query = newSql;
+          values.push(this.query.params[param]);
+          index++;
+        }
+      });
+
+    }
+
 
     const queryConfig = {
       text: query,
@@ -662,7 +692,7 @@ export class QueryBuilder {
   /**
    * 실행
    * @template T
-   * @returns {Promise<T | boolean>}
+   * @returns {Promise<T | void>}
    * @throws {DatabaseError}
    */
   async exec() {
@@ -670,9 +700,7 @@ export class QueryBuilder {
     logger.debug(`Query: ${query.name}}`, query);
 
     const { rows } = await this.client.query(query);
-    if (rows.length === 0) {
-      return true;
-    } else {
+    if (rows.length > 0) {
       return snakeToCamel(rows);
     }
   }
