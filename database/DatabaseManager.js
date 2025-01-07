@@ -19,13 +19,20 @@ types.setTypeParser(1082, (val) => {
 
 // Pool 인스턴스 생성
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: Number(process.env.DB_PORT),
-  max: 40,
-  min: 10
+  user: 'postgres',
+  host: 'localhost',
+  database: 'test',
+  password: 'postgres',
+  port: 5432,
+  max: 100,
+  min: 10,
+  // user: process.env.DB_USER,
+  // host: process.env.DB_HOST,
+  // database: process.env.DB_NAME,
+  // password: process.env.DB_PASSWORD,
+  // port: Number(process.env.DB_PORT),
+  // max: 40,
+  // min: 10
 });
 
 /**
@@ -99,7 +106,6 @@ export const transaction = async (callback) => {
     await commit(client);
     return result;
   } catch (error) {
-    await rollback(client);
     throw error;
   }
 };

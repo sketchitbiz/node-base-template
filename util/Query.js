@@ -742,16 +742,15 @@ export class QueryBuilder {
 
   /**
    * raw 쿼리 실행
-    * @returns {Promise<unknown>}
+   * @template T
+   * @returns {Promise<T | void>}
    */
   async rawExec() {
     const query = this.rawQueryBuild();
     logger.debug(`Query: ${query.name}}`, query);
 
     const { rows } = await this.client.query(query);
-    if (rows.length === 0) {
-      return true;
-    } else {
+    if (rows.length > 0) {
       return snakeToCamel(rows);
     }
   }
