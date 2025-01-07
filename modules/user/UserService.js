@@ -1,10 +1,12 @@
 
 
+import bcrypt from 'bcrypt';
 import { redisManager } from '../../database/RedisManager.js';
 import { createTransactionalService } from "../../database/TransactionProxy.js";
-import { NotFoundError } from "../../util/types/Error.js";
+import { ConflictError, NotFoundError } from '../../util/types/Error.js';
+import { ResponseMessage } from '../../util/types/ResponseMessage.js';
 import { UserMapper } from "./UserMapper.js";
-import { UserMst } from "./UserMst.js";
+import { UserMst } from './UserMst.js';
 
 /** @typedef {import('./UserMapper.js').UserMapper} UserMapperType */
 
@@ -21,48 +23,54 @@ class _UserService {
   }
 
   /**
-   * uid로 사용자 조회
-   * @param {{uid: string}} params
+   * 사용자 생성
+   *
+   * @async
+   * @param {Omit<UserMst, 'index'>} user
    * @returns {Promise<UserMst>}
    */
-  async findUserByUid({ uid }) {
-    // Redis에서 먼저 조회
-    const cachedUser = await this.redis.get(`user:${uid}`);
-    if (cachedUser) {
-      return JSON.parse(cachedUser);
+  async createUser(user) {
+    const emailExists = await this.userMapper.checkEmailExists(user.email);
+    if (emailExists) {
+      throw new ConflictError({ message: ResponseMessage.conflict, customMessage: "이미 존재하는 이메일입니다." });
     }
 
-    const user = await this.userMapper.findUserByUid(uid);
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    user.password = hashedPassword;
 
-    if (!user) {
-      throw new NotFoundError({ message: '사용자를 찾을 수 없습니다.' });
-    }
-
-    // Redis에 저장
-    await this.redis.set(`user:${uid}`, JSON.stringify(user), 60 * 60 * 24);
-
-    return user;
+    const newUser = await this.userMapper.createUser(user);
+    // @ts-ignore
+    delete newUser.password;
+    await this.redis.set('users', JSON.stringify(newUser));
+    return newUser;
   }
 
+
+  /**
+   * 모든 사용자 조회
+   *
+   * @async
+   * @returns {Promise<UserMst[]>}
+   */
   async findAllUsers() {
-    // redis에서 조회
-    const cachedUsers = await this.redis.get('users');
-    if (cachedUsers) {
-      /** @type {UserMst[]} */
-      const users = JSON.parse(cachedUsers);
-      return users;
+    /** @type {string | null | UserMst[]} */
+    let redisUsers = await this.redis.get('users');
+    if (redisUsers) {
+      const parsedData = JSON.parse(redisUsers);
+
+      if (parsedData?.length > 0) {
+        return parsedData;
+      }
     }
 
-    const users = await this.userMapper.findAllUsers();
-
+    let users = await this.userMapper.findAllUsers();
     if (users.length === 0) {
-      throw new NotFoundError({ customMessage: "사용자가 없습니다." });
+      throw new NotFoundError({ message: ResponseMessage.noData, customMessage: "데이터가 없습니다." });
     }
 
-    // redis에 저장
-    await this.redis.set('users', JSON.stringify(users), 60 * 60 * 24);
+    await this.redis.set('users', JSON.stringify(users));
 
-    return users;
+    return this.userMapper.findAllUsers();
   }
 }
 

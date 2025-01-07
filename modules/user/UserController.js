@@ -11,15 +11,13 @@ export class UserController {
   }
 
   /**
-   * 사용자 조회
+   * 사용자 생성
    * @param {import('express').Request} req
    * @param {import('express').Response} res
    */
-  findUserByUid = async (req, res) => {
+  createUser = async (req, res) => {
     try {
-      const uid = req.params.uid;
-      const user = await this.userService.findUserByUid({ uid });
-
+      const user = await this.userService.createUser(req.body);
       const response = ServerResponse.data(user);
       sendResponse(res, response);
     } catch (e) {
@@ -27,6 +25,12 @@ export class UserController {
     }
   };
 
+
+  /**
+   * 사용자 조회
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
   findAllUsers = async (req, res) => {
     try {
       const users = await this.userService.findAllUsers();

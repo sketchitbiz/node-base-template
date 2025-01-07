@@ -25,9 +25,9 @@ export function UserRoutes(app) {
     res.json({ token });
   });
 
-  userRouter.get('/:uid', userController.findUserByUid);
-
   userRouter.get('/', userController.findAllUsers);
+  userRouter.post('/', userController.createUser);
+
 
   app.use('/users', userRouter);
 }

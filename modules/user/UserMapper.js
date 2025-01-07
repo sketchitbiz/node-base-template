@@ -8,30 +8,56 @@ import { UserMst } from "./UserMst.js";
  */
 export class UserMapper extends BaseMapper {
 
+
   /**
-   * uid로 사용자 조회
-   * @param {string} uid - 사용자 uid
-   * @returns {Promise<UserMst|null>} 사용자 정보
+   * 사용자 생성
+   *
+   * @async
+   * @param {Partial<UserMst>} user
+   * @returns {Promise<UserMst>}
    */
-  async findUserByUid(uid) {
-    return this.exec(async query => query.setName('findUserByUid')
-      .select('um.*')
-      .from('link9.user_mst um')
-      .where('um.uid = :uid')
-      .setParams({ uid })
-      .findOne()
+  async createUser(user) {
+    // @ts-ignore
+    return this.exec(async query => query.setName('createUser')
+      .insert(`public.user_mst`, true)
+      .insertFields('name', 'email', 'password')
+      .insertValues(`'${user.name}'`, `'${user.email}'`, `'${user.password}'`)
+      .exec()
     );
+  }
+
+  /**
+   * 이메일 존재 여부 확인
+   *
+   * @async
+   * @param {string} email
+   * @returns {Promise<boolean>}
+   */
+  async checkEmailExists(email) {
+    const result = await this.exec(async query => query.setName('checkEmailExists')
+      .setQuery(`SELECT exists(SELECT 1 FROM public.user_mst WHERE email = :email)`)
+      .setParams({ email })
+      .rawExec()
+    );
+
+    if (result[0]['exists']) {
+      return true;
+    }
+
+    return false;
   }
 
 
   /**
    * 모든 사용자 조회
-   * @returns {Promise<UserMst[]>} 사용자 목록
+   *
+   * @async
+   * @returns {Promise<UserMst[]>}
    */
   async findAllUsers() {
     return this.exec(async query => query.setName('findAllUsers')
       .select('um.*')
-      .from('link9.user_mst um')
+      .from('public.user_mst um')
       .findMany()
     );
   }

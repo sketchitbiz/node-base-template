@@ -98,7 +98,7 @@ app.get('*', (req, res) => {
 });
 
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   logger.error('Error:', err);
 
   if (err instanceof BaseError) {

@@ -106,6 +106,7 @@ export const transaction = async (callback) => {
     await commit(client);
     return result;
   } catch (error) {
+    await rollback(client);
     throw error;
   }
 };

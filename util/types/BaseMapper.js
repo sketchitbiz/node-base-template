@@ -42,8 +42,9 @@ export class BaseMapper {
       logger.error(error);
       throw error;
     } finally {
-      client.release();
+      if (!getClient()) {
+        client.release();
+      }
     }
   }
-
 }

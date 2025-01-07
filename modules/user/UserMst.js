@@ -30,28 +30,17 @@ export const PartialUserMstSchema = UserMstSchema.fork(Object.keys(UserMstSchema
  * @class UserMst
  */
 export class UserMst extends CreatedUpdateTimeId {
+  /** @type {number} */
+  index;
 
   /** @type {string} */
   name;
 
   /** @type {string} */
-  cellphone;
-
-  /** @type {string} */
   email;
 
-  /** @type {Provider} */
-  lastLoginProvider;
+  /** @type {string} */
+  password;
 
-  /** @type {Dayjs} */
-  lastLoginTime;
 
-  /** @type {UserType} */
-  type;
-
-  /** @type {Yn} */
-  marketingAgreeYn;
-
-  /** @type {Yn} */
-  mergedYn;
 }

@@ -102,6 +102,18 @@ const colors = { // 각각의 레벨에 대한 색상을 지정해줍니다.
 
 winston.addColors(colors);
 
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return '[Circular]';
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+};
 
 const consoleFormat = winston.format.combine(
   label({ label: 'Test Server' }),
@@ -128,7 +140,8 @@ const consoleFormat = winston.format.combine(
     body = colorize().colorize('data', `[Body]\n` + body);
 
 
-    return `${timestamp} ${label} -  ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, null, 2) + `\n${body}` : ''}`.trim();
+    // return `${timestamp} ${label} -  ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, null, 2) + `\n${body}` : ''}`.trim();
+    return `${timestamp} ${label} -  ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, getCircularReplacer(), 2) + `\n${body}` : ''}`.trim();
   })
 );
 
@@ -145,7 +158,8 @@ const fileFormat = winston.format.combine(
     body = JSON.stringify(body, null, 2);
     body = `[Body]\n${body}`;
 
-    return `${level} ${timestamp} ${label} - ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, null, 2) + `\n${body}` : ''}`.trim();
+    // return `${level} ${timestamp} ${label} - ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, null, 2) + `\n${body}` : ''}`.trim();
+    return `${timestamp} ${label} -  ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, getCircularReplacer(), 2) + `\n${body}` : ''}`.trim();
   })
 );
 
