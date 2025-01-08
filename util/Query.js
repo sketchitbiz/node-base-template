@@ -300,7 +300,7 @@ export class QueryBuilder {
    * @returns {this}
    */
   updateSet(field, value) {
-    this.query.fields.push(`${field} = :${value}`);
+    this.query.fields.push(`${field} = ${value}`);
     return this;
   }
 

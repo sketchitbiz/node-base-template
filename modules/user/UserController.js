@@ -74,4 +74,21 @@ export class UserController {
       sendErrorResponse(res, e);
     }
   };
+
+  /**
+   * 사용자 업데이트
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
+  updateUser = async (req, res) => {
+    try {
+      const body = req.body;
+      const index = Number(req.params.index);
+      const user = await this.userService.updateUser({ updateUser: body, index });
+      const response = ServerResponse.data(user);
+      sendResponse(res, response);
+    } catch (e) {
+      sendErrorResponse(res, e);
+    }
+  };
 }

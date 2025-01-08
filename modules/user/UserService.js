@@ -90,6 +90,31 @@ class _UserService {
   async findUserByEmail(email) {
     return this.userMapper.findUserByEmail(email);
   }
+
+  /**
+   * 사용자 업데이트
+   *
+   * @async
+   * @param {Object} param0 
+   * @param {Partial<UserMst>} param0.updateUser
+   * @param {number} param0.index
+   * @returns {Promise<UserMst>}
+   */
+  async updateUser({ updateUser, index }) {
+    const user = await this.userMapper.findUserByIndex(index);
+    if (!user) {
+      throw new NotFoundError({ message: ResponseMessage.noData, customMessage: "데이터가 없습니다." });
+    }
+
+    if (updateUser.password) {
+      const hashedPassword = await bcrypt.hash(updateUser.password, 10);
+      updateUser.password = hashedPassword;
+    }
+
+    updateUser = { ...user, ...updateUser };
+
+    return this.userMapper.updateUser({ user: updateUser, index });
+  }
 }
 
 /** @type {typeof _UserService} */

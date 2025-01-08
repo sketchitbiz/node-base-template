@@ -86,6 +86,7 @@ export const htmlFile = () => {
     }),
     // fileFilter : fileFilter,
     limits: {
+      files: 10,
       fieldNameSize: 200,
       fieldSize: 1000 * 1000 * 1000,
       fileSize: 10 * 1000 * 1000 * 1000

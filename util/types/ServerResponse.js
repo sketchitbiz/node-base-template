@@ -64,7 +64,7 @@ export class ServerResponse {
 
   /**
    *
-   * @param {BaseError} error
+   * @param {BaseError | Error} error
    */
   static fromError(error) {
 
@@ -78,6 +78,17 @@ export class ServerResponse {
           stack: error.stack
         }
       });
+    } else if (error instanceof Error) {
+      return new ServerResponse({
+        statusCode: 500,
+        data: null,
+        message: error.message,
+        error: {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        }
+      });
     } else {
       return new ServerResponse({
         statusCode: 500,
@@ -86,7 +97,6 @@ export class ServerResponse {
         error
       });
     }
-
   }
 
   /**

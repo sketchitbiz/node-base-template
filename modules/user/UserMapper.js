@@ -96,4 +96,23 @@ export class UserMapper extends BaseMapper {
         .findOne()
     );
   }
+
+  /**
+   * 사용자 업데이트
+   *
+   * @async
+   * @param {{user: Partial<UserMst>, index: number}} param0  
+   * @returns {Promise<UserMst>}
+   */
+  async updateUser({ user, index }) {
+    return this.exec(async query =>
+      query.setName('updateUser')
+        .update('public.user_mst')
+        .updateSet('name', `'${user.name}'`)
+        .updateSet('email', `'${user.email}'`)
+        .updateSet('password', `'${user.password}'`)
+        .where(`index = ${index}`)
+        .exec()
+    );
+  }
 }
