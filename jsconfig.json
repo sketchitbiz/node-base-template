@@ -14,6 +14,7 @@
         "types/*"
       ]
     },
+    "strictNullChecks": false,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,

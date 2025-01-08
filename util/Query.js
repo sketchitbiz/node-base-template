@@ -178,9 +178,13 @@ export class QueryBuilder {
 
   /**
    * @type {import('pg').PoolClient}
-   * @private
    */
-  client;
+  #client;
+
+
+  get client() {
+    return this.#client;
+  }
 
   /**
    * @param {import('pg').PoolClient} client
@@ -191,7 +195,7 @@ export class QueryBuilder {
     if (!client) {
       throw new Error('Database client is required');
     }
-    this.client = client;
+    this.#client = client;
     this.rawQuery = '';
     this.query = {
       returning: false,
@@ -536,10 +540,8 @@ export class QueryBuilder {
    * @private
    */
   build() {
+    this.logQuery();
     let query = '';
-
-    logger.debug(`Query: ${this.query.name}`, this.query);
-
 
     // 쿼리 타입에 따라 쿼리 생성
     if (this.query.type === 'SELECT') {
@@ -617,13 +619,12 @@ export class QueryBuilder {
 
     }
 
-
     const queryConfig = {
       name: this.query.name,
       text: query,
       values
     };
-    logger.debug(`Raw Query: ${queryConfig.name}`, queryConfig);
+
     return queryConfig;
   }
 
@@ -647,16 +648,14 @@ export class QueryBuilder {
       }
     });
 
-    logger.debug(`Raw Query: ${this.query.name}`, {
-      name: this.query.name,
-      text: query,
-      values
-    });
-    return {
+    const queryConfig = {
       name: this.query.name,
       text: query,
       values
     };
+
+    logger.debug(`Raw Query: ${this.query.name}`, queryConfig);
+    return queryConfig;
   }
 
 
@@ -667,7 +666,6 @@ export class QueryBuilder {
    */
   async findMany() {
     const query = this.build();
-    logger.debug(`Query: ${query.name}`, query);
 
     const { rows } = await this.client.query(query);
     if (rows.length === 0) {
@@ -683,7 +681,6 @@ export class QueryBuilder {
    */
   async findOne() {
     const query = this.build();
-    logger.debug(`Query: ${query.name}`, query);
 
     const { rows } = await this.client.query(query);
     if (rows.length === 0) {
@@ -695,12 +692,11 @@ export class QueryBuilder {
   /**
    * 실행
    * @template T
-   * @returns {Promise<T | void>}
+   * @returns {Promise<T>}
    * @throws {DatabaseError}
    */
   async exec() {
     const query = this.build();
-    logger.debug(`Query: ${query.name}}`, query);
 
     const { rows } = await this.client.query(query);
     if (rows.length > 0) {
@@ -716,7 +712,6 @@ export class QueryBuilder {
    */
   async rawFindMany() {
     const query = this.rawQueryBuild();
-    logger.debug(`Query: ${query.name}`, query);
 
     const { rows } = await this.client.query(query);
     if (rows.length === 0) {
@@ -733,7 +728,6 @@ export class QueryBuilder {
    */
   async rawFindOne() {
     const query = this.rawQueryBuild();
-    logger.debug(`Query: ${query.name}`, query);
 
     const { rows } = await this.client.query(query);
     if (rows.length === 0) {
@@ -746,15 +740,81 @@ export class QueryBuilder {
   /**
    * raw 쿼리 실행
    * @template T
-   * @returns {Promise<T | void>}
+   * @returns {Promise<T>}
    */
   async rawExec() {
     const query = this.rawQueryBuild();
-    logger.debug(`Query: ${query.name}}`, query);
 
     const { rows } = await this.client.query(query);
     if (rows.length > 0) {
       return snakeToCamel(rows);
     }
+  }
+
+
+  logQuery() {
+    let query = '';
+
+    // 쿼리 타입에 따라 쿼리 생성
+    if (this.query.type === 'SELECT') {
+      query = `SELECT ${this.query.fields.join(', ')} FROM ${this.query.table}`;
+    } else if (this.query.type === 'INSERT') {
+      query = `INSERT INTO ${this.query.table} (${this.query.fields.join(', ')}) VALUES ${Array.isArray(this.query.values[0])
+        ? this.query.values.map(row => `(${row.join(', ')})`).join(', ')
+        : `(${this.query.values.join(', ')})`}`;
+
+      if (this.query.returning) {
+        query += ` RETURNING *`;
+      }
+    } else if (this.query.type === 'UPDATE') {
+      query = `UPDATE ${this.query.table} SET ${this.query.fields.join(', ')}`;
+
+      if (this.query.returning) {
+        query += ` RETURNING *`;
+      }
+    } else if (this.query.type === 'DELETE') {
+      query = `DELETE FROM ${this.query.table} WHERE ${this.query.where.join(' AND ')}`;
+    }
+
+    // JOIN 절 추가
+    if (this.query.joins.length) {
+      query += ' ' + this.query.joins
+        .map(join => {
+          if (join.condition) {
+            return `${join.type} JOIN ${join.table} ON ${join.condition}`;
+          }
+          return `${join.type} JOIN ${join.table}`;
+        })
+        .join(' ');
+    }
+
+    // WHERE 절 추가
+    if (this.query.where.length) {
+      query += ` WHERE ${this.query.where.join(' ')}`;
+    }
+
+    // GROUP BY 절 추가
+    if (this.query.groupBy.length) {
+      query += ` GROUP BY ${this.query.groupBy.join(', ')}`;
+    }
+
+    // HAVING 절 추가
+    if (this.query.having.length) {
+      query += ` HAVING ${this.query.having.join(' ')}`;
+    }
+
+    // ORDER BY 절 추가
+    if (this.query.orderBy.length) {
+      query += ` ORDER BY ${this.query.orderBy
+        .map(({ field, direction }) => `${field} ${direction}`)
+        .join(', ')}`;
+    }
+
+    // LIMIT 절 추가
+    if (this.query.limit) {
+      query += ` LIMIT ${this.query.limit}`;
+    }
+
+    logger.debug(`Query: ${this.query.name}`, { query, params: this.query.params });
   }
 }

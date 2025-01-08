@@ -135,3 +135,14 @@ export class ForbiddenError extends BaseError {
     this.name = 'ForbiddenError';
   }
 }
+
+export class InternalServerError extends BaseError {
+  /**
+   * @constructor
+   * @param {{message?: string, customMessage?: string}} params
+   */
+  constructor({ message, customMessage } = {}) {
+    super({ message: message || ResponseMessage.internalServerError, statusCode: 500, customMessage });
+    this.name = 'InternalServerError';
+  }
+} 

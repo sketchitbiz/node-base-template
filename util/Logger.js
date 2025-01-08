@@ -137,11 +137,11 @@ const consoleFormat = winston.format.combine(
     message = colorize().colorize(level, message);
     let { body, ...others } = other;
     body = JSON.stringify(body, null, 2);
-    body = colorize().colorize('data', `[Body]\n` + body);
+    body = body ? colorize().colorize('data', `[Body]\n` + body) : null;
 
 
     // return `${timestamp} ${label} -  ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, null, 2) + `\n${body}` : ''}`.trim();
-    return `${timestamp} ${label} -  ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, getCircularReplacer(), 2) + `\n${body}` : ''}`.trim();
+    return `${timestamp} ${label} -  ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, getCircularReplacer(), 2) + `\n${body ?? ''}` : ''}`.trim();
   })
 );
 
@@ -159,7 +159,7 @@ const fileFormat = winston.format.combine(
     body = `[Body]\n${body}`;
 
     // return `${level} ${timestamp} ${label} - ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, null, 2) + `\n${body}` : ''}`.trim();
-    return `${timestamp} ${label} -  ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, getCircularReplacer(), 2) + `\n${body}` : ''}`.trim();
+    return `${timestamp} ${label} -  ${message} ${Object.keys(other).length > 0 ? '\n' + JSON.stringify(others, getCircularReplacer(), 2) + `\n${body ?? ''}` : ''}`.trim();
   })
 );
 

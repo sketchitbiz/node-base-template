@@ -39,7 +39,7 @@ class _UserService {
     user.password = hashedPassword;
 
     const newUser = await this.userMapper.createUser(user);
-    // @ts-ignore
+
     delete newUser.password;
     await this.redis.set('users', JSON.stringify(newUser), 60 * 60 * 24);
     return newUser;
@@ -68,9 +68,15 @@ class _UserService {
       throw new NotFoundError({ message: ResponseMessage.noData, customMessage: "데이터가 없습니다." });
     }
 
+    // pw 제거
+    users = users.map(user => {
+      delete user.password;
+      return user;
+    });
+
     await this.redis.set('users', JSON.stringify(users), 60 * 60 * 24);
 
-    return this.userMapper.findAllUsers();
+    return users;
   }
 
 
