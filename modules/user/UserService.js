@@ -41,7 +41,7 @@ class _UserService {
     const newUser = await this.userMapper.createUser(user);
     // @ts-ignore
     delete newUser.password;
-    await this.redis.set('users', JSON.stringify(newUser));
+    await this.redis.set('users', JSON.stringify(newUser), 60 * 60 * 24);
     return newUser;
   }
 
@@ -68,12 +68,12 @@ class _UserService {
       throw new NotFoundError({ message: ResponseMessage.noData, customMessage: "데이터가 없습니다." });
     }
 
-    await this.redis.set('users', JSON.stringify(users));
+    await this.redis.set('users', JSON.stringify(users), 60 * 60 * 24);
 
     return this.userMapper.findAllUsers();
   }
 
-  
+
   /**
    * 이메일로 사용자 조회
    *

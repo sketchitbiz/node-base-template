@@ -55,7 +55,7 @@ class _AuthService {
 
     const token = generateJwt(user.email);
 
-    await this.redis.set(`users:${user.email}`, JSON.stringify(user));
+    await this.redis.set(`users:${user.email}`, JSON.stringify(user), 60 * 60 * 24);
 
     return { token };
   }
