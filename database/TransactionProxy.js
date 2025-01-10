@@ -3,13 +3,7 @@ import { transaction } from './DatabaseManager.js';
 
 const txContext = new AsyncLocalStorage();
 export function getClient() {
-  const client = txContext.getStore();
-
-  if (!client) {
-    throw new Error("Transaction Client가 없습니다.");
-  }
-
-  return client;
+  return txContext.getStore();
 }
 
 /**

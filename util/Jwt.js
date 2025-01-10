@@ -40,14 +40,19 @@ export const jwtStrategy = new JwtStrategy({
   audience: 'audience',
   issuer: 'issuer',
 }, async (req, payload, done) => {
-  // NOTE: 프로젝트마다 payload의 key값이 다를 수 있음
-  const userId = payload.userId;
+  try {
 
-  const userMapper = new UserMapper();
-  const user = await userMapper.findUserByEmail(userId);
-  if (!user) {
-    return done(new NotFoundError({ message: ResponseMessage.noUser, customMessage: "존재하지 않는 유저입니다." }),);
-  } else {
-    done(null, user);
+    // NOTE: 프로젝트마다 payload의 key값이 다를 수 있음
+    const userId = payload.userId;
+
+    const userMapper = new UserMapper();
+    const user = await userMapper.findUserByEmail(userId);
+    if (!user) {
+      return done(new NotFoundError({ message: ResponseMessage.noUser, customMessage: "존재하지 않는 유저입니다." }), false);
+    }
+
+    return done(null, user);
+  } catch (error) {
+    return done(error, false);
   }
 });
