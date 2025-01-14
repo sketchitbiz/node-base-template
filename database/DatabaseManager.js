@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { config } from 'dotenv';
 import pg from 'pg';
-import { AbstractDBManager } from '../util/types/AbstractDbManager.js';
+import { AbstractDBManager } from '../util/types/AbstractDBManager.js';
 
 const { Pool, types } = pg;
 
@@ -21,7 +21,7 @@ types.setTypeParser(1082, (val) => {
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'test',
+  database: 'postgres',
   password: 'postgres',
   port: 5432,
   max: 100,
@@ -37,14 +37,14 @@ const pool = new Pool({
 
 
 /**
- * 트랜잭션
+ * 트랜잭션 
  *
 
  * @template U
  * @export
  * @async
- * @param {AbstractDBManager} tx
- * @param {(tx: AbstractDBManager) => Promise<U>} callback
+ * @param {PgDBManager} tx
+ * @param {(tx: PgDBManager) => Promise<U>} callback
  * @returns {Promise<U>}
  */
 export async function transaction(tx, callback) {

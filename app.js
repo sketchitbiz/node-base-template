@@ -10,7 +10,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import passport from "passport";
 import { collectDefaultMetrics, register } from 'prom-client';
-import { connect } from "./database/DatabaseManager.js";
+import { PgDBManager } from './database/DatabaseManager.js';
 import { UserRoutes } from "./routes/UserRoutes.js";
 import { sendErrorResponse, sendResponse } from "./util/Functions.js";
 import { jwtStrategy } from "./util/Jwt.js";
@@ -119,6 +119,6 @@ app.use((err, req, res, next) => {
 
 app.listen(80, async () => {
   // DB 연결
-  await connect();
+  new PgDBManager().connect();
   logger.info('Server is running on port 80');
 });
