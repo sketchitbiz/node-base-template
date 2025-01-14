@@ -37,15 +37,15 @@ export class PgQueryBuilder extends AbstractQuery {
       case 'INSERT':
         let values;
         if (Array.isArray(this.query.values[0])) {
-          values = this.query.values.map(value => `(${value.join(', ')})`).join(', ');
+          values = this.query.values.map(value => `(${value.map(v => `'${v}'`).join(', ')})`).join(', ');
         } else {
-          values = `(${this.query.values.join(', ')})`;
+          values = `(${this.query.values.map(v => `'${v}'`).join(', ')})`;
         }
         query = `INSERT INTO ${this.query.table} (${this.query.insertFields.join(', ')}) VALUES ${values}`;
         break;
 
       case 'UPDATE':
-        let sets = Object.entries(this.query.updateSets).map(([key, value]) => `${key} = ${value}`).join(', ');
+        let sets = Object.entries(this.query.updateSets).map(([key, value]) => `${key} = '${value}'`).join(', ');
         query = `UPDATE ${this.query.table} SET ${sets}`;
         break;
 
@@ -120,7 +120,6 @@ export class PgQueryBuilder extends AbstractQuery {
 
     /** @type {import('pg').QueryConfig} */
     const result = {
-      name: this.name,
       text: query,
       values: values,
     };
@@ -148,7 +147,6 @@ export class PgQueryBuilder extends AbstractQuery {
 
     /** @type {import('pg').QueryConfig} */
     const result = {
-      name: this.name,
       text: query,
       values: values,
     };

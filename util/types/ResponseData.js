@@ -7,7 +7,7 @@ const { DatabaseError } = pg;
  * @template T
  * @class ServerResponse
  */
-export class ServerResponse {
+export class ResponseData {
 
   /** @type {number} */
   statusCode;
@@ -23,7 +23,7 @@ export class ServerResponse {
 
   /**
    *
-   * @param {Partial<ServerResponse<T>>} params
+   * @param {Partial<ResponseData<T>>} params
    */
   constructor(params) {
 
@@ -46,20 +46,20 @@ export class ServerResponse {
   }
 
   static success() {
-    return new ServerResponse({ statusCode: 200, message: 'success', data: null, error: null });
+    return new ResponseData({ statusCode: 200, message: 'success', data: null, error: null });
   }
 
   static noData(message) {
-    return new ServerResponse({ statusCode: 404, message: message ?? 'no data', data: null, error: null });
+    return new ResponseData({ statusCode: 404, message: message ?? 'no data', data: null, error: null });
   }
 
   /**
    * @template T
    * @param {T} data
-   * @returns {ServerResponse<T>}
+   * @returns {ResponseData<T>}
    */
   static data(data) {
-    return new ServerResponse({ statusCode: 200, message: 'success', data, error: null });
+    return new ResponseData({ statusCode: 200, message: 'success', data, error: null });
   }
 
   /**
@@ -69,7 +69,7 @@ export class ServerResponse {
   static fromError(error) {
 
     if (error instanceof BaseError) {
-      return new ServerResponse({
+      return new ResponseData({
         statusCode: error.statusCode ?? 500,
         message: error.message ?? 'fail',
         error: {
@@ -79,7 +79,7 @@ export class ServerResponse {
         }
       });
     } else if (error instanceof Error) {
-      return new ServerResponse({
+      return new ResponseData({
         statusCode: 500,
         data: null,
         message: error.message,
@@ -90,7 +90,7 @@ export class ServerResponse {
         }
       });
     } else {
-      return new ServerResponse({
+      return new ResponseData({
         statusCode: 500,
         data: null,
         message: 'fail',
@@ -101,17 +101,17 @@ export class ServerResponse {
 
   /**
    * @param {{message: string, customMessage?: string}} params
-   * @returns {ServerResponse}
+   * @returns {ResponseData}
    */
   static badRequest({ message, customMessage }) {
-    return ServerResponse.fromError(new BadRequestError({ message, customMessage }));
+    return ResponseData.fromError(new BadRequestError({ message, customMessage }));
   }
 
   /**
    * @param {{message: string, customMessage?: string}} params
-   * @returns {ServerResponse}
+   * @returns {ResponseData}
    */
   static conflict({ message, customMessage }) {
-    return ServerResponse.fromError(new ConflictError({ message, customMessage }));
+    return ResponseData.fromError(new ConflictError({ message, customMessage }));
   }
 }

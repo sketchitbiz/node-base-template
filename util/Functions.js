@@ -1,6 +1,6 @@
 import { hash } from 'bcrypt';
 import { logger, logResponse } from "./Logger.js";
-import { ServerResponse } from "./types/ServerResponse.js";
+import { ResponseData } from "./types/ResponseData.js";
 
 /**
  * Convert snake_case to camelCase
@@ -54,7 +54,7 @@ export function camelToSnake(data) {
 /**
  * Send response
  * @param {import('express').Response}res
- * @param {ServerResponse} result
+ * @param {ResponseData} result
  */
 export function sendResponse(res, result) {
   logResponse(null, res, result);
@@ -63,7 +63,7 @@ export function sendResponse(res, result) {
 
 export function sendErrorResponse(res, error) {
   logger.error(`Error: `, error);
-  const response = ServerResponse.fromError(error);
+  const response = ResponseData.fromError(error);
   sendResponse(res, response);
 }
 

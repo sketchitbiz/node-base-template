@@ -1,7 +1,7 @@
 import { sendErrorResponse, sendResponse } from "../../util/Functions.js";
 import { ValidationError } from '../../util/types/Error.js';
+import { ResponseData } from "../../util/types/ResponseData.js";
 import { ResponseMessage } from '../../util/types/ResponseMessage.js';
-import { ServerResponse } from "../../util/types/ServerResponse.js";
 import { AuthService } from '../auth/AuthService.js';
 import { UserService } from "./UserService.js";
 
@@ -37,7 +37,7 @@ export class UserController {
       }
 
       const user = await this.authService.login(req.body);
-      const response = ServerResponse.data(user);
+      const response = ResponseData.data(user);
       sendResponse(res, response);
     } catch (e) {
       sendErrorResponse(res, e);
@@ -52,7 +52,7 @@ export class UserController {
   createUser = async (req, res) => {
     try {
       const user = await this.userService.createUser(req.body);
-      const response = ServerResponse.data(user);
+      const response = ResponseData.data(user);
       sendResponse(res, response);
     } catch (e) {
       sendErrorResponse(res, e);
@@ -68,7 +68,7 @@ export class UserController {
   findAllUsers = async (req, res) => {
     try {
       const users = await this.userService.findAllUsers();
-      const response = ServerResponse.data(users);
+      const response = ResponseData.data(users);
       sendResponse(res, response);
     } catch (e) {
       sendErrorResponse(res, e);
@@ -85,7 +85,7 @@ export class UserController {
       const body = req.body;
       const index = Number(req.params.index);
       const user = await this.userService.updateUser({ updateUser: body, index });
-      const response = ServerResponse.data(user);
+      const response = ResponseData.data(user);
       sendResponse(res, response);
     } catch (e) {
       sendErrorResponse(res, e);

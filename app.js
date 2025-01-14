@@ -16,7 +16,7 @@ import { sendErrorResponse, sendResponse } from "./util/Functions.js";
 import { jwtStrategy } from "./util/Jwt.js";
 import { logger } from "./util/Logger.js";
 import { BaseError } from "./util/types/Error.js";
-import { ServerResponse } from "./util/types/ServerResponse.js";
+import { ResponseData } from "./util/types/ResponseData.js";
 
 // dotenv 설정
 config();
@@ -79,7 +79,7 @@ app.get('/img/:path', async (req, res) => {
     const file = readFileSync(path.join(parent, 'assets/assets/images', filePath));
     res.status(200).send(file);
   } catch (error) {
-    sendResponse(res, ServerResponse.noData());
+    sendResponse(res, ResponseData.noData());
   }
 });
 
