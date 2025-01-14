@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { config } from 'dotenv';
 import pg from 'pg';
-import { logger } from "../util/Logger.js";
+import { AbstractDBManager } from '../util/types/AbstractDbManager.js';
 
 const { Pool, types } = pg;
 
@@ -35,88 +35,81 @@ const pool = new Pool({
   // min: 10
 });
 
-/**
- * 새로운 클라이언트 반환
- * @returns {Promise<import('pg').PoolClient>}
- */
-export const getNewClient = () => {
-  return pool.connect();
-};
 
 /**
- * 트랜잭션 시작
- * @returns {Promise<import('pg').PoolClient>}
- */
-export const begin = async () => {
-  const client = await pool.connect();
-  try {
-    logger.debug('BEGIN');
-    await client.query('BEGIN');
-    return client;
-  } catch (error) {
-    await rollback(client);
-    throw error;
-  }
-};
+ * 트랜잭션
+ *
 
-/**
- * 트랜잭션 커밋
- * @param {import('pg').PoolClient} client
- * @returns {Promise<void>}
+ * @template U
+ * @export
+ * @async
+ * @param {AbstractDBManager} tx
+ * @param {(tx: AbstractDBManager) => Promise<U>} callback
+ * @returns {Promise<U>}
  */
-export const commit = async (client) => {
+export async function transaction(tx, callback) {
+  await tx.begin();
   try {
-    logger.debug('COMMIT');
-    await client.query('COMMIT');
-  } catch (error) {
-    await rollback(client);
-    throw error;
-  } finally {
-    client.release();
-  }
-};
-
-/**
- * 트랜잭션 롤백
- * @param {import('pg').PoolClient} client
- * @returns {Promise<void>}
- */
-export const rollback = async (client) => {
-  try {
-    logger.debug('ROLLBACK');
-    await client.query('ROLLBACK');
-  } catch (error) {
-    logger.error(error);
-  } finally {
-    client.release();
-  }
-};
-
-/**
- * 트랜잭션 실행
- * @template T
- * @param {function(import('pg').PoolClient): Promise<T>} callback
- * @returns {Promise<T>}
- * @throws {Error}
- */
-export const transaction = async (callback) => {
-  const client = await begin();
-  try {
-    const result = await callback(client);
-    await commit(client);
+    const result = await callback(tx);
+    await tx.commit();
     return result;
   } catch (error) {
-    await rollback(client);
+    await tx.rollback();
     throw error;
+  } finally {
+    tx.release();
   }
-};
+}
+export class PgDBManager extends AbstractDBManager {
 
-/**
- * DB 연결
- * @returns {Promise<void>}
- */
-export const connect = async () => {
-  await pool.connect();
-  logger.info('Database connected');
-};
+  /** @type {pg.Pool} @private */
+  pool;
 
+  /** @type {pg.PoolClient} */
+  client;
+
+  constructor() {
+    super();
+    this.pool = pool;
+  }
+
+  async connect() {
+    this.client = await this.pool.connect();
+    return this.client;
+  }
+
+  async disconnect() {
+    this.client.release();
+  }
+
+  async begin() {
+    if (!this.client) {
+      this.client = await this.pool.connect();
+    }
+    try {
+      await this.client.query('BEGIN');
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async commit() {
+    try {
+      await this.client.query('COMMIT');
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async rollback() {
+    try {
+      await this.client.query('ROLLBACK');
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async release() {
+    this.client.release();
+  }
+}

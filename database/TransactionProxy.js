@@ -1,8 +1,8 @@
 import { AsyncLocalStorage } from "async_hooks";
-import { transaction } from './DatabaseManager.js';
+import { PgDBManager, transaction } from './DatabaseManager.js';
 
 const txContext = new AsyncLocalStorage();
-export function getClient() {
+export function getManager() {
   return txContext.getStore();
 }
 
@@ -39,7 +39,9 @@ export function createTransactionalService(Target) {
 
           if (typeof value === 'function' && shouldWrapTransaction(String(prop))) {
             return async function (args) {
-              return transaction(async (client) => {
+              const newClient = new PgDBManager();
+              await newClient.connect();
+              return transaction(newClient, async (client) => {
                 return txContext.run(client, () => value.apply(target, [args]));
               });
             };

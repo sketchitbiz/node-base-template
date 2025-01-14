@@ -12,7 +12,10 @@
       "runtimeArgs": [
         "start"
       ],
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "dev"
+      }
     }
   ]
 }
