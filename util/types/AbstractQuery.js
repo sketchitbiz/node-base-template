@@ -224,6 +224,7 @@ export class AbstractQuery {
    */
   setName(name) {
     this.name = name;
+    this.query.name = name;
     return this;
   }
 

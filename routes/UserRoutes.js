@@ -34,8 +34,8 @@ export function UserRoutes(app) {
   app.use('/users', function (req, res, next) {
 
     // 토큰 검증 미들웨어 적용 제외 경로
-    const whitelist = ['/login'];
-    if (whitelist.includes(req.path)) {
+    const whitelist = ['*'];
+    if (whitelist.length === 1 && whitelist[0] === '*' || whitelist.some(path => new RegExp(path).test(req.path))) {
       return next();
     }
 

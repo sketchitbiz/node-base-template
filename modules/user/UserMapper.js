@@ -19,9 +19,10 @@ export class UserMapper extends BaseMapper {
   async createUser(user) {
     return this.exec(async query =>
       query.setName('createUser')
-        .insert(`public.user_mst`, true)
-        .insertFields('name', 'email', 'password')
-        .insertValues(`'${user.name}'`, `'${user.email}'`, `'${user.password}'`)
+        .INSERT(`public.user_mst`)
+        .INSERT_FIELDS('name', 'email', 'password')
+        .INSERT_VALUES(`'${user.name}'`, `'${user.email}'`, `'${user.password}'`)
+        .RETURNING()
         .exec()
     );
   }
@@ -36,8 +37,8 @@ export class UserMapper extends BaseMapper {
   async checkEmailExists(email) {
     return this.exec(async query => {
       const result = await query.setName('checkEmailExists')
-        .setQuery(`SELECT exists(SELECT 1 FROM public.user_mst WHERE email = :email)`)
-        .setParams({ email })
+        .rawQuery(`SELECT exists(SELECT 1 FROM public.user_mst WHERE email = :email)`)
+        .SET_PARAMS({ email })
         .rawExec();
 
 
@@ -55,8 +56,8 @@ export class UserMapper extends BaseMapper {
   async findAllUsers() {
     return this.exec(async query =>
       query.setName('findAllUsers')
-        .select('um.*')
-        .from('public.user_mst um')
+        .SELECT('um.*')
+        .FROM('public.user_mst um')
         .findMany()
     );
   }
@@ -71,10 +72,10 @@ export class UserMapper extends BaseMapper {
   async findUserByEmail(email) {
     return this.exec(async query =>
       query.setName('findUserByEmail')
-        .select('um.*')
-        .from('public.user_mst um')
-        .where('um.email = :email')
-        .setParams({ email })
+        .SELECT('um.*')
+        .FROM('public.user_mst um')
+        .WHERE('um.email = :email')
+        .SET_PARAMS({ email })
         .findOne()
     );
   };
@@ -89,10 +90,10 @@ export class UserMapper extends BaseMapper {
   async findUserByIndex(index) {
     return this.exec(async query =>
       query.setName('findUserByIndex')
-        .select('um.*')
-        .from('public.user_mst um')
-        .where('um.index = :index')
-        .setParams({ index })
+        .SELECT('um.*')
+        .FROM('public.user_mst um')
+        .WHERE('um.index = :index')
+        .SET_PARAMS({ index })
         .findOne()
     );
   }
@@ -107,11 +108,13 @@ export class UserMapper extends BaseMapper {
   async updateUser({ user, index }) {
     return this.exec(async query =>
       query.setName('updateUser')
-        .update('public.user_mst')
-        .updateSet('name', `'${user.name}'`)
-        .updateSet('email', `'${user.email}'`)
-        .updateSet('password', `'${user.password}'`)
-        .where(`index = ${index}`)
+        .UPDATE('public.user_mst')
+        .UPDATE_FIELDS({
+          name: `'${user.name}'`,
+          email: `'${user.email}'`,
+          password: `'${user.password}'`
+        })
+        .WHERE(`index = ${index}`)
         .exec()
     );
   }
