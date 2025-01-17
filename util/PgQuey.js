@@ -1,4 +1,4 @@
-import { snakeToCamel } from './Functions.js';
+import { camelToSnake, snakeToCamel } from './Functions.js';
 import { logger } from './Logger.js';
 import { AbstractQuery } from './types/AbstractQuery.js';
 
@@ -45,7 +45,7 @@ export class PgQueryBuilder extends AbstractQuery {
         break;
 
       case 'UPDATE':
-        let sets = Object.entries(this.query.updateSets).map(([key, value]) => `${key} = '${value}'`).join(', ');
+        let sets = Object.entries(this.query.updateSets).map(([key, value]) => `${camelToSnake(key)} = '${value}'`).join(', ');
         query = `UPDATE ${this.query.table} SET ${sets}`;
         break;
 
@@ -265,4 +265,5 @@ export class PgQueryBuilder extends AbstractQuery {
     return;
   }
 }
+
 

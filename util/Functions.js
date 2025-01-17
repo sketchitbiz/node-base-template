@@ -29,6 +29,10 @@ export function snakeToCamel(data) {
   return data;
 }
 
+/**
+ * Convert camelCase to snake_case
+ * @param {Object | Array} data
+ */
 export function camelToSnake(data) {
   if (data === null || data === undefined) {
     return data;
@@ -46,6 +50,8 @@ export function camelToSnake(data) {
       snakeCaseData[snakeCaseKey] = camelToSnake(value);
     }
     return snakeCaseData;
+  } else if (typeof data === 'string') {
+    return data.replace(/([A-Z])/g, '_$1').toLowerCase();
   }
 
   return data;

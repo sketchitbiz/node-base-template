@@ -1,4 +1,9 @@
+import { TokenExpiredError } from 'jsonwebtoken';
+import passport from 'passport';
+import { sendResponse } from './Functions.js';
 import { logRequest } from "./Logger.js";
+import { ResponseData } from './types/ResponseData.js';
+import { ResponseMessage } from './types/ResponseMessage.js';
 
 /**
  * 기본 정보를 설정하는 미들웨어
@@ -19,3 +24,37 @@ export function setBasicInfo(req, res, next) {
 
   next();
 }
+/**
+ * JWT 인증 미들웨어
+ * @param {import('express').Request} req Express Request 객체
+ * @param {import('express').Response} res Express Response 객체
+ * @param {import('express').NextFunction} next Express Next 함수
+ * @returns {void}
+ */
+export const jwtAuth = (req, res, next) => passport.authenticate('jwt', { session: false },
+  /**
+   * JWT 인증 콜백 함수
+   * @type {passport.AuthenticateCallback}
+   */
+  (err, user, info, status) => {
+    if (err) {
+      return next(err);
+    }
+
+    if (info) {
+      if (info instanceof TokenExpiredError) {
+        const response = new ResponseData({ message: ResponseMessage.tokenInvalid, statusCode: 401 });
+        sendResponse(res, response);
+        return;
+      }
+
+      // @ts-ignore
+      if (info.message === 'No auth token') {
+        const response = new ResponseData({ message: ResponseMessage.tokenInvalid, statusCode: 401 });
+        sendResponse(res, response);
+        return;
+      }
+    }
+
+    next();
+  })(req, res, next);
