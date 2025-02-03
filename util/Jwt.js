@@ -1,11 +1,11 @@
-import { config } from 'dotenv';
-import jwt from 'jsonwebtoken';
-import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
-import { UserMapper } from '../modules/user/UserMapper.js';
-import { NotFoundError } from "./types/Error.js";
-import { ResponseMessage } from "./types/ResponseMessage.js";
+import { config } from 'dotenv'
+import jwt from 'jsonwebtoken'
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt'
+import { UserMapper } from '../modules/user/UserMapper.js'
+import { NotFoundError } from "./types/Error.js"
+import { ResponseMessage } from "./types/ResponseMessage.js"
 
-config();
+config()
 
 /** @type {import('jsonwebtoken').SignOptions} */
 const webTokenOption = {
@@ -13,7 +13,7 @@ const webTokenOption = {
   expiresIn: '1 day', // 토큰 유효 기간
   issuer: 'issuer', // 발행
   audience: 'audience', // 수취
-};
+}
 
 /**
  * 토큰 발행
@@ -22,10 +22,10 @@ const webTokenOption = {
  * @returns {string}
  */
 export const generateJwt = (userId) => {
-  const payload = { userId };
+  const payload = { userId }
 
-  return jwt.sign(payload, 'secret', webTokenOption);
-};
+  return jwt.sign(payload, 'secret', webTokenOption)
+}
 
 
 /**
@@ -43,16 +43,16 @@ export const jwtStrategy = new JwtStrategy({
   try {
 
     // NOTE: 프로젝트마다 payload의 key값이 다를 수 있음
-    const userId = payload.userId;
+    const userId = payload.userId
 
-    const userMapper = new UserMapper();
-    const user = await userMapper.findUserByEmail(userId);
+    const userMapper = new UserMapper()
+    const user = await userMapper.findUserByEmail(userId)
     if (!user) {
-      return done(new NotFoundError({ message: ResponseMessage.noUser, customMessage: "존재하지 않는 유저입니다." }), false);
+      return done(new NotFoundError({ message: ResponseMessage.noUser, customMessage: "존재하지 않는 유저입니다." }), false)
     }
 
-    return done(null, user);
+    return done(null, user)
   } catch (error) {
-    return done(error, false);
+    return done(error, false)
   }
-});
+})

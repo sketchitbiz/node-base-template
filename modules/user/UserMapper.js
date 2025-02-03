@@ -1,5 +1,5 @@
-import { BaseMapper } from '../../util/types/BaseMapper.js';
-import { UserMst } from "./UserMst.js";
+import { BaseMapper } from '../../util/types/BaseMapper.js'
+import { UserMst } from "./UserMst.js"
 
 
 /**
@@ -24,7 +24,7 @@ export class UserMapper extends BaseMapper {
         .INSERT_VALUES(`'${user.name}'`, `'${user.email}'`, `'${user.password}'`)
         .RETURNING()
         .exec()
-    );
+    )
   }
 
   /**
@@ -39,11 +39,11 @@ export class UserMapper extends BaseMapper {
       const result = await query.setName('checkEmailExists')
         .rawQuery(`SELECT exists(SELECT 1 FROM public.user_mst WHERE email = :email)`)
         .SET_PARAMS({ email })
-        .rawExec();
+        .rawExec()
 
 
-      return result[0]['exists'] === true;
-    });
+      return result[0]['exists'] === true
+    })
   }
 
 
@@ -59,7 +59,7 @@ export class UserMapper extends BaseMapper {
         .SELECT('um.*')
         .FROM('public.user_mst um')
         .findMany()
-    );
+    )
   }
 
   /**
@@ -77,8 +77,26 @@ export class UserMapper extends BaseMapper {
         .WHERE('um.email = :email')
         .SET_PARAMS({ email })
         .findOne()
-    );
+    )
   };
+
+  /**
+   * 이메일로 사용자 조회
+   *
+   * @async
+   * @param {string} email
+   * @returns {Promise<UserMst | null>}
+   */
+  async findUserByEmailWithPassword(email) {
+    return this.exec(async query =>
+      query.setName('findUserByEmailWithPassword')
+        .SELECT('um.index', 'um.name', 'um.email', 'um.password')
+        .FROM('public.user_mst um')
+        .WHERE('um.email = :email')
+        .SET_PARAMS({ email })
+        .findOne()
+    )
+  }
 
   /**
    * 인덱스로 사용자 조회
@@ -95,7 +113,7 @@ export class UserMapper extends BaseMapper {
         .WHERE('um.index = :index')
         .SET_PARAMS({ index })
         .findOne()
-    );
+    )
   }
 
   /**
@@ -116,6 +134,6 @@ export class UserMapper extends BaseMapper {
         })
         .WHERE(`index = ${index}`)
         .exec()
-    );
+    )
   }
 }
