@@ -1,21 +1,21 @@
-import dayjs from "dayjs";
-import { config } from 'dotenv';
-import pg from 'pg';
-import { AbstractDBManager } from '../util/types/AbstractDBManager.js';
+import dayjs from "dayjs"
+import { config } from 'dotenv'
+import pg from 'pg'
+import { AbstractDBManager } from '../util/types/AbstractDBManager.js'
 
-const { Pool, types } = pg;
+const { Pool, types } = pg
 
-config();
+config()
 
 // datetime 변환 설정
 types.setTypeParser(1184, (val) => {
-  return dayjs(val).format('YYYY-MM-DD HH:mm:ss');
-});
+  return dayjs(val).format('YYYY-MM-DD HH:mm:ss')
+})
 
 // date 변환 설정
 types.setTypeParser(1082, (val) => {
-  return dayjs(val).format('YYYY-MM-DD');
-});
+  return dayjs(val).format('YYYY-MM-DD')
+})
 
 // Pool 인스턴스 생성
 const pool = new Pool({
@@ -33,13 +33,12 @@ const pool = new Pool({
   // port: Number(process.env.DB_PORT),
   // max: 40,
   // min: 10
-});
+})
 
 
 /**
  * 트랜잭션 
  *
-
  * @template U
  * @export
  * @async
@@ -48,68 +47,68 @@ const pool = new Pool({
  * @returns {Promise<U>}
  */
 export async function transaction(tx, callback) {
-  await tx.begin();
+  await tx.begin()
   try {
-    const result = await callback(tx);
-    await tx.commit();
-    return result;
+    const result = await callback(tx)
+    await tx.commit()
+    return result
   } catch (error) {
-    await tx.rollback();
-    throw error;
+    await tx.rollback()
+    throw error
   } finally {
-    tx.release();
+    tx.release()
   }
 }
 export class PgDBManager extends AbstractDBManager {
 
   /** @type {pg.Pool} @private */
-  pool;
+  pool
 
   /** @type {pg.PoolClient} */
-  client;
+  client
 
   constructor() {
-    super();
-    this.pool = pool;
+    super()
+    this.pool = pool
   }
 
   async connect() {
-    this.client = await this.pool.connect();
-    return this.client;
+    this.client = await this.pool.connect()
+    return this.client
   }
 
   async disconnect() {
-    this.client.release();
+    this.client.release()
   }
 
   async begin() {
     if (!this.client) {
-      this.client = await this.pool.connect();
+      this.client = await this.pool.connect()
     }
     try {
-      await this.client.query('BEGIN');
+      await this.client.query('BEGIN')
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
   async commit() {
     try {
-      await this.client.query('COMMIT');
+      await this.client.query('COMMIT')
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
   async rollback() {
     try {
-      await this.client.query('ROLLBACK');
+      await this.client.query('ROLLBACK')
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
   async release() {
-    this.client.release();
+    this.client.release()
   }
 }

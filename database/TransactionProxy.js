@@ -1,9 +1,15 @@
-import { AsyncLocalStorage } from "async_hooks";
-import { PgDBManager, transaction } from './DatabaseManager.js';
+import { AsyncLocalStorage } from "async_hooks"
+import { PgDBManager, transaction } from './DatabaseManager.js'
 
-const txContext = new AsyncLocalStorage();
+// 트랜잭션 컨텍스트를 저장하는 스토리지
+const txContext = new AsyncLocalStorage()
+
+/**
+ * 트랜잭션 컨텍스트를 반환
+ * @returns {PgDBManager}
+ */
 export function getManager() {
-  return txContext.getStore();
+  return txContext.getStore()
 }
 
 /**
@@ -14,8 +20,8 @@ export function getManager() {
 const shouldWrapTransaction = (prop) => {
   return typeof prop === 'string'
     && !prop.startsWith('_')
-    && !['constructor', 'withTransaction', 'client'].includes(prop);
-};
+    && !['constructor', 'withTransaction', 'client'].includes(prop)
+}
 
 /**
  * 서비스 클래스에 트랜잭션 프록시를 적용
@@ -26,7 +32,7 @@ export function createTransactionalService(Target) {
   return class extends Target {
     constructor(...args) {
       // @ts-ignore
-      super(...args);
+      super(...args)
 
       return new Proxy(this, {
         /**
@@ -35,52 +41,20 @@ export function createTransactionalService(Target) {
          * @param {any} receiver
          */
         get(target, prop, receiver) {
-          const value = target[prop];
+          const value = target[prop]
 
           if (typeof value === 'function' && shouldWrapTransaction(String(prop))) {
-            return async function (args) {
-              const newClient = new PgDBManager();
-              await newClient.connect();
+            return async function (...args) {
+              const newClient = new PgDBManager()
+              await newClient.connect()
               return transaction(newClient, async (client) => {
-                return txContext.run(client, () => value.apply(target, [args]));
-              });
-            };
+                return txContext.run(client, () => value.apply(target, args))
+              })
+            }
           }
-          return value;
+          return value
         }
-      });
+      })
     }
-  };
+  }
 }
-
-// /**
-//  * @template {new (...args: any[]) => any} T
-//  * @param {T} mapper
-//  * @returns {T}
-//  */
-// export function createClientImportMapper(mapper) {
-//   return class extends mapper {
-//     constructor(...args) {
-//       super(...args);
-
-//       return new Proxy(this, {
-//         /**
-//          * @param {any} target
-//          * @param {string | symbol} prop
-//          * @param {any} receiver
-//          */
-//         get(target, prop, receiver) {
-//           const value = target[prop];
-
-//           if (typeof value === 'function' && typeof prop === 'string' && !prop.startsWith('_')) {
-//             return async function (args) {
-//               const client = getClient();
-//               return value.apply(target, [{ client, ...args }]);
-//             };
-//           }
-//           return value;
-//         }
-//       });
-//     }
-//   };
-// }
