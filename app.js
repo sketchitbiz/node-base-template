@@ -70,6 +70,7 @@ passport.use('local', localStrategy)
 
 // 라우팅
 const apiRouter = express.Router()
+// 유저 라우트 등록
 UserRoutes(apiRouter)
 app.use('/api', apiRouter)
 

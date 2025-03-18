@@ -61,12 +61,9 @@ export const localAuth = (req, res, next) => passport.authenticate('local', { se
     }
 
     if (user) {
-      const response = ResponseData.data(user)
-      sendResponse(res, response)
-      return
+      next() // 로그인 성공 시 다음 미들웨어로 이동
     }
 
-    next()
   }
 )(req, res, next)
 
