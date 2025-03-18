@@ -1,6 +1,5 @@
-import dayjs from 'dayjs';
-import Joi from "joi";
-const { Dayjs } = dayjs;
+import dayjs from 'dayjs'
+const { Dayjs } = dayjs
 
 /** @typedef {'Y'|'N'} Yn */
 
@@ -10,10 +9,10 @@ const { Dayjs } = dayjs;
  */
 export class CreatedUpdateTime {
   /** @type {Dayjs} */
-  createdTime;
+  createdTime
 
   /** @type {Dayjs} */
-  updateTime;
+  updateTime
 }
 
 /**
@@ -22,10 +21,10 @@ export class CreatedUpdateTime {
  */
 export class CreatedUpdateId {
   /** @type {string} */
-  createId;
+  createId
 
   /** @type {string} */
-  updateId;
+  updateId
 }
 
 /**
@@ -34,56 +33,47 @@ export class CreatedUpdateId {
  */
 export class CreatedUpdateTimeId {
   /** @type {Dayjs} */
-  createdTime;
+  createdTime
 
   /** @type {Dayjs} */
-  updateTime;
+  updateTime
 
   /** @type {string} */
-  createId;
+  createId
 
   /** @type {string} */
-  updateId;
+  updateId
 }
 
 export const Yn = Object.freeze({
   Y: 'Y',
   N: 'N'
-});
+})
 
-export const Provider = Object.freeze({
-  KAKAO: 'KAKAO',
-  APPLE: 'APPLE',
-  ID: 'ID'
-});
+/**
+ * @abstract
+ * @class Metadata
+ */
+export class Metadata { }
 
-export const JoiDayjs = Joi.custom((value, helper) => {
+/**
+ * 
+ * @class PaginationMetadata
+ */
+export class PaginationMetadata extends Metadata {
+  /** @type {number} */
+  allCnt
 
-  try {
-    if (dayjs.isDayjs(value)) {
-      return value;
-    } else {
-      return dayjs(value);
-    }
-  }
-  catch (e) {
-    return helper.error('날짜 형식이 아닙니다.');
-  }
-});
+  /** @type {number} */
+  totalCnt
 
-export const CreatedUpdateTimeSchema = Joi.object({
-  createdTime: JoiDayjs,
-  updateTime: JoiDayjs.allow(null)
-});
+  /** @type {number} */
+  pageCnt
 
-export const CreatedUpdateIdSchema = Joi.object({
-  createdId: Joi.string().optional(),
-  updateId: Joi.string().optional().allow(null)
-});
+  /** @type {number} */
+  pageSize
 
-export const CreatedUpdateTimeAndIdSchema = Joi.object({
-  createdTime: JoiDayjs,
-  updateTime: JoiDayjs.allow(null),
-  createdId: Joi.string().optional(),
-  updateId: Joi.string().optional().allow(null)
-});
+  /** @type {number} */
+  totalPage
+
+}

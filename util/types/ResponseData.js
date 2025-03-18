@@ -1,7 +1,8 @@
-import pg from "pg";
-import { BadRequestError, BaseError, ConflictError, ValidationError } from "./Error.js";
-
-const { DatabaseError } = pg;
+import pg from "pg"
+import { Metadata } from "./Common.js"
+import { BadRequestError, BaseError, ConflictError, ValidationError } from "./Error.js"
+import { ResponseMessage } from "./ResponseMessage.js"
+const { DatabaseError } = pg
 
 /**
  * @template T
@@ -10,16 +11,19 @@ const { DatabaseError } = pg;
 export class ResponseData {
 
   /** @type {number} */
-  statusCode;
+  statusCode
 
-  /** @type {string} */
-  message;
+  /** @type {string | ResponseMessage} */
+  message
 
   /** @type {T | T[] | null} */
-  data;
+  data
 
   /** @type {Error| null} */
-  error;
+  error
+
+  /** @type {Metadata | null} */
+  metadata
 
   /**
    *
@@ -28,38 +32,44 @@ export class ResponseData {
   constructor(params) {
 
     if (!params.statusCode || !params.message) {
-      throw new ValidationError({ customMessage: 'statusCode, message는 필수입니다.' });
+      throw new ValidationError({ customMessage: 'statusCode, message는 필수입니다.' })
     }
 
-    this.statusCode = params.statusCode;
-    this.message = params.message;
+    this.statusCode = params.statusCode
+    this.message = params.message
+    this.metadata = params.metadata ?? null
 
     if (Array.isArray(params.data)) {
-      this.data = params.data;
+      this.data = params.data
     } else if (params.data === null || params.data === undefined) {
-      this.data = null;
+      this.data = null
     } else {
-      this.data = [params.data];
+      this.data = [params.data]
     }
 
-    this.error = params.error ?? null;
+    this.error = params.error ?? null
   }
 
   static success() {
-    return new ResponseData({ statusCode: 200, message: 'success', data: null, error: null });
+    return new ResponseData({ statusCode: 200, message: 'success', data: null, error: null, metadata: null })
   }
 
-  static noData(message) {
-    return new ResponseData({ statusCode: 404, message: message ?? 'no data', data: null, error: null });
+  /**
+   * @param {string|ResponseMessage} message
+   * @returns {ResponseData}
+   */
+  static noData(message = ResponseMessage.noData) {
+    return new ResponseData({ statusCode: 404, message: message ?? 'no data', data: null, error: null, metadata: null })
   }
 
   /**
    * @template T
    * @param {T} data
+   * @param {Metadata|null} metadata
    * @returns {ResponseData<T>}
    */
-  static data(data) {
-    return new ResponseData({ statusCode: 200, message: 'success', data, error: null });
+  static data(data, metadata = null) {
+    return new ResponseData({ statusCode: 200, message: 'success', data, error: null, metadata })
   }
 
   /**
@@ -77,7 +87,7 @@ export class ResponseData {
           message: error.customMessage ?? error.message,
           stack: error.stack
         }
-      });
+      })
     } else if (error instanceof Error) {
       return new ResponseData({
         statusCode: 500,
@@ -88,14 +98,14 @@ export class ResponseData {
           message: error.message,
           stack: error.stack
         }
-      });
+      })
     } else {
       return new ResponseData({
         statusCode: 500,
         data: null,
         message: 'fail',
         error
-      });
+      })
     }
   }
 
@@ -104,7 +114,7 @@ export class ResponseData {
    * @returns {ResponseData}
    */
   static badRequest({ message, customMessage }) {
-    return ResponseData.fromError(new BadRequestError({ message, customMessage }));
+    return ResponseData.fromError(new BadRequestError({ message, customMessage }))
   }
 
   /**
@@ -112,6 +122,6 @@ export class ResponseData {
    * @returns {ResponseData}
    */
   static conflict({ message, customMessage }) {
-    return ResponseData.fromError(new ConflictError({ message, customMessage }));
+    return ResponseData.fromError(new ConflictError({ message, customMessage }))
   }
 }
