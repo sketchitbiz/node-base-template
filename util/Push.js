@@ -8,10 +8,25 @@ const serviceConfig = snakeToCamel(jsonCofig)
 firebase.initializeApp({ credential: firebase.credential.cert(serviceConfig) })
 
 // 푸시 타입
+// 푸시 타입에 따라 푸시 정보와 푸시 메시지를 결정하기 때문에 기획에 맞춰 푸시 타입을 추가해야 한다.
+export const PushType = Object.freeze({
+  USER: 1
+})
 
+
+/**
+ * 푸시 전송
+ * 
+ * @param {Object} params 
+ * @param {typeof PushType[keyof typeof PushType]} params.type 푸시 타입
+ * @param {string} params.title 푸시 제목
+ * @param {string} params.content 푸시 내용
+ * @param {string[]} params.tokens 푸시 토큰
+ */
 export async function sendPush(params) {
   try {
-    let pushInfo = {} // 푸시 정보 조회하는 쿼리 실행
+    // 푸시 정보 저장할 객체
+    let pushInfo = {}
 
     // 메시지생성
     /** @type {firebase.messaging.MulticastMessage} */
@@ -43,8 +58,15 @@ export async function sendPush(params) {
       tokens: []
     }
 
-    // 토큰 조회
     let tokens = []
+
+    // 푸시 타입에 따라 푸시 정보 및 토큰 조회
+    switch (params.type) {
+      case PushType.USER:
+        tokens = []
+        break
+    }
+
 
     // 토큰 중복 제거
     tokens = Array.from(new Set(tokens.map(token => token.deviceToken)))

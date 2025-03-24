@@ -137,3 +137,4 @@ export class UserMapper extends BaseMapper {
     )
   }
 }
+
