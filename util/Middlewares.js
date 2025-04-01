@@ -1,3 +1,46 @@
+/**
+ * Authentication Middleware Module
+ * 
+ * This module provides authentication middleware functions for the application,
+ * including local authentication and JWT token validation.
+ * 
+ * Features:
+ * - Basic request information setting
+ * - Local authentication using email/password
+ * - JWT token validation
+ * - Request logging
+ * 
+ * Usage:
+ * ```javascript
+ * // Set basic request information
+ * app.use(setBasicInfo);
+ * 
+ * // Protect routes with local authentication
+ * app.post('/login', localAuth, (req, res) => {
+ *   // Handle authenticated request
+ * });
+ * 
+ * // Protect routes with JWT authentication
+ * app.get('/protected', jwtAuth, (req, res) => {
+ *   // Handle JWT authenticated request
+ * });
+ * ```
+ * 
+ * Authentication Flow:
+ * 1. Local Auth:
+ *    - Validates email/password credentials
+ *    - Returns 401 for invalid credentials
+ * 
+ * 2. JWT Auth:
+ *    - Validates JWT token from Authorization header
+ *    - Returns 401 for expired/invalid tokens
+ * 
+ * Error Handling:
+ * - UnauthorizedError: Invalid credentials
+ * - TokenExpiredError: Expired JWT token
+ * - Custom error messages for authentication failures
+ */
+
 import jwt from 'jsonwebtoken'
 import passport from 'passport'
 import { sendResponse } from './Functions.js'
@@ -26,8 +69,6 @@ export function setBasicInfo(req, res, next) {
 
   next()
 }
-
-
 
 /**
  * Local Auth 미들웨어

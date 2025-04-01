@@ -45,31 +45,43 @@ import { UserMapper } from '../modules/user/UserMapper.js'
 import { NotFoundError } from "./types/Error.js"
 import { ResponseMessage } from "./types/ResponseMessage.js"
 
+// Load environment variables from .env file
 config()
 
-/** @type {import('jsonwebtoken').SignOptions} */
+/**
+ * JWT token configuration options
+ * Defines the settings for token generation and validation
+ * 
+ * @type {import('jsonwebtoken').SignOptions}
+ */
 const webTokenOption = {
-  algorithm: 'HS256', // 해싱 알고리즘
-  expiresIn: '1 day', // 토큰 유효 기간
-  issuer: 'issuer', // 발행
-  audience: 'audience', // 수취
+  algorithm: 'HS256', // Hashing algorithm
+  expiresIn: '1 day', // Token validity period
+  issuer: 'issuer', // Token issuer
+  audience: 'audience', // Token audience
 }
 
 /**
- * 토큰 발행
- *
- * @param {string} userId
- * @returns {string}
+ * Generates a new JWT token for user authentication
+ * 
+ * @param {string} userId - The unique identifier of the user
+ * @returns {string} - The generated JWT token
  */
 export const generateJwt = (userId) => {
   const payload = { userId }
-
   return jwt.sign(payload, 'secret', webTokenOption)
 }
 
-
 /**
- * jwt 전략
+ * JWT Strategy for Passport.js authentication
+ * Handles token validation and user verification
+ * 
+ * Configuration:
+ * - Uses HS256 algorithm for token verification
+ * - Extracts token from Authorization header or custom access_token header
+ * - Validates token issuer and audience
+ * - Verifies user existence in database
+ * 
  * @type {import('passport-jwt').Strategy}
  */
 export const jwtStrategy = new JwtStrategy({
@@ -81,18 +93,24 @@ export const jwtStrategy = new JwtStrategy({
   issuer: 'issuer',
 }, async (req, payload, done) => {
   try {
-
-    // NOTE: 프로젝트마다 payload의 key값이 다를 수 있음
+    // Extract userId from token payload
+    // Note: Payload key may vary depending on project requirements
     const userId = payload.userId
 
+    // Verify user existence in database
     const userMapper = new UserMapper()
     const user = await userMapper.findUserByEmail(userId)
     if (!user) {
-      return done(new NotFoundError({ message: ResponseMessage.noUser, customMessage: "존재하지 않는 유저입니다." }), false)
+      return done(new NotFoundError({
+        message: ResponseMessage.noUser,
+        customMessage: "존재하지 않는 유저입니다."
+      }), false)
     }
 
+    // Return verified user
     return done(null, user)
   } catch (error) {
+    // Handle any errors during verification
     return done(error, false)
   }
 })
