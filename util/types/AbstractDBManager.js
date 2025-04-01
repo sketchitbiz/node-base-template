@@ -1,6 +1,42 @@
 
 /**
- * 추상화 DB 관리자
+ * Abstract Database Manager
+ * 
+ * This is an abstract class for database connection and transaction management.
+ * Currently only PostgreSQL is used, but this abstraction allows for easy integration
+ * of other database systems in the future. When adding a new database type,
+ * simply create a new manager class that extends this abstract class.
+ * 
+ * Usage Example:
+ * ```javascript
+ * // Implementation example in a concrete class
+ * class PostgresDBManager extends AbstractDBManager {
+ *   async connect() {
+ *     this.client = await pool.connect();
+ *     return this.client;
+ *   }
+ *   
+ *   async begin() {
+ *     await this.client.query('BEGIN');
+ *   }
+ *   
+ *   // Other method implementations...
+ * }
+ * 
+ * // Using the manager in application code
+ * const dbManager = new PostgresDBManager();
+ * await dbManager.connect();
+ * await dbManager.begin();
+ * try {
+ *   // Database operations
+ *   await dbManager.commit();
+ * } catch (error) {
+ *   await dbManager.rollback();
+ *   throw error;
+ * } finally {
+ *   await dbManager.release();
+ * }
+ * ```
  *
  * @export
  * @abstract
@@ -12,18 +48,18 @@ export class AbstractDBManager {
   client;
 
   /**
-   * 연결
+   * Connect to the database
    *
    * @abstract
    * @memberof AbstractDBManager
-   * @returns {Promise<any>}
+   * @returns {Promise<any>} Database client or connection
    */
   connect() {
     throw new Error('connect() is not implemented');
   }
 
   /**
-   * 연결 해제
+   * Disconnect from the database
    *
    * @abstract
    * @memberof AbstractDBManager
@@ -34,7 +70,7 @@ export class AbstractDBManager {
   }
 
   /**
-   * 트랜잭션 시작
+   * Begin a transaction
    *
    * @abstract
    * @memberof AbstractDBManager
@@ -45,7 +81,7 @@ export class AbstractDBManager {
   }
 
   /**
-   * 트랜잭션 커밋
+   * Commit a transaction
    *
    * @abstract
    * @memberof AbstractDBManager
@@ -56,7 +92,7 @@ export class AbstractDBManager {
   }
 
   /**
-   * 트랜잭션 롤백
+   * Rollback a transaction
    *
    * @abstract
    * @memberof AbstractDBManager
@@ -67,7 +103,7 @@ export class AbstractDBManager {
   }
 
   /**
-   * 릴리즈
+   * Release the database connection
    *
    * @abstract
    * @memberof AbstractDBManager

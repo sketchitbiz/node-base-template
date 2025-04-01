@@ -6,7 +6,7 @@ import { createTransactionalService } from "../../database/TransactionProxy.js"
 import { ConflictError, NotFoundError, UnauthorizedError } from '../../util/types/Error.js'
 import { ResponseMessage } from '../../util/types/ResponseMessage.js'
 import { UserMapper } from "./UserMapper.js"
-import { UserMst } from './UserMst.js'
+import { UserMst } from './models/UserMst.js'
 
 /** @typedef {import('./UserMapper.js').UserMapper} UserMapperType */
 

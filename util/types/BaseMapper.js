@@ -10,12 +10,12 @@ import { AbstractQuery } from './AbstractQuery.js';
  */
 export class BaseMapper {
   /**
-  * 데이터베이스 클라이언트를 생성하고 콜백 함수를 실행합니다
+  * Create a database client and execute the callback function
   * @template T
   * @protected
-  * @param {(query: AbstractQuery) => Promise<T>} callback - 데이터베이스 클라이언트를 인자로 받는 콜백 함수
-  * @returns {Promise<T>} 콜백 함수의 실행 결과
-  * @throws {Error} 콜백 함수 실행 중 발생한 에러
+  * @param {(query: AbstractQuery) => Promise<T>} callback - Callback function that takes a database client as an argument
+  * @returns {Promise<T>} The result of executing the callback function
+  * @throws {Error} Error thrown during execution of the callback function
   */
   async exec(callback) {
     /** @type {AbstractDBManager} */

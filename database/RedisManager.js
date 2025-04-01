@@ -2,7 +2,7 @@ import Redis from 'ioredis'
 import { logger } from '../util/Logger.js'
 
 /**
- * Redis 작업을 위한 인터페이스 타입
+ * Interface type for Redis operations
  * @typedef {Object} RedisInterface
  * @property {() => import('ioredis').ChainableCommander} beginTransaction
  * @property {() => import('ioredis').ChainableCommander} pipeline
@@ -18,9 +18,9 @@ import { logger } from '../util/Logger.js'
  */
 
 /**
- * Redis 클라이언트를 생성하고 연결합니다
- * @param {import('ioredis').RedisOptions} config - Redis 설정
- * @returns {Promise<RedisInterface>} Redis 작업을 위한 함수들을 포함한 객체
+ * Creates and establishes a connection to Redis
+ * @param {import('ioredis').RedisOptions} config - Redis configuration options
+ * @returns {Promise<RedisInterface>} Object containing Redis operation functions
  */
 export async function createRedisConnection(config = {}) {
   const client = new Redis({
@@ -33,17 +33,17 @@ export async function createRedisConnection(config = {}) {
     ...config
   })
 
-  // 이벤트 리스너 설정
-  client.on('error', err => logger.error(`Redis 클라이언트 에러: ${err}`))
-  client.on('connect', () => logger.info('Redis 클라이언트 연결 완료'))
-  client.on('ready', () => logger.info('Redis 클라이언트 준비 완료'))
-  client.on('reconnecting', () => logger.info('Redis 재연결 시도 중...'))
+  // Set up event listeners
+  client.on('error', err => logger.error(`Redis client error: ${err}`))
+  client.on('connect', () => logger.info('Redis client connected'))
+  client.on('ready', () => logger.info('Redis client ready'))
+  client.on('reconnecting', () => logger.info('Attempting to reconnect to Redis...'))
 
-  // 연결 확인
+  // Verify connection
   try {
     await client.ping()
   } catch (err) {
-    console.error("Redis 연결 실패: ", err)
+    console.error("Redis connection failed: ", err)
     throw err
   }
 
@@ -58,6 +58,7 @@ export async function createRedisConnection(config = {}) {
     },
 
     /**
+     * Executes a pipeline of Redis commands
      * @param {import('ioredis').ChainableCommander} pipeline
      * @returns {Promise<[Error|null, any][]>}
      */
@@ -110,14 +111,14 @@ export async function createRedisConnection(config = {}) {
       if (typeof originalMethod === 'function') {
         return async function (...args) {
           const methodName = prop.toString()
-          logger.debug(`Redis: ${methodName} 실행`, { args })
+          logger.debug(`Redis: Executing ${methodName}`, { args })
 
           try {
             const result = await originalMethod.apply(this, args)
-            logger.debug(`Redis: ${methodName} 결과`, { result })
+            logger.debug(`Redis: ${methodName} result`, { result })
             return result
           } catch (error) {
-            logger.error(`Redis: ${methodName} 에러`, { error, args })
+            logger.error(`Redis: ${methodName} error`, { error, args })
             throw error
           }
         }

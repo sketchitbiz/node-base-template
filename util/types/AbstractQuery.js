@@ -1,44 +1,86 @@
+/**
+ * This file contains utility functions for query construction and an abstract class for query builders.
+ * It provides a foundation for building SQL queries in a structured and type-safe manner.
+ * 
+ * Currently, only PostgreSQL is supported through the PgQuery class which inherits from AbstractQuery.
+ * However, the abstract design allows for easy integration of other database systems in the future.
+ * To add support for a new database, simply create a new query builder class that extends AbstractQuery.
+ * 
+ * Usage Example:
+ * ```javascript
+ * // Using the PostgreSQL implementation
+ * const queryBuilder = new PgQueryBuilder(client)
+ *   .setName('getUserData')
+ *   .SELECT('id', 'name', 'email')
+ *   .FROM('users')
+ *   .WHERE('active = true')
+ *   .AND('last_login > :lastLoginDate')
+ *   .SET_PARAM('lastLoginDate', '2023-01-01')
+ *   .ORDER_BY({ field: 'created_at', direction: 'DESC' })
+ *   .LIMIT(10);
+ * 
+ * const users = await queryBuilder.findMany();
+ * ```
+ * 
+ * The module provides a fluent interface for building queries with proper type definitions
+ * and abstracts away the differences between database systems.
+ */
 
 /**
- * 파일 관련 쿼리 인터페이스
+ * File related query interface
+ * 
+ * 
  * @typedef {Object} FileQuery
- * @property {string} fileType - 파일 타입
- * @property {number} [contentsNo] - 컨텐츠 번호 (선택사항)
- * @property {number} [userId] - 사용자 ID (선택사항)
- * @property {number} [limit] - 제한 수 (선택사항)
- * @property {string} [fieldName] - 필드명 (선택사항)
+ * @property {string} fileType - 파일 타입 file type
+ * @property {number} [contentsNo] - 컨텐츠 번호 (선택사항) - optional content number
+ * @property {number} [userId] - 사용자 ID (선택사항) - optional user ID
+ * @property {number} [limit] - 제한 수 (선택사항) - optional limit
+ * @property {string} [fieldName] - 필드명 (선택사항) - optional field name
  */
 
 
-
-
-
-
-
 /**
- * 카운트 쿼리 파라미터 인터페이스
+ * Count query parameter interface
+ * Interface for total count query parameters
+ * 
  * @typedef {Object} CountQueryParams
- * @property {string} table - 테이블명
- * @property {string} [where] - WHERE 조건절 (선택사항)
+ * @property {string} table - Table name to query
+ * @property {string} [where] - Optional WHERE condition clause
  */
 
 /**
- * 날짜 범위 인터페이스
+ * Date range interface
+ * Interface for defining a date range with start and end dates
+ * 
  * @typedef {Object} FromToDate
- * @property {string} fromDate - 시작 날짜
- * @property {string} toDate - 종료 날짜
+ * @property {string} fromDate - Start date of the range
+ * @property {string} toDate - End date of the range
  */
 
 /**
- * 키워드 인터페이스
+ * Keyword interface
+ * Interface for keyword-based searches
+ * 
  * @typedef {Object} KeywordParam
- * @property {string[]} keyword - 키워드
+ * @property {string[]} keyword - Array of keywords for searching
  */
 
 /**
- * @description file count 쿼리 추가
- * @param {FileQuery} params
- * @returns {string}
+ * Adds a file count query to get the number of files
+ * 
+ * This function creates a SQL query fragment that counts files based on the provided parameters.
+ * It returns a coalesced count to ensure null values are converted to zero.
+ * 
+ * Usage Example:
+ * ```javascript
+ * const fileCountQuery = addFileCountQuery({
+ *   fileType: 'PRODUCT_IMAGE',
+ *   contentsNo: 123
+ * });
+ * ```
+ * 
+ * @param {FileQuery} params - Parameters for the file count query
+ * @returns {string} SQL query fragment for counting files
  */
 export function addFileCountQuery(params) {
   let query = `coalesce(`;
@@ -54,9 +96,22 @@ export function addFileCountQuery(params) {
 }
 
 /**
- * @description 생성자로 파일 쿼리 추가
- * @param {FileQuery} params
- * @returns {string}
+ * Adds a file query to count files created by a specific user
+ * 
+ * This function creates a SQL query fragment that counts files created by a specific user
+ * based on the provided parameters. It returns both the count and file type.
+ * 
+ * Usage Example:
+ * ```javascript
+ * const creatorFileQuery = addCreatorFileQuery({
+ *   fileType: 'USER_UPLOADS',
+ *   userId: 456,
+ *   limit: 10
+ * });
+ * ```
+ * 
+ * @param {FileQuery} params - Parameters for the creator file query
+ * @returns {string} SQL query fragment for counting files by creator
  */
 export function addCreatorFileQuery(params) {
   let query = `coalesce((SELECT count(*) FROM common.attach_file_info WHERE attach_file_type = '${params.fileType}' AND created_id = ${params.userId} `;
@@ -72,9 +127,23 @@ export function addCreatorFileQuery(params) {
 }
 
 /**
- * @description 파일 쿼리 추가
- * @param {FileQuery} params
- * @returns {string}
+ * Adds a file query to retrieve file information as a JSON array
+ * 
+ * This function creates a SQL query fragment that retrieves detailed file information
+ * as a JSON aggregate based on the provided parameters.
+ * 
+ * Usage Example:
+ * ```javascript
+ * const fileQuery = addFileQuery({
+ *   fileType: 'PRODUCT_IMAGE',
+ *   contentsNo: 123,
+ *   userId: 456,
+ *   fieldName: 'product_images'
+ * });
+ * ```
+ * 
+ * @param {FileQuery} params - Parameters for the file query
+ * @returns {string} SQL query fragment for retrieving file information as JSON
  */
 export function addFileQuery(params) {
   let query = `(SELECT json_agg(sub_image) FROM (SELECT s.attach_file_no, s.origin_file_name, s.file_path, s.created_time` +
@@ -82,24 +151,36 @@ export function addFileQuery(params) {
     ` WHERE s.attach_file_type = '${params.fileType}'`;
 
   if (params.userId) {
-    query += ` AND s.created_id = ${params.userId}`; // userId 조건 추가
+    query += ` AND s.created_id = ${params.userId}`; // userId condition added
   }
 
   if (params.contentsNo) {
-    query += ` AND s.contents_no = ${params.contentsNo}`; // contentsNo 조건 추가
+    query += ` AND s.contents_no = ${params.contentsNo}`; // contentsNo condition added
   }
 
-  query += `) sub_image ) AS ${params.fieldName}`; // 쿼리 마무리
+  query += `) sub_image ) AS ${params.fieldName}`; // query finish
 
   return query;
 }
 
 /**
- * @description 전체 카운트 쿼리 추가
- * @param {Object} params
- * @param {string} params.table - 테이�� 이름
- * @param {string} [params.where] - 조건절
- * @returns {string}
+ * Adds a total count query to get the number of records in a table
+ * 
+ * This function creates a SQL query fragment that counts all records in a table
+ * with an optional WHERE condition.
+ * 
+ * Usage Example:
+ * ```javascript
+ * const allCountQuery = addAllCountQuery({
+ *   table: 'users',
+ *   where: 'active = true'
+ * });
+ * ```
+ * 
+ * @param {Object} params - Parameters for the count query
+ * @param {string} params.table - Table name to query
+ * @param {string} [params.where] - Optional WHERE condition
+ * @returns {string} SQL query fragment for counting all records
  */
 export function addAllCountQuery({ table, where }) {
   let query = `(SELECT count(*) FROM ${table}`;
@@ -112,11 +193,24 @@ export function addAllCountQuery({ table, where }) {
 }
 
 /**
- * @description 필터 결과 카운트 쿼리 추가
- * @param {Object} params
- * @param {string} params.table - 테이블 이름
- * @param {string} [params.where] - 조건절
- * @returns {string}
+ * Adds a total count query to get the number of records in a table
+ * 
+ * This function creates a SQL query fragment that counts all records in a table
+ * with an optional WHERE condition. Similar to addAllCountQuery but with a different
+ * parameter structure and alias.
+ * 
+ * Usage Example:
+ * ```javascript
+ * const totalCountQuery = addTotalCountQuery({
+ *   table: 'products',
+ *   where: 'category_id = 5'
+ * });
+ * ```
+ * 
+ * @param {Object} params - Parameters for the total count query
+ * @param {string} params.table - Table name to query
+ * @param {string} [params.where] - Optional WHERE condition
+ * @returns {string} SQL query fragment for counting total records
  */
 export function addTotalCountQuery(params) {
   let query = `(SELECT count(*) FROM ${params.table}`;
@@ -129,13 +223,27 @@ export function addTotalCountQuery(params) {
 }
 
 /**
- * @description 행 번호 쿼리 추가
- * @param {string} sort - 정렬 조건
- * @returns {string}
+ * Adds a row number query for result pagination and ordering
+ * 
+ * This function creates a SQL query fragment that adds a row number to each result
+ * based on the provided sort condition.
+ * 
+ * Usage Example:
+ * ```javascript
+ * const rowNoQuery = addRowNoQuery('ORDER BY created_at DESC');
+ * ```
+ * 
+ * @param {string} sort - SQL sort condition (e.g., 'ORDER BY field ASC')
+ * @returns {string} SQL query fragment for adding row numbers
  */
 export function addRowNoQuery(sort) {
   return `row_number() over(${sort}) as no`;
 }
+
+/**
+ * Define types and interfaces for writing queries
+ */
+
 
 /**
  * @typedef {'INNER'|'LEFT'|'RIGHT'|'FULL'|'CROSS'|'NATURAL'|'FULL OUTER'|'LEFT OUTER'|'RIGHT OUTER'|'NATURAL OUTER'} JoinType
@@ -147,40 +255,40 @@ export function addRowNoQuery(sort) {
 
 /**
  * @typedef {Object} Join
- * @property {JoinType} type - 조인 타입
- * @property {string} table - 조인할 테이블 이름
- * @property {string} on - 조인 조건
+ * @property {JoinType} type - join type
+ * @property {string} table - table name to join
+ * @property {string} on - join condition
  */
 
 /**
  * @typedef {Object} OrderBy
- * @property {string} field - 정렬 필드
- * @property {OrderByDirection} direction - 정렬 방향
+ * @property {string} field - sort field
+ * @property {OrderByDirection} direction - sort direction
  */
 
 /**
  * @typedef {Object} Query
- * @property {string} name - 쿼리 이름
- * @property {'SELECT'|'UPDATE'|'DELETE'|'INSERT'|null} type - 쿼리 타입
- * @property {string} table - 테이블 이름
- * @property {string[]} selectFields - select할 필드들
- * @property {string[]} insertFields - insert할 필드들
- * @property {any[]} values - 쿼리에 사용될 값들
- * @property {Record<string,any>} params - 파라미터화된 값들
- * @property {Record<string,any>} updateSets - update할 필드와 값들
- * @property {boolean} returning - 반환 여부
- * @property {Join[]} joins - 조인 조건
- * @property {string[]} where - WHERE 조건절
- * @property {string[]} groupBy - GROUP BY 필드 목록
- * @property {string[]} having - HAVING 조건절
- * @property {OrderBy[]} orderBy - 정렬 조건
- * @property {string[]} returningFields - RETURNING 절에 포함될 필드들
- * @property {number|null} limit - LIMIT 값
- * @property {number|null} offset - OFFSET 값
+ * @property {string} name - query name
+ * @property {'SELECT'|'UPDATE'|'DELETE'|'INSERT'|null} type - query type
+ * @property {string} table - table name
+ * @property {string[]} selectFields - select fields
+ * @property {string[]} insertFields - insert fields
+ * @property {any[]} values - values used in query (using in insert query)
+ * @property {Record<string,any>} params - parameterized values
+ * @property {Record<string,any>} updateSets - update fields and values
+ * @property {boolean} returning - return status
+ * @property {Join[]} joins - join conditions
+ * @property {string[]} where - WHERE condition
+ * @property {string[]} groupBy - GROUP BY fields
+ * @property {string[]} having - HAVING condition
+ * @property {OrderBy[]} orderBy - sort conditions
+ * @property {string[]} returningFields - fields included in RETURNING clause
+ * @property {number|null} limit - LIMIT value
+ * @property {number|null} offset - OFFSET value
  */
 
 /**
- * 쿼리빌더 추상화 클래스
+ * Abstract class for query builder
  *
  * @abstract
  * @export
@@ -218,7 +326,7 @@ export class AbstractQuery {
   }
 
   /**
-   * 쿼리 이름 지정
+   * Specify query name
    * @param {string} name
    * @returns {this}
    */
@@ -229,7 +337,7 @@ export class AbstractQuery {
   }
 
   /**
-   * raw 쿼리 작성
+   * Write raw query
    * @param {string} query
    */
   rawQuery(query) {
@@ -238,7 +346,7 @@ export class AbstractQuery {
   }
 
   /**
-   * SELECT문 추가
+   * Add SELECT statement
    * @param {string[]} fields
    * @returns {this}
    */
@@ -249,7 +357,7 @@ export class AbstractQuery {
   }
 
   /**
-   * INSERT 쿼리 시작
+   * Start INSERT query
    * @param {string} table
    * @returns {this}
    */
@@ -260,7 +368,7 @@ export class AbstractQuery {
   }
 
   /**
-   * INSERT 필드 추가
+   * Add INSERT fields
    * @param {string[]} fields
    * @returns {this}
    */
@@ -270,7 +378,7 @@ export class AbstractQuery {
   }
 
   /**
-   * INSERT 값 추가
+   * Add INSERT values
    * @param {string[] | string[][]} values
    * @returns {this}
    */
@@ -280,7 +388,7 @@ export class AbstractQuery {
   }
 
   /**
-   * UPDATE 쿼리 시작
+   * Start UPDATE query
    * @param {string} table
    * @returns {this}
    */
@@ -291,7 +399,7 @@ export class AbstractQuery {
   }
 
   /**
-   * UPDATE 필드 추가
+   * Add UPDATE fields
    * @param {Record<string, any>} sets
    * @returns {this}
    */
@@ -301,7 +409,7 @@ export class AbstractQuery {
   }
 
   /**
-   * DELETE 쿼리 시작
+   * Start DELETE query
    * @param {string} table
    * @returns {this}
    */
@@ -312,7 +420,7 @@ export class AbstractQuery {
   }
 
   /**
-   * FROM 쿼리 시작
+   * Start FROM query
    * @param {string} table
    * @returns {this}
    */
@@ -322,7 +430,7 @@ export class AbstractQuery {
   }
 
   /**
-   * JOIN 조인 추가
+   * Add JOIN join
    * @param {Join} params
    * @returns {this}
    */
@@ -332,7 +440,7 @@ export class AbstractQuery {
   }
 
   /**
-   * WHERE 조건절 추가
+   * Add WHERE condition
    * @param {string} predicate
    * @returns {this}
    */
@@ -342,7 +450,7 @@ export class AbstractQuery {
   }
 
   /**
-   * AND 조건절 추가
+   * Add AND condition
    * @param {string} predicate
    * @returns {this}
    */
@@ -352,7 +460,7 @@ export class AbstractQuery {
   }
 
   /**
-   * OR 조건절 추가
+   * Add OR condition
    * @param {string} predicate
    * @returns {this}
    */
@@ -362,7 +470,7 @@ export class AbstractQuery {
   }
 
   /**
-   * GROUP BY 필드 추가
+   * Add GROUP BY fields
    * @param {string[]} fields
    * @returns {this}
    */
@@ -372,7 +480,7 @@ export class AbstractQuery {
   }
 
   /**
-   * HAVING 조건절 추가
+   * Add HAVING condition
    * @param {string} predicate
    * @returns {this}
    */
@@ -382,7 +490,7 @@ export class AbstractQuery {
   }
 
   /**
-   * ORDER BY 정렬 조건 추가
+   * Add ORDER BY sort condition
    * @param {OrderBy} params
    * @returns {this}
    */
@@ -392,7 +500,7 @@ export class AbstractQuery {
   }
 
   /**
-   * LIMIT 제한 추가
+   * Add LIMIT limit
    * @param {number} limit
    * @returns {this}
    */
@@ -402,7 +510,7 @@ export class AbstractQuery {
   }
 
   /**
-   * OFFSET 추가
+   * Add OFFSET
    * @param {number} offset
    * @returns {this}
    */
@@ -412,7 +520,7 @@ export class AbstractQuery {
   }
 
   /**
-   * RETURNING 필드 추가
+   * Add RETURNING fields
    * @param {string[]} fields
    * @returns {this}
    */
@@ -427,7 +535,7 @@ export class AbstractQuery {
   }
 
   /**
-   * 파라미터 추가
+   * Add parameters
    * @param {Record<string, any>} params
    * @returns {this}
    */
@@ -437,7 +545,7 @@ export class AbstractQuery {
   }
 
   /**
-   * 파라미터 추가
+   * Add parameters
    * @param {string} key
    * @param {any} value
    * @returns {this}
@@ -448,7 +556,7 @@ export class AbstractQuery {
   }
 
 
-  /** 쿼리빌더 빌드
+  /** Build query builder
    * @abstract
    * @protected
    * @returns {any}
@@ -456,7 +564,7 @@ export class AbstractQuery {
   build() { }
 
   /**
-   * raw 쿼리 빌드
+   * Build raw query
    * @abstract
    * @protected
    * @returns {any}
@@ -464,42 +572,42 @@ export class AbstractQuery {
   rawQueryBuild() { }
 
   /**
-   * 여러 개 조회
+   * Find multiple
    * @abstract
    * @returns {any}
    */
   findMany() { }
 
   /**
-   * 하나 조회
+   * Find one
    * @abstract
    * @returns {any}
    */
   findOne() { }
 
   /**
-   * 쿼리 실행
+   * Execute query
    * @abstract
    * @returns {any}
    */
   exec() { }
 
   /**
-   * raw 쿼리 여러 개 조회
+   * Find multiple raw query
    * @abstract
    * @returns {any}
    */
   rawFindMany() { }
 
   /**
-   * raw 쿼리 하나 조회
+   * Find one raw query
    * @abstract
    * @returns {any}
    */
   rawFindOne() { }
 
   /**
-   * raw 쿼리 실행
+   * Execute raw query
    * @abstract
    * @returns {any}
    */

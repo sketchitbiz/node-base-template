@@ -1,21 +1,35 @@
 import { AsyncLocalStorage } from "async_hooks"
 import { PgDBManager, transaction } from './DatabaseManager.js'
 
-// 트랜잭션 컨텍스트를 저장하는 스토리지
+/**
+ * TransactionProxy.js
+ * 
+ * This module provides transaction management functionality for service classes.
+ * It uses AsyncLocalStorage to maintain transaction context across async operations
+ * and automatically wraps service methods in database transactions.
+ * 
+ * Key features:
+ * - Automatic transaction wrapping for service methods
+ * - Transaction context management using AsyncLocalStorage
+ * - Proxy-based method interception
+ * - Support for nested transactions
+ */
+
+// Storage for maintaining transaction context across async operations
 const txContext = new AsyncLocalStorage()
 
 /**
- * 트랜잭션 컨텍스트를 반환
- * @returns {PgDBManager}
+ * Retrieves the current transaction context
+ * @returns {PgDBManager} The current database manager instance in the transaction context
  */
 export function getManager() {
   return txContext.getStore()
 }
 
 /**
- * 트랜잭션이 필요한 메서드인지 확인
- * @param {string} prop - 메서드 이름
- * @returns {boolean}
+ * Determines if a method should be wrapped in a transaction
+ * @param {string} prop - Method name to check
+ * @returns {boolean} True if the method should be wrapped in a transaction
  */
 const shouldWrapTransaction = (prop) => {
   return typeof prop === 'string'
@@ -24,9 +38,29 @@ const shouldWrapTransaction = (prop) => {
 }
 
 /**
- * 서비스 클래스에 트랜잭션 프록시를 적용
- * @param {new (...args: any[]) => any} Target - 대상 서비스 클래스
- * @returns {new (...args: any[]) => any}
+ * Creates a transactional wrapper for a service class
+ * 
+ * This function takes a service class and returns a new class that automatically
+ * wraps all public methods in database transactions. It uses a Proxy to intercept
+ * method calls and ensures that each method runs within its own transaction context.
+ * 
+ * Features:
+ * - Automatic transaction management for all public methods
+ * - Transaction context preservation across async operations
+ * - Method-specific transaction isolation
+ * - Proper cleanup of database connections
+ * 
+ * @param {new (...args: any[]) => any} Target - The service class to wrap
+ * @returns {new (...args: any[]) => any} A new class with transaction support
+ * 
+ * @example
+ * class UserService {
+ *   async createUser(userData) {
+ *     // This method will automatically run in a transaction
+ *   }
+ * }
+ * 
+ * const TransactionalUserService = createTransactionalService(UserService)
  */
 export function createTransactionalService(Target) {
   return class extends Target {
@@ -36,9 +70,13 @@ export function createTransactionalService(Target) {
 
       return new Proxy(this, {
         /**
-         * @param {any} target
-         * @param {string | symbol} prop
-         * @param {any} receiver
+         * Intercepts property access on the service instance
+         * Wraps method calls in transactions if appropriate
+         * 
+         * @param {any} target - The original service instance
+         * @param {string | symbol} prop - The property being accessed
+         * @param {any} receiver - The proxy or object that the property access was initiated on
+         * @returns {any} The wrapped method or original property value
          */
         get(target, prop, receiver) {
           const value = target[prop]

@@ -1,3 +1,41 @@
+/**
+ * Utility Functions Module
+ * 
+ * This module provides various utility functions for the application, including:
+ * - Case conversion between snake_case and camelCase
+ * - Response handling for API endpoints
+ * - Password hashing
+ * 
+ * Usage:
+ * 1. Case Conversion:
+ *    - snakeToCamel(data): Convert snake_case to camelCase
+ *    - camelToSnake(data): Convert camelCase to snake_case
+ * 
+ * 2. Response Handling:
+ *    - sendResponse(res, result): Send successful API response
+ *    - sendErrorResponse(res, error): Send error response
+ * 
+ * 3. Security:
+ *    - hashPassword(password): Hash password using bcrypt
+ * 
+ * Example:
+ * ```javascript
+ * // Case conversion
+ * const snakeData = { user_name: 'john', email_address: 'john@example.com' };
+ * const camelData = snakeToCamel(snakeData);
+ * // Result: { userName: 'john', emailAddress: 'john@example.com' }
+ * 
+ * // Response handling
+ * app.get('/api/users', (req, res) => {
+ *   const result = new ResponseData(200, 'Success', users);
+ *   sendResponse(res, result);
+ * });
+ * 
+ * // Password hashing
+ * const hashedPassword = await hashPassword('userPassword123');
+ * ```
+ */
+
 import { hash } from 'bcrypt'
 import { logger, logResponse } from "./Logger.js"
 import { ResponseData } from "./types/ResponseData.js"

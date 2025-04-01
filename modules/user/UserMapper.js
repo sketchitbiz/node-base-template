@@ -1,5 +1,5 @@
 import { BaseMapper } from '../../util/types/BaseMapper.js'
-import { UserMst } from "./UserMst.js"
+import { UserMst } from "./models/UserMst.js"
 
 
 /**

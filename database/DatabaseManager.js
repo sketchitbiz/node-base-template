@@ -7,17 +7,17 @@ const { Pool, types } = pg
 
 config()
 
-// datetime 변환 설정
+// Configure datetime type conversion
 types.setTypeParser(1184, (val) => {
   return dayjs(val).format('YYYY-MM-DD HH:mm:ss')
 })
 
-// date 변환 설정
+// Configure date type conversion
 types.setTypeParser(1082, (val) => {
   return dayjs(val).format('YYYY-MM-DD')
 })
 
-// Pool 인스턴스 생성
+// Create Pool instance
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
@@ -37,14 +37,15 @@ const pool = new Pool({
 
 
 /**
- * 트랜잭션 
+ * Transaction wrapper function
+ * Handles transaction lifecycle including begin, commit, rollback, and release
  *
  * @template U
  * @export
  * @async
- * @param {PgDBManager} tx
- * @param {(tx: PgDBManager) => Promise<U>} callback
- * @returns {Promise<U>}
+ * @param {PgDBManager} tx - Transaction manager instance
+ * @param {(tx: PgDBManager) => Promise<U>} callback - Async callback function to execute within transaction
+ * @returns {Promise<U>} - Result of the callback execution
  */
 export async function transaction(tx, callback) {
   await tx.begin()
@@ -59,6 +60,11 @@ export async function transaction(tx, callback) {
     tx.release()
   }
 }
+
+/**
+ * PostgreSQL Database Manager class
+ * Extends AbstractDBManager to implement PostgreSQL-specific database operations
+ */
 export class PgDBManager extends AbstractDBManager {
 
   /** @type {pg.Pool} @private */
@@ -72,15 +78,26 @@ export class PgDBManager extends AbstractDBManager {
     this.pool = pool
   }
 
+  /**
+   * Establishes a connection to the database
+   * @returns {Promise<pg.PoolClient>} Database client instance
+   */
   async connect() {
     this.client = await this.pool.connect()
     return this.client
   }
 
+  /**
+   * Releases the database connection
+   */
   async disconnect() {
     this.client.release()
   }
 
+  /**
+   * Begins a new transaction
+   * Creates a new connection if one doesn't exist
+   */
   async begin() {
     if (!this.client) {
       this.client = await this.pool.connect()
@@ -92,6 +109,9 @@ export class PgDBManager extends AbstractDBManager {
     }
   }
 
+  /**
+   * Commits the current transaction
+   */
   async commit() {
     try {
       await this.client.query('COMMIT')
@@ -100,6 +120,9 @@ export class PgDBManager extends AbstractDBManager {
     }
   }
 
+  /**
+   * Rolls back the current transaction
+   */
   async rollback() {
     try {
       await this.client.query('ROLLBACK')
@@ -108,6 +131,9 @@ export class PgDBManager extends AbstractDBManager {
     }
   }
 
+  /**
+   * Releases the database client connection
+   */
   async release() {
     this.client.release()
   }

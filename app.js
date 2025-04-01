@@ -20,9 +20,11 @@ import { BaseError } from "./util/types/Error.js"
 import { ResponseData } from "./util/types/ResponseData.js"
 
 // dotenv 설정
+// dotevt config
 config()
 
 // timezone 설정
+// timezone config
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(locale)
@@ -30,12 +32,15 @@ dayjs.locale('ko')
 dayjs.tz.setDefault('Asia/Seoul')
 
 // 매트릭 수집기 생성
+// metrics collector
 collectDefaultMetrics()
 
 // Express 앱 생성
+// express app
 const app = express()
 
 // 메트릭 엔드포인트
+// metrics endpoint
 app.get('/metrics', async (req, res) => {
   try {
     res.set('Content-Type', register.contentType)
@@ -52,6 +57,7 @@ const __dirname = path.dirname(__filename)
 export const parent = path.join(__dirname, 'public')
 
 // 이미지 정적 파일 서빙
+// static file serve
 app.use(express.static(path.join(parent, 'images')))
 
 
@@ -64,21 +70,29 @@ app.use(cors(corsOption))
 app.use(express.static(parent))
 
 // passport 설정
+// passport config
+// jwt strategy and local(id/password) strategy
 passport.initialize()
 passport.use('jwt', jwtStrategy)
 passport.use('local', localStrategy)
 
 // 라우팅
+// routing
 const apiRouter = express.Router()
+
 // 유저 라우트 등록
+// register user routes
 UserRoutes(apiRouter)
+// use 'api' prefix for all routes
 app.use('/api', apiRouter)
 
 // 그외 정적 파일 서빙 ================================================================================
+// serve other static files
 app.get('/img/:path', async (req, res) => {
   let filePath = req.params['path']
 
   try {
+    // !! Check the file path !!
     const file = readFileSync(path.join(parent, 'assets/assets/images', filePath))
     res.status(200).send(file)
   } catch (error) {
@@ -87,6 +101,7 @@ app.get('/img/:path', async (req, res) => {
 })
 
 // 에러 페이지
+// error page
 app.get('/errorPage', (req, res) => {
   try {
     res.sendFile(path.join(parent, 'index.html'))
@@ -96,11 +111,12 @@ app.get('/errorPage', (req, res) => {
 })
 
 // Flutter 라우팅 ================================================================================
+// serve Flutter index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(parent, 'index.html'))
 })
 
-
+// error handler
 app.use((err, req, res, next) => {
   logger.error('Error:', err)
 
