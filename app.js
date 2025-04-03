@@ -19,9 +19,9 @@ import { logger } from "./util/Logger.js"
 import { BaseError } from "./util/types/Error.js"
 import { ResponseData } from "./util/types/ResponseData.js"
 
-// dotenv 설정
-// dotevt config
-config()
+// 개발 환경에 따라 환경 변수 설정
+const env = process.env.NODE_ENV || 'local'
+config({ path: `.env.${env}` })
 
 // timezone 설정
 // timezone config
