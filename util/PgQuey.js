@@ -77,12 +77,21 @@ export class PgQueryBuilder extends AbstractQuery {
       case 'INSERT':
         let values
         if (Array.isArray(this.query.values[0])) {
-          values = this.query.values.map(value => `(${value.map(v => typeof v === 'string' ? `'${v}'` : v).join(', ')})`).join(', ')
+          values = this.query.values.map(value =>
+            `(${value.map(v => {
+              if (v === null || v === undefined || v === '' || v.length === 0) return 'NULL'
+              return typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v
+            }).join(', ')})`
+          ).join(', ')
         } else {
-          values = `(${this.query.values.map(v => typeof v === 'string' ? `'${v}'` : v).join(', ')})`
+          values = `(${this.query.values.map(v => {
+            if (v === null || v === undefined || v === '' || v.length === 0) return 'NULL'
+            return typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v
+          }).join(', ')})`
         }
         query = `INSERT INTO ${this.query.table} (${this.query.insertFields.join(', ')}) VALUES ${values}`
         break
+
 
       case 'UPDATE':
         let sets = Object.entries(this.query.updateSets).map(([key, value]) => `${camelToSnake(key)} = ${typeof value === 'string' ? `'${value}'` : value}`).join(', ')
