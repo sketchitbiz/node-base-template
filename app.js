@@ -1,3 +1,15 @@
+/**
+ * Main Application Entry Point
+ * 
+ * This file serves as the entry point for the Heredot application, setting up:
+ * - Express server configuration
+ * - Middleware registration
+ * - Route definitions
+ * - Error handling
+ * - Database connections
+ * - Prometheus metrics collection
+ */
+
 import cors from 'cors'
 import dayjs from 'dayjs'
 import locale from 'dayjs/plugin/localeData.js'

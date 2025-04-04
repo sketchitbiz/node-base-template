@@ -1,3 +1,19 @@
+/**
+ * User Controller Module
+ * 
+ * This controller handles all user-related HTTP requests including:
+ * - User authentication (login)
+ * - User registration (createUser)
+ * - User retrieval (findAllUsers)
+ * - User data updates (updateUser)
+ * 
+ * Each method follows a similar pattern:
+ * 1. Process request data
+ * 2. Call appropriate service method
+ * 3. Format response using ResponseData
+ * 4. Handle errors consistently
+ */
+
 import { ValidationError } from "util/types/Error.js"
 import { ResponseMessage } from "util/types/ResponseMessage.js"
 import { sendErrorResponse, sendResponse } from "../../util/Functions.js"

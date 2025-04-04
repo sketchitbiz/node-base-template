@@ -1,3 +1,143 @@
+# Heredot Backend Server Template
+
+[한국어 버전은 아래에 있습니다 / Korean version below](#heredot-백엔드-서버-템플릿)
+
+Heredot is an Express.js-based backend server template that provides the basic structure and tools for fast and efficient API development.
+
+## Key Features
+
+- **Express.js Framework**: Fast and minimalist web application framework
+- **PostgreSQL Database**: Robust relational database support
+- **JWT Authentication**: User authentication using JSON Web Token
+- **Passport.js**: Support for various authentication strategies
+- **Error Handling**: Standardized error handling with proper HTTP status codes
+- **Response Formatting**: Consistent API response structure
+- **Database Abstraction**: Flexible database management through AbstractDBManager
+- **Prometheus Monitoring**: Application performance metrics collection
+
+## System Requirements
+
+- Node.js 16.x or higher
+- PostgreSQL 13.x or higher
+- Docker (optional deployment option)
+
+## Installation
+
+### Local Environment Setup
+
+1. Clone the repository
+
+   ```bash
+   git clone [repository URL]
+   cd heredot
+   ```
+
+2. Install dependencies
+
+   ```bash
+   npm install
+   # or
+   pnpm install
+   ```
+
+3. Configure environment variables
+   Copy the `.env.example` file to `.env` and set the necessary environment variables.
+
+   ```bash
+   cp .env.example .env
+   # Edit the .env file
+   ```
+
+   Key environment variables:
+
+   - `SERVER_TYPE`: Server type (APP, CMS)
+   - `DB_USER`: PostgreSQL username
+   - `DB_HOST`: PostgreSQL host address
+   - `DB_NAME`: Database name
+   - `DB_PASSWORD`: Database password
+   - `PORT`: Database port
+
+### Docker Setup (Optional)
+
+1. Install Docker (Ubuntu-based)
+
+   ```bash
+   ./install_docker.sh
+   ```
+
+2. Run Docker containers
+   ```bash
+   docker-compose up -d
+   ```
+
+## Running the Application
+
+### Development Mode
+
+```bash
+npm start
+# or
+pnpm start
+```
+
+The server runs on port 80 by default.
+
+## Project Structure
+
+```
+heredot/
+├── app.js                  # Application entry point
+├── config/                 # Configuration files
+├── database/               # Database-related code
+│   ├── DatabaseManager.js  # PostgreSQL connection management
+│   └── TransactionProxy.js # Transaction management
+├── modules/                # Business logic modules
+├── routes/                 # API route definitions
+│   └── UserRoutes.js       # User-related routes
+├── util/                   # Utility functions
+├── prometheus/             # Prometheus monitoring setup
+└── log/                    # Log files directory
+```
+
+## API Endpoints
+
+### User Management
+
+- `POST /api/users/join`: User registration
+- `POST /api/users/login`: User login
+
+## Authentication
+
+This template supports two authentication methods:
+
+1. **Local Authentication**: Basic authentication using username and password
+2. **JWT Authentication**: Authentication using tokens issued after login
+
+## Monitoring
+
+Prometheus metrics are available at the `/metrics` endpoint.
+
+## Logging
+
+Application logs are stored in the `log/` directory. The Winston logger is used to record logs in various files according to log level.
+
+## Module Overview
+
+### Core Modules
+
+- **app.js**: Main application entry point, configures Express, middleware, routes, and error handling
+- **DatabaseManager.js**: PostgreSQL connection management with connection pooling and transaction support
+- **UserRoutes.js**: Defines user-related API endpoints and applies authentication middleware
+- **UserController.js**: Handles HTTP requests for user operations, processes request data, and formats responses
+- **AbstractDBManager.js**: Abstract class for database operations to allow multiple database support
+- **JWT.js**: JWT authentication utilities including token generation and validation
+- **Local.js**: Local authentication strategy using username and password
+- **Middlewares.js**: Express middleware for authentication and request processing
+- **ResponseData.js**: Standardized API response formatting for consistent client communication
+- **Error.js**: Error classes with appropriate HTTP status codes and messages
+
+---
+
 # Heredot 백엔드 서버 템플릿
 
 Heredot는 Express.js 기반의 백엔드 서버 템플릿으로, 빠르고 효율적인 API 개발을 위한 기본 구조와 도구를 제공합니다.

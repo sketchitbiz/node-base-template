@@ -1,3 +1,14 @@
+/**
+ * PostgreSQL Database Manager Module
+ * 
+ * This module provides database connection and transaction management for PostgreSQL.
+ * Features:
+ * - Connection pooling for efficient database access
+ * - Transaction management with begin, commit, and rollback
+ * - Date/time type handling
+ * - Implements AbstractDBManager interface for consistent database operations
+ */
+
 import dayjs from "dayjs"
 import { config } from 'dotenv'
 import pg from 'pg'

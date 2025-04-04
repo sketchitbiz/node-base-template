@@ -1,3 +1,16 @@
+/**
+ * User Routes Module
+ * 
+ * This module defines all routes related to user operations including:
+ * - User registration (join)
+ * - User authentication (login)
+ * - User management endpoints
+ * 
+ * Authentication is applied through middleware:
+ * - Local strategy for login
+ * - JWT strategy for protected routes
+ */
+
 import { Router } from 'express'
 import { UserController } from "../modules/user/UserController.js"
 import { jwtAuth, localAuth, setBasicInfo } from '../util/Middlewares.js'
