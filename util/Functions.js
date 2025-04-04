@@ -36,7 +36,9 @@
  * ```
  */
 
-import { hash } from 'bcrypt'
+import { hash } from 'bcryptjs'
+import { ZodError } from 'node_modules/zod/index.js'
+import { fromError } from 'zod-validation-error'
 import { logger, logResponse } from "./Logger.js"
 import { ResponseData } from "./types/ResponseData.js"
 
@@ -109,6 +111,17 @@ export function sendErrorResponse(res, error) {
   logger.error(`Error: `, error)
   const response = ResponseData.fromError(error)
   sendResponse(res, response)
+}
+
+/**
+ * Parse ZodError
+ * @param {ZodError} error
+ * @returns {{field:string|number, message:string}[]}
+ */
+export function parseZodError(error) {
+  if (error instanceof ZodError) {
+    return fromError(error).details.map(e => ({ field: e.path[0], message: e.message }))
+  }
 }
 
 

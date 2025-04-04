@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { redisManager } from '../../database/RedisManager.js'
 import { createTransactionalService } from '../../database/TransactionProxy.js'
 import { generateJwt } from '../../util/Jwt.js'

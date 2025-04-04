@@ -1,6 +1,6 @@
 
 
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { redisManager } from '../../database/RedisManager.js'
 import { createTransactionalService } from "../../database/TransactionProxy.js"
 import { ConflictError, NotFoundError, UnauthorizedError } from '../../util/types/Error.js'
