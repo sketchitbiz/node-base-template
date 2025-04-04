@@ -26,11 +26,8 @@ export class UserController {
   login = async (req, res) => {
     try {
 
-      let result = LoginRequest.safeParse(req.body)
-      if (!result.success) {
-        throw new ValidationError({ message: ResponseMessage.badRequest, customMessage: result.error.message })
-      }
-      const { email, password } = result.data
+      let result = LoginRequest.parse(req.body)
+  
 
       const user = await this.authService.login(req.body)
       const response = ResponseData.data(user)
