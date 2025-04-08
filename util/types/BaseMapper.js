@@ -1,7 +1,7 @@
 import { PgDBManager } from '../../database/DatabaseManager.js';
 import { getManager } from '../../database/TransactionProxy.js';
 import { logger } from '../Logger.js';
-import { PgQueryBuilder } from '../PgQuey.js';
+import { PgQueryBuilder } from '../PgQuery.js';
 import { AbstractDBManager } from './AbstractDBManager.js';
 import { AbstractQuery } from './AbstractQuery.js';
 

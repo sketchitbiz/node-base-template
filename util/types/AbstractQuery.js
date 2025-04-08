@@ -41,28 +41,24 @@
 
 /**
  * Count query parameter interface
- * Interface for total count query parameters
+ * 전체 카운트 쿼리 파라미터 인터페이스
  * 
  * @typedef {Object} CountQueryParams
- * @property {string} table - Table name to query
- * @property {string} [where] - Optional WHERE condition clause
+ * @property {string} table - table name
+ * @property {string} [where] - WHERE condition (optional)
  */
 
 /**
  * Date range interface
- * Interface for defining a date range with start and end dates
- * 
  * @typedef {Object} FromToDate
- * @property {string} fromDate - Start date of the range
- * @property {string} toDate - End date of the range
+ * @property {string} fromDate - start date
+ * @property {string} toDate - end date
  */
 
 /**
  * Keyword interface
- * Interface for keyword-based searches
- * 
  * @typedef {Object} KeywordParam
- * @property {string[]} keyword - Array of keywords for searching
+ * @property {string[]} keyword - keyword
  */
 
 /**
@@ -83,16 +79,16 @@
  * @returns {string} SQL query fragment for counting files
  */
 export function addFileCountQuery(params) {
-  let query = `coalesce(`;
-  query += `( SELECT count(*) FROM common.attach_file_info`;
-  query += ` WHERE attach_file_type = ${params.fileType}`;
+  let query = `coalesce(`
+  query += `( SELECT count(*) FROM common.attach_file_info`
+  query += ` WHERE attach_file_type = ${params.fileType}`
 
   if (params.contentsNo) {
-    query += ` AND contents_no = ${params.contentsNo}`;
+    query += ` AND contents_no = ${params.contentsNo}`
   }
-  query += `), 0) AS file_cnt`;
+  query += `), 0) AS file_cnt`
 
-  return query;
+  return query
 }
 
 /**
@@ -114,16 +110,16 @@ export function addFileCountQuery(params) {
  * @returns {string} SQL query fragment for counting files by creator
  */
 export function addCreatorFileQuery(params) {
-  let query = `coalesce((SELECT count(*) FROM common.attach_file_info WHERE attach_file_type = '${params.fileType}' AND created_id = ${params.userId} `;
+  let query = `coalesce((SELECT count(*) FROM common.attach_file_info WHERE attach_file_type = '${params.fileType}' AND created_id = ${params.userId} `
 
   if (params.limit) {
-    query += ` LIMIT ${params.limit}`;
+    query += ` LIMIT ${params.limit}`
   }
 
-  query += `), 0) as file_cnt`;
-  query += ` ,'${params.fileType}' AS file_type`;
+  query += `), 0) as file_cnt`
+  query += ` ,'${params.fileType}' AS file_type`
 
-  return query;
+  return query
 }
 
 /**
@@ -148,19 +144,19 @@ export function addCreatorFileQuery(params) {
 export function addFileQuery(params) {
   let query = `(SELECT json_agg(sub_image) FROM (SELECT s.attach_file_no, s.origin_file_name, s.file_path, s.created_time` +
     `, s.update_time FROM common.attach_file_info s` +
-    ` WHERE s.attach_file_type = '${params.fileType}'`;
+    ` WHERE s.attach_file_type = '${params.fileType}'`
 
   if (params.userId) {
-    query += ` AND s.created_id = ${params.userId}`; // userId condition added
+    query += ` AND s.created_id = ${params.userId}` // userId condition added
   }
 
   if (params.contentsNo) {
-    query += ` AND s.contents_no = ${params.contentsNo}`; // contentsNo condition added
+    query += ` AND s.contents_no = ${params.contentsNo}` // contentsNo condition added
   }
 
-  query += `) sub_image ) AS ${params.fieldName}`; // query finish
+  query += `) sub_image ) AS ${params.fieldName}` // query finish
 
-  return query;
+  return query
 }
 
 /**
@@ -183,13 +179,13 @@ export function addFileQuery(params) {
  * @returns {string} SQL query fragment for counting all records
  */
 export function addAllCountQuery({ table, where }) {
-  let query = `(SELECT count(*) FROM ${table}`;
+  let query = `(SELECT count(*) FROM ${table}`
   if (where) {
-    query += ` WHERE ${where}`;
+    query += ` WHERE ${where}`
   }
-  query += `) AS all_cnt`;
+  query += `) AS all_cnt`
 
-  return query;
+  return query
 }
 
 /**
@@ -213,13 +209,13 @@ export function addAllCountQuery({ table, where }) {
  * @returns {string} SQL query fragment for counting total records
  */
 export function addTotalCountQuery(params) {
-  let query = `(SELECT count(*) FROM ${params.table}`;
+  let query = `(SELECT count(*) FROM ${params.table}`
   if (params.where) {
-    query += ` WHERE ${params.where}`;
+    query += ` WHERE ${params.where}`
   }
-  query += `) AS total_cnt`;
+  query += `) AS total_cnt`
 
-  return query;
+  return query
 }
 
 /**
@@ -237,7 +233,7 @@ export function addTotalCountQuery(params) {
  * @returns {string} SQL query fragment for adding row numbers
  */
 export function addRowNoQuery(sort) {
-  return `row_number() over(${sort}) as no`;
+  return `row_number() over(${sort}) as no`
 }
 
 /**
@@ -285,6 +281,7 @@ export function addRowNoQuery(sort) {
  * @property {string[]} returningFields - fields included in RETURNING clause
  * @property {number|null} limit - LIMIT value
  * @property {number|null} offset - OFFSET value
+ * @property {string[]} types - PostgreSQL data types for each column (e.g., ['int4', 'text', 'timestamp']) used in bulk insert
  */
 
 /**
@@ -296,14 +293,14 @@ export function addRowNoQuery(sort) {
  */
 export class AbstractQuery {
   /** @type {string} @protected */
-  name;
+  name
   /** @type {Query} @protected */
-  query;
+  query
   /** @type {string} @protected */
-  _rawQuery;
+  _rawQuery
 
   constructor() {
-    this._rawQuery = '';
+    this._rawQuery = ''
     this.query = {
       name: '',
       type: null,
@@ -321,8 +318,9 @@ export class AbstractQuery {
       orderBy: [],
       limit: null,
       offset: null,
-      returningFields: []
-    };
+      returningFields: [],
+      types: []
+    }
   }
 
   /**
@@ -331,9 +329,9 @@ export class AbstractQuery {
    * @returns {this}
    */
   setName(name) {
-    this.name = name;
-    this.query.name = name;
-    return this;
+    this.name = name
+    this.query.name = name
+    return this
   }
 
   /**
@@ -341,8 +339,8 @@ export class AbstractQuery {
    * @param {string} query
    */
   rawQuery(query) {
-    this._rawQuery += ' ' + query;
-    return this;
+    this._rawQuery += ' ' + query
+    return this
   }
 
   /**
@@ -351,9 +349,9 @@ export class AbstractQuery {
    * @returns {this}
    */
   SELECT(...fields) {
-    this.query.type = 'SELECT';
-    this.query.selectFields = fields.length > 0 ? fields : ['*'];
-    return this;
+    this.query.type = 'SELECT'
+    this.query.selectFields = fields.length > 0 ? fields : ['*']
+    return this
   }
 
   /**
@@ -362,9 +360,9 @@ export class AbstractQuery {
    * @returns {this}
    */
   INSERT(table) {
-    this.query.type = 'INSERT';
-    this.query.table = table;
-    return this;
+    this.query.type = 'INSERT'
+    this.query.table = table
+    return this
   }
 
   /**
@@ -373,18 +371,18 @@ export class AbstractQuery {
    * @returns {this}
    */
   INSERT_FIELDS(...fields) {
-    this.query.insertFields = fields;
-    return this;
+    this.query.insertFields = fields
+    return this
   }
 
   /**
    * Add INSERT values
-   * @param {string[] | string[][]} values
+   * @param {any[] | any[][]} values
    * @returns {this}
    */
   INSERT_VALUES(...values) {
-    this.query.values = values;
-    return this;
+    this.query.values = values
+    return this
   }
 
   /**
@@ -393,9 +391,9 @@ export class AbstractQuery {
    * @returns {this}
    */
   UPDATE(table) {
-    this.query.type = 'UPDATE';
-    this.query.table = table;
-    return this;
+    this.query.type = 'UPDATE'
+    this.query.table = table
+    return this
   }
 
   /**
@@ -404,8 +402,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   UPDATE_FIELDS(sets) {
-    this.query.updateSets = sets;
-    return this;
+    this.query.updateSets = sets
+    return this
   }
 
   /**
@@ -414,9 +412,9 @@ export class AbstractQuery {
    * @returns {this}
    */
   DELETE(table) {
-    this.query.type = 'DELETE';
-    this.query.table = table;
-    return this;
+    this.query.type = 'DELETE'
+    this.query.table = table
+    return this
   }
 
   /**
@@ -425,8 +423,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   FROM(table) {
-    this.query.table = table;
-    return this;
+    this.query.table = table
+    return this
   }
 
   /**
@@ -435,8 +433,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   JOIN(params) {
-    this.query.joins.push(params);
-    return this;
+    this.query.joins.push(params)
+    return this
   }
 
   /**
@@ -445,8 +443,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   WHERE(predicate) {
-    this.query.where = [predicate];
-    return this;
+    this.query.where = [predicate]
+    return this
   }
 
   /**
@@ -455,8 +453,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   AND(predicate) {
-    this.query.where.push('AND ' + predicate);
-    return this;
+    this.query.where.push('AND ' + predicate)
+    return this
   }
 
   /**
@@ -465,8 +463,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   OR(predicate) {
-    this.query.where.push('OR ' + predicate);
-    return this;
+    this.query.where.push('OR ' + predicate)
+    return this
   }
 
   /**
@@ -475,8 +473,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   GROUP_BY(fields) {
-    this.query.groupBy = fields;
-    return this;
+    this.query.groupBy = fields
+    return this
   }
 
   /**
@@ -485,8 +483,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   HAVING(predicate) {
-    this.query.having = [predicate];
-    return this;
+    this.query.having = [predicate]
+    return this
   }
 
   /**
@@ -495,8 +493,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   ORDER_BY(params) {
-    this.query.orderBy.push(params);
-    return this;
+    this.query.orderBy.push(params)
+    return this
   }
 
   /**
@@ -505,8 +503,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   LIMIT(limit) {
-    this.query.limit = limit;
-    return this;
+    this.query.limit = limit
+    return this
   }
 
   /**
@@ -515,8 +513,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   OFFSET(offset) {
-    this.query.offset = offset;
-    return this;
+    this.query.offset = offset
+    return this
   }
 
   /**
@@ -525,13 +523,13 @@ export class AbstractQuery {
    * @returns {this}
    */
   RETURNING(...fields) {
-    this.query.returning = true;
+    this.query.returning = true
     if (fields.length === 0) {
-      this.query.returningFields = ['*'];
+      this.query.returningFields = ['*']
     } else {
-      this.query.returningFields = fields;
+      this.query.returningFields = fields
     }
-    return this;
+    return this
   }
 
   /**
@@ -540,8 +538,8 @@ export class AbstractQuery {
    * @returns {this}
    */
   SET_PARAMS(params) {
-    this.query.params = params;
-    return this;
+    this.query.params = params
+    return this
   }
 
   /**
@@ -551,14 +549,32 @@ export class AbstractQuery {
    * @returns {this}
    */
   SET_PARAM(key, value) {
-    this.query.params[key] = value;
-    return this;
+    this.query.params[key] = value
+    return this
   }
 
+  /**
+   * Set PostgreSQL data types for bulk insert columns
+   * This method is used to specify the data type of each column when performing a bulk insert
+   * The order of types should match the order of insert fields
+   * 
+   * @example
+   * query.INSERT('users')
+   *   .INSERT_FIELDS('id', 'name', 'created_at')
+   *   .SET_TYPES('int4', 'text', 'timestamp')
+   *   .INSERT_VALUES([1, 'John', '2024-03-20'], [2, 'Jane', '2024-03-21'])
+   * 
+   * @param {...string} types - PostgreSQL data types
+   * @returns {this}
+   */
+  SET_TYPES(...types) {
+    this.query.types = types
+    return this
+  }
 
-  /** Build query builder
+  /**
+   * Build query
    * @abstract
-   * @protected
    * @returns {any}
    */
   build() { }
