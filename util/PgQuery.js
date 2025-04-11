@@ -1,5 +1,5 @@
 import { size } from 'es-toolkit/compat'
-import { snakeToCamel } from './Functions.js'
+import { camelToSnake, snakeToCamel } from './Functions.js'
 import { logger } from './Logger.js'
 import { AbstractQuery } from './types/AbstractQuery.js'
 
@@ -77,10 +77,17 @@ export class PgQueryBuilder extends AbstractQuery {
 
       case 'UPDATE':
         query = `UPDATE ${this.query.table} SET `
-        query += Object.entries(this.query.updateSets)
-          .map(([key, value], idx) => `${key} = $${idx + 1}`)
+
+        // SET절 파라미터 처리 - 원본 형식으로 (:param)
+        const setEntries = Object.entries(this.query.updateSets)
+        query += setEntries
+          .map(([key]) => `${camelToSnake(key)} = :${key}`)
           .join(', ')
-        this.query.params = Object.values(this.query.updateSets)
+
+        // UPDATE SET 값들을 params에 추가
+        setEntries.forEach(([key, value]) => {
+          this.query.params[key] = value
+        })
         break
 
       case 'DELETE':
@@ -145,10 +152,18 @@ export class PgQueryBuilder extends AbstractQuery {
 
     let values = []
     if (size(this.query.params) > 0) {
-
       const paramList = Object.keys(this.query.params).sort((a, b) => b.length - a.length)
-      let index = 1
-      logger.debug(`Query: ${this.name}`, { query, params: this.query.params })
+      let index = this.query.values ? this.query.values.length + 1 : 1
+
+      // UPDATE SET 값들과 WHERE 파라미터를 모두 포함하여 로깅
+      const allParams = {
+        ...Object.fromEntries(
+          Object.entries(this.query.updateSets || {}).map(([key, value]) => [`${key}`, value])
+        ),
+        ...this.query.params
+      }
+      logger.debug(`Query: ${this.name}`, { query, params: allParams })
+
       paramList.forEach(key => {
         const newSql = query.replace(new RegExp(`:${key}`, 'g'), `$${index}`)
 
@@ -158,8 +173,13 @@ export class PgQueryBuilder extends AbstractQuery {
           index++
         }
       })
+
+      // values 배열에 UPDATE SET 값들을 먼저 추가
+      if (this.query.values) {
+        values = [...this.query.values, ...values]
+      }
     } else {
-      values = this.query.values
+      values = this.query.values || []
     }
 
     /** @type {import('pg').QueryConfig} */

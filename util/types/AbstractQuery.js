@@ -233,9 +233,26 @@ export function addTotalCountQuery(params) {
  * @returns {string} SQL query fragment for adding row numbers
  */
 export function addRowNoQuery(sort) {
-  return `row_number() over(${sort}) as no`
+  return `CAST(ROW_NUMBER() OVER (ORDER BY ${sort}) AS INTEGER) AS no`
 }
 
+/**
+ * Adds a date truncation query for date range filtering  
+ * 
+ * This function creates a SQL query fragment that truncates a date field to the day level
+ * and compares it to the provided date range.
+ * 
+ * Usage Example:
+ * ```javascript
+ * const dateTruncQuery = addDateTruncQuery('created_time');
+ * ```
+ * 
+ * @param {string} field - The date field to truncate
+ * @returns {string} SQL query fragment for date truncation
+ */
+export function addDateTruncQuery(field) {
+  return `(date_trunc('day', ${field}::timestamp) BETWEEN date_trunc('day', :fromDate::timestamp) AND date_trunc('day', :toDate::timestamp))`
+}
 /**
  * Define types and interfaces for writing queries
  */
@@ -453,7 +470,7 @@ export class AbstractQuery {
    * @returns {this}
    */
   AND(predicate) {
-    this.query.where.push('AND ' + predicate)
+    this.query.where.push('AND ' + `(${predicate})`)
     return this
   }
 
@@ -489,11 +506,11 @@ export class AbstractQuery {
 
   /**
    * Add ORDER BY sort condition
-   * @param {OrderBy} params
+   * @param {OrderBy[]} params
    * @returns {this}
    */
-  ORDER_BY(params) {
-    this.query.orderBy.push(params)
+  ORDER_BY(...params) {
+    this.query.orderBy.push(...params)
     return this
   }
 
