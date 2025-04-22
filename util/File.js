@@ -34,18 +34,9 @@ import multer from "multer"
 import * as fs from "node:fs"
 import { existsSync, mkdirSync, unlink } from "node:fs"
 import path from "node:path"
+
 import { parent } from "../app.js"
 import { logger } from "./Logger.js"
-
-/**
- * 파일 저장한 디렉토리 존재 확인 및 생성
- * @param {string} filePath
- */
-function ensureDirectoryExistence(filePath) {
-  if (!existsSync(filePath)) {
-    mkdirSync(filePath, { recursive: true })
-  }
-}
 
 export async function deleteFile(file) {
   let filePath = path.join(parent, file)
@@ -58,6 +49,16 @@ export async function deleteFile(file) {
         logger.info("File deleted successfully")
       }
     })
+  }
+}
+
+/**
+ * 파일 저장한 디렉토리 존재 확인 및 생성
+ * @param {string} filePath
+ */
+function ensureDirectoryExistence(filePath) {
+  if (!existsSync(filePath)) {
+    mkdirSync(filePath, { recursive: true })
   }
 }
 
@@ -92,6 +93,13 @@ export const upload = multer({
 
 export const htmlFile = () => {
   return multer({
+    // fileFilter : fileFilter,
+    limits: {
+      fieldNameSize: 200,
+      fieldSize: 1000 * 1000 * 1000,
+      files: 10,
+      fileSize: 10 * 1000 * 1000 * 1000
+    },
     storage: multer.diskStorage({
       //폴더위치저장
       destination: (req, file, callback) => {
@@ -115,14 +123,7 @@ export const htmlFile = () => {
         //@ts-ignore
         req.files.at(req.files.length - 1).ext = ext.substring(1)
       },
-    }),
-    // fileFilter : fileFilter,
-    limits: {
-      files: 10,
-      fieldNameSize: 200,
-      fieldSize: 1000 * 1000 * 1000,
-      fileSize: 10 * 1000 * 1000 * 1000
-    }
+    })
   })
 }
 

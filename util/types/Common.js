@@ -41,18 +41,6 @@ const { Dayjs } = dayjs
 
 /**
  * @abstract
- * @class CreatedUpdateTime
- */
-export class CreatedUpdateTime {
-  /** @type {Dayjs} */
-  createdTime
-
-  /** @type {Dayjs} */
-  updateTime
-}
-
-/**
- * @abstract
  * @class CreatedUpdateId
  */
 export class CreatedUpdateId {
@@ -65,25 +53,37 @@ export class CreatedUpdateId {
 
 /**
  * @abstract
+ * @class CreatedUpdateTime
+ */
+export class CreatedUpdateTime {
+  /** @type {Dayjs} */
+  createdTime
+
+  /** @type {Dayjs} */
+  updateTime
+}
+
+/**
+ * @abstract
  * @class CreatedUpdateTimeId
  */
 export class CreatedUpdateTimeId {
   /** @type {Dayjs} */
   createdTime
 
-  /** @type {Dayjs} */
-  updateTime
-
   /** @type {string} */
   createId
 
   /** @type {string} */
   updateId
+
+  /** @type {Dayjs} */
+  updateTime
 }
 
 export const Yn = Object.freeze({
-  Y: 'Y',
-  N: 'N'
+  N: 'N',
+  Y: 'Y'
 })
 
 /**
@@ -97,18 +97,18 @@ export class Metadata { }
  * @class PaginationMetadata
  */
 export class PaginationMetadata extends Metadata {
-  
-  /** @type {number} */
-  allCnt
 
   /** @type {number} */
-  totalCnt
+  allCnt
 
   /** @type {number} */
   pageCnt
 
   /** @type {number} */
   pageSize
+
+  /** @type {number} */
+  totalCnt
 
   /** @type {number} */
   totalPage
@@ -124,7 +124,7 @@ export class PaginationMetadata extends Metadata {
    * @param {number} [params.pageSize=0] 페이지 크기
    * @param {number} [params.totalPage=0] 총 페이지 수
    */
-  constructor(params = { allCnt: 0, totalCnt: 0, pageCnt: 0, pageSize: 0, totalPage: 0 }) {
+  constructor(params = { allCnt: 0, pageCnt: 0, pageSize: 0, totalCnt: 0, totalPage: 0 }) {
     super()
     this.allCnt = params.allCnt
     this.totalCnt = params.totalCnt

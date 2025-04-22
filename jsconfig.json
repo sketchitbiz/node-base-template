@@ -3,20 +3,14 @@
     "checkJs": true,
     "strict": true,
     "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "allowJs": true,
     "noEmit": true,
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "*",
-        "types/*"
-      ]
-    },
     "strictNullChecks": false,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "alwaysStrict": true,
     "noImplicitAny": false,
@@ -26,7 +20,10 @@
   },
   "include": [
     "**/*.js",
-    "**/*.jsx"
+    "**/*.jsx",
+    "**/*.json",
+    "**/*.mjs",
+    "**/*.cjs"
   ],
   "exclude": [
     "node_modules",

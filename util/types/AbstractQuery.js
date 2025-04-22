@@ -62,31 +62,376 @@
  */
 
 /**
- * Adds a file count query to get the number of files
+ * Abstract class for query builder
+ *
+ * @abstract
+ * @export
+ * @class AbstractQuery
+ */
+export class AbstractQuery {
+  /** @type {string} @protected */
+  _rawQuery
+  /** @type {string} @protected */
+  name
+  /** @type {Query} @protected */
+  query
+
+  constructor() {
+    this._rawQuery = ''
+    this.query = {
+      groupBy: [],
+      having: [],
+      insertFields: [],
+      joins: [],
+      limit: null,
+      name: '',
+      offset: null,
+      orderBy: [],
+      params: {},
+      returning: false,
+      returningFields: [],
+      selectFields: [],
+      table: '',
+      type: null,
+      types: [],
+      updateSets: {},
+      values: [],
+      where: []
+    }
+  }
+
+  /**
+   * Add AND condition
+   * @param {string} predicate
+   * @returns {this}
+   */
+  AND(predicate) {
+    this.query.where.push('AND ' + `(${predicate})`)
+    return this
+  }
+
+  /**
+   * Build query
+   * @abstract
+   * @returns {any}
+   */
+  build() { }
+
+  /**
+   * Start DELETE query
+   * @param {string} table
+   * @returns {this}
+   */
+  DELETE(table) {
+    this.query.type = 'DELETE'
+    this.query.table = table
+    return this
+  }
+
+  /**
+   * Execute query
+   * @abstract
+   * @returns {any}
+   */
+  exec() { }
+
+  /**
+   * Find multiple
+   * @abstract
+   * @returns {any}
+   */
+  findMany() { }
+
+  /**
+   * Find one
+   * @abstract
+   * @returns {any}
+   */
+  findOne() { }
+
+  /**
+   * Start FROM query
+   * @param {string} table
+   * @returns {this}
+   */
+  FROM(table) {
+    this.query.table = table
+    return this
+  }
+
+  /**
+   * Add GROUP BY fields
+   * @param {string[]} fields
+   * @returns {this}
+   */
+  GROUP_BY(fields) {
+    this.query.groupBy = fields
+    return this
+  }
+
+  /**
+   * Add HAVING condition
+   * @param {string} predicate
+   * @returns {this}
+   */
+  HAVING(predicate) {
+    this.query.having = [predicate]
+    return this
+  }
+
+  /**
+   * Start INSERT query
+   * @param {string} table
+   * @returns {this}
+   */
+  INSERT(table) {
+    this.query.type = 'INSERT'
+    this.query.table = table
+    return this
+  }
+
+  /**
+   * Add INSERT fields
+   * @param {string[]} fields
+   * @returns {this}
+   */
+  INSERT_FIELDS(...fields) {
+    this.query.insertFields = fields
+    return this
+  }
+
+  /**
+   * Add INSERT values
+   * @param {any[] | any[][]} values
+   * @returns {this}
+   */
+  INSERT_VALUES(...values) {
+    this.query.values = values
+    return this
+  }
+
+  /**
+   * Add JOIN join
+   * @param {Join} params
+   * @returns {this}
+   */
+  JOIN(params) {
+    this.query.joins.push(params)
+    return this
+  }
+
+  /**
+   * Add LIMIT limit
+   * @param {number} limit
+   * @returns {this}
+   */
+  LIMIT(limit) {
+    this.query.limit = limit
+    return this
+  }
+
+  /**
+   * Add OFFSET
+   * @param {number} offset
+   * @returns {this}
+   */
+  OFFSET(offset) {
+    this.query.offset = offset
+    return this
+  }
+
+  /**
+   * Add OR condition
+   * @param {string} predicate
+   * @returns {this}
+   */
+  OR(predicate) {
+    this.query.where.push('OR ' + predicate)
+    return this
+  }
+
+  /**
+   * Add ORDER BY sort condition
+   * @param {OrderBy[]} params
+   * @returns {this}
+   */
+  ORDER_BY(...params) {
+    this.query.orderBy.push(...params)
+    return this
+  }
+
+  /**
+   * Execute raw query
+   * @abstract
+   * @returns {any}
+   */
+  rawExec() { }
+
+  /**
+   * Find multiple raw query
+   * @abstract
+   * @returns {any}
+   */
+  rawFindMany() { }
+
+  /**
+   * Find one raw query
+   * @abstract
+   * @returns {any}
+   */
+  rawFindOne() { }
+
+  /**
+   * Write raw query
+   * @param {string} query
+   */
+  rawQuery(query) {
+    this._rawQuery += ' ' + query
+    return this
+  }
+
+  /**
+   * Build raw query
+   * @abstract
+   * @protected
+   * @returns {any}
+   */
+  rawQueryBuild() { }
+
+  /**
+   * Add RETURNING fields
+   * @param {string[]} fields
+   * @returns {this}
+   */
+  RETURNING(...fields) {
+    this.query.returning = true
+    if (fields.length === 0) {
+      this.query.returningFields = ['*']
+    } else {
+      this.query.returningFields = fields
+    }
+    return this
+  }
+
+  /**
+   * Add SELECT statement
+   * @param {string[]} fields
+   * @returns {this}
+   */
+  SELECT(...fields) {
+    this.query.type = 'SELECT'
+    this.query.selectFields = fields.length > 0 ? fields : ['*']
+    return this
+  }
+
+  /**
+   * Add parameters
+   * @param {string} key
+   * @param {any} value
+   * @returns {this}
+   */
+  SET_PARAM(key, value) {
+    this.query.params[key] = value
+    return this
+  }
+
+  /**
+   * Add parameters
+   * @param {Record<string, any>} params
+   * @returns {this}
+   */
+  SET_PARAMS(params) {
+    this.query.params = params
+    return this
+  }
+
+  /**
+   * Set PostgreSQL data types for bulk insert columns
+   * This method is used to specify the data type of each column when performing a bulk insert
+   * The order of types should match the order of insert fields
+   * 
+   * @example
+   * query.INSERT('users')
+   *   .INSERT_FIELDS('id', 'name', 'created_at')
+   *   .SET_TYPES('int4', 'text', 'timestamp')
+   *   .INSERT_VALUES([1, 'John', '2024-03-20'], [2, 'Jane', '2024-03-21'])
+   * 
+   * @param {...string} types - PostgreSQL data types
+   * @returns {this}
+   */
+  SET_TYPES(...types) {
+    this.query.types = types
+    return this
+  }
+
+  /**
+   * Specify query name
+   * @param {string} name
+   * @returns {this}
+   */
+  setName(name) {
+    this.name = name
+    this.query.name = name
+    return this
+  }
+
+  /**
+   * Start UPDATE query
+   * @param {string} table
+   * @returns {this}
+   */
+  UPDATE(table) {
+    this.query.type = 'UPDATE'
+    this.query.table = table
+    return this
+  }
+
+  /**
+   * Add UPDATE fields
+   * @param {Record<string, any>} sets
+   * @returns {this}
+   */
+  UPDATE_FIELDS(sets) {
+    this.query.updateSets = sets
+    return this
+  }
+
+  /**
+   * Add WHERE condition
+   * @param {string} predicate
+   * @returns {this}
+   */
+  WHERE(predicate) {
+    this.query.where = [predicate]
+    return this
+  }
+}
+
+/**
+ * Adds a total count query to get the number of records in a table
  * 
- * This function creates a SQL query fragment that counts files based on the provided parameters.
- * It returns a coalesced count to ensure null values are converted to zero.
+ * This function creates a SQL query fragment that counts all records in a table
+ * with an optional WHERE condition.
  * 
  * Usage Example:
  * ```javascript
- * const fileCountQuery = addFileCountQuery({
- *   fileType: 'PRODUCT_IMAGE',
- *   contentsNo: 123
+ * const allCountQuery = addAllCountQuery({
+ *   table: 'users',
+ *   where: 'active = true'
  * });
  * ```
  * 
- * @param {FileQuery} params - Parameters for the file count query
- * @returns {string} SQL query fragment for counting files
+ * @param {Object} params - Parameters for the count query
+ * @param {string} params.table - Table name to query
+ * @param {string} [params.where] - Optional WHERE condition
+ * @returns {string} SQL query fragment for counting all records
  */
-export function addFileCountQuery(params) {
-  let query = `coalesce(`
-  query += `( SELECT count(*) FROM common.attach_file_info`
-  query += ` WHERE attach_file_type = ${params.fileType}`
-
-  if (params.contentsNo) {
-    query += ` AND contents_no = ${params.contentsNo}`
+export function addAllCountQuery({ table, where }) {
+  let query = `(SELECT count(*) FROM ${table}`
+  if (where) {
+    query += ` WHERE ${where}`
   }
-  query += `), 0) AS file_cnt`
+  query += `) AS all_cnt`
 
   return query
 }
@@ -118,6 +463,54 @@ export function addCreatorFileQuery(params) {
 
   query += `), 0) as file_cnt`
   query += ` ,'${params.fileType}' AS file_type`
+
+  return query
+}
+
+/**
+ * Adds a date truncation query for date range filtering  
+ * 
+ * This function creates a SQL query fragment that truncates a date field to the day level
+ * and compares it to the provided date range.
+ * 
+ * Usage Example:
+ * ```javascript
+ * const dateTruncQuery = addDateTruncQuery('created_time');
+ * ```
+ * 
+ * @param {string} field - The date field to truncate
+ * @returns {string} SQL query fragment for date truncation
+ */
+export function addDateTruncQuery(field) {
+  return `(date_trunc('day', ${field}::timestamp) BETWEEN date_trunc('day', :fromDate::timestamp) AND date_trunc('day', :toDate::timestamp))`
+}
+
+/**
+ * Adds a file count query to get the number of files
+ * 
+ * This function creates a SQL query fragment that counts files based on the provided parameters.
+ * It returns a coalesced count to ensure null values are converted to zero.
+ * 
+ * Usage Example:
+ * ```javascript
+ * const fileCountQuery = addFileCountQuery({
+ *   fileType: 'PRODUCT_IMAGE',
+ *   contentsNo: 123
+ * });
+ * ```
+ * 
+ * @param {FileQuery} params - Parameters for the file count query
+ * @returns {string} SQL query fragment for counting files
+ */
+export function addFileCountQuery(params) {
+  let query = `coalesce(`
+  query += `( SELECT count(*) FROM common.attach_file_info`
+  query += ` WHERE attach_file_type = ${params.fileType}`
+
+  if (params.contentsNo) {
+    query += ` AND contents_no = ${params.contentsNo}`
+  }
+  query += `), 0) AS file_cnt`
 
   return query
 }
@@ -160,65 +553,6 @@ export function addFileQuery(params) {
 }
 
 /**
- * Adds a total count query to get the number of records in a table
- * 
- * This function creates a SQL query fragment that counts all records in a table
- * with an optional WHERE condition.
- * 
- * Usage Example:
- * ```javascript
- * const allCountQuery = addAllCountQuery({
- *   table: 'users',
- *   where: 'active = true'
- * });
- * ```
- * 
- * @param {Object} params - Parameters for the count query
- * @param {string} params.table - Table name to query
- * @param {string} [params.where] - Optional WHERE condition
- * @returns {string} SQL query fragment for counting all records
- */
-export function addAllCountQuery({ table, where }) {
-  let query = `(SELECT count(*) FROM ${table}`
-  if (where) {
-    query += ` WHERE ${where}`
-  }
-  query += `) AS all_cnt`
-
-  return query
-}
-
-/**
- * Adds a total count query to get the number of records in a table
- * 
- * This function creates a SQL query fragment that counts all records in a table
- * with an optional WHERE condition. Similar to addAllCountQuery but with a different
- * parameter structure and alias.
- * 
- * Usage Example:
- * ```javascript
- * const totalCountQuery = addTotalCountQuery({
- *   table: 'products',
- *   where: 'category_id = 5'
- * });
- * ```
- * 
- * @param {Object} params - Parameters for the total count query
- * @param {string} params.table - Table name to query
- * @param {string} [params.where] - Optional WHERE condition
- * @returns {string} SQL query fragment for counting total records
- */
-export function addTotalCountQuery(params) {
-  let query = `(SELECT count(*) FROM ${params.table}`
-  if (params.where) {
-    query += ` WHERE ${params.where}`
-  }
-  query += `) AS total_cnt`
-
-  return query
-}
-
-/**
  * Adds a row number query for result pagination and ordering
  * 
  * This function creates a SQL query fragment that adds a row number to each result
@@ -234,24 +568,6 @@ export function addTotalCountQuery(params) {
  */
 export function addRowNoQuery(sort) {
   return `CAST(ROW_NUMBER() OVER (ORDER BY ${sort}) AS INTEGER) AS no`
-}
-
-/**
- * Adds a date truncation query for date range filtering  
- * 
- * This function creates a SQL query fragment that truncates a date field to the day level
- * and compares it to the provided date range.
- * 
- * Usage Example:
- * ```javascript
- * const dateTruncQuery = addDateTruncQuery('created_time');
- * ```
- * 
- * @param {string} field - The date field to truncate
- * @returns {string} SQL query fragment for date truncation
- */
-export function addDateTruncQuery(field) {
-  return `(date_trunc('day', ${field}::timestamp) BETWEEN date_trunc('day', :fromDate::timestamp) AND date_trunc('day', :toDate::timestamp))`
 }
 /**
  * Define types and interfaces for writing queries
@@ -302,347 +618,31 @@ export function addDateTruncQuery(field) {
  */
 
 /**
- * Abstract class for query builder
- *
- * @abstract
- * @export
- * @class AbstractQuery
+ * Adds a total count query to get the number of records in a table
+ * 
+ * This function creates a SQL query fragment that counts all records in a table
+ * with an optional WHERE condition. Similar to addAllCountQuery but with a different
+ * parameter structure and alias.
+ * 
+ * Usage Example:
+ * ```javascript
+ * const totalCountQuery = addTotalCountQuery({
+ *   table: 'products',
+ *   where: 'category_id = 5'
+ * });
+ * ```
+ * 
+ * @param {Object} params - Parameters for the total count query
+ * @param {string} params.table - Table name to query
+ * @param {string} [params.where] - Optional WHERE condition
+ * @returns {string} SQL query fragment for counting total records
  */
-export class AbstractQuery {
-  /** @type {string} @protected */
-  name
-  /** @type {Query} @protected */
-  query
-  /** @type {string} @protected */
-  _rawQuery
-
-  constructor() {
-    this._rawQuery = ''
-    this.query = {
-      name: '',
-      type: null,
-      table: '',
-      selectFields: [],
-      insertFields: [],
-      values: [],
-      params: {},
-      updateSets: {},
-      returning: false,
-      joins: [],
-      where: [],
-      groupBy: [],
-      having: [],
-      orderBy: [],
-      limit: null,
-      offset: null,
-      returningFields: [],
-      types: []
-    }
+export function addTotalCountQuery(params) {
+  let query = `(SELECT count(*) FROM ${params.table}`
+  if (params.where) {
+    query += ` WHERE ${params.where}`
   }
+  query += `) AS total_cnt`
 
-  /**
-   * Specify query name
-   * @param {string} name
-   * @returns {this}
-   */
-  setName(name) {
-    this.name = name
-    this.query.name = name
-    return this
-  }
-
-  /**
-   * Write raw query
-   * @param {string} query
-   */
-  rawQuery(query) {
-    this._rawQuery += ' ' + query
-    return this
-  }
-
-  /**
-   * Add SELECT statement
-   * @param {string[]} fields
-   * @returns {this}
-   */
-  SELECT(...fields) {
-    this.query.type = 'SELECT'
-    this.query.selectFields = fields.length > 0 ? fields : ['*']
-    return this
-  }
-
-  /**
-   * Start INSERT query
-   * @param {string} table
-   * @returns {this}
-   */
-  INSERT(table) {
-    this.query.type = 'INSERT'
-    this.query.table = table
-    return this
-  }
-
-  /**
-   * Add INSERT fields
-   * @param {string[]} fields
-   * @returns {this}
-   */
-  INSERT_FIELDS(...fields) {
-    this.query.insertFields = fields
-    return this
-  }
-
-  /**
-   * Add INSERT values
-   * @param {any[] | any[][]} values
-   * @returns {this}
-   */
-  INSERT_VALUES(...values) {
-    this.query.values = values
-    return this
-  }
-
-  /**
-   * Start UPDATE query
-   * @param {string} table
-   * @returns {this}
-   */
-  UPDATE(table) {
-    this.query.type = 'UPDATE'
-    this.query.table = table
-    return this
-  }
-
-  /**
-   * Add UPDATE fields
-   * @param {Record<string, any>} sets
-   * @returns {this}
-   */
-  UPDATE_FIELDS(sets) {
-    this.query.updateSets = sets
-    return this
-  }
-
-  /**
-   * Start DELETE query
-   * @param {string} table
-   * @returns {this}
-   */
-  DELETE(table) {
-    this.query.type = 'DELETE'
-    this.query.table = table
-    return this
-  }
-
-  /**
-   * Start FROM query
-   * @param {string} table
-   * @returns {this}
-   */
-  FROM(table) {
-    this.query.table = table
-    return this
-  }
-
-  /**
-   * Add JOIN join
-   * @param {Join} params
-   * @returns {this}
-   */
-  JOIN(params) {
-    this.query.joins.push(params)
-    return this
-  }
-
-  /**
-   * Add WHERE condition
-   * @param {string} predicate
-   * @returns {this}
-   */
-  WHERE(predicate) {
-    this.query.where = [predicate]
-    return this
-  }
-
-  /**
-   * Add AND condition
-   * @param {string} predicate
-   * @returns {this}
-   */
-  AND(predicate) {
-    this.query.where.push('AND ' + `(${predicate})`)
-    return this
-  }
-
-  /**
-   * Add OR condition
-   * @param {string} predicate
-   * @returns {this}
-   */
-  OR(predicate) {
-    this.query.where.push('OR ' + predicate)
-    return this
-  }
-
-  /**
-   * Add GROUP BY fields
-   * @param {string[]} fields
-   * @returns {this}
-   */
-  GROUP_BY(fields) {
-    this.query.groupBy = fields
-    return this
-  }
-
-  /**
-   * Add HAVING condition
-   * @param {string} predicate
-   * @returns {this}
-   */
-  HAVING(predicate) {
-    this.query.having = [predicate]
-    return this
-  }
-
-  /**
-   * Add ORDER BY sort condition
-   * @param {OrderBy[]} params
-   * @returns {this}
-   */
-  ORDER_BY(...params) {
-    this.query.orderBy.push(...params)
-    return this
-  }
-
-  /**
-   * Add LIMIT limit
-   * @param {number} limit
-   * @returns {this}
-   */
-  LIMIT(limit) {
-    this.query.limit = limit
-    return this
-  }
-
-  /**
-   * Add OFFSET
-   * @param {number} offset
-   * @returns {this}
-   */
-  OFFSET(offset) {
-    this.query.offset = offset
-    return this
-  }
-
-  /**
-   * Add RETURNING fields
-   * @param {string[]} fields
-   * @returns {this}
-   */
-  RETURNING(...fields) {
-    this.query.returning = true
-    if (fields.length === 0) {
-      this.query.returningFields = ['*']
-    } else {
-      this.query.returningFields = fields
-    }
-    return this
-  }
-
-  /**
-   * Add parameters
-   * @param {Record<string, any>} params
-   * @returns {this}
-   */
-  SET_PARAMS(params) {
-    this.query.params = params
-    return this
-  }
-
-  /**
-   * Add parameters
-   * @param {string} key
-   * @param {any} value
-   * @returns {this}
-   */
-  SET_PARAM(key, value) {
-    this.query.params[key] = value
-    return this
-  }
-
-  /**
-   * Set PostgreSQL data types for bulk insert columns
-   * This method is used to specify the data type of each column when performing a bulk insert
-   * The order of types should match the order of insert fields
-   * 
-   * @example
-   * query.INSERT('users')
-   *   .INSERT_FIELDS('id', 'name', 'created_at')
-   *   .SET_TYPES('int4', 'text', 'timestamp')
-   *   .INSERT_VALUES([1, 'John', '2024-03-20'], [2, 'Jane', '2024-03-21'])
-   * 
-   * @param {...string} types - PostgreSQL data types
-   * @returns {this}
-   */
-  SET_TYPES(...types) {
-    this.query.types = types
-    return this
-  }
-
-  /**
-   * Build query
-   * @abstract
-   * @returns {any}
-   */
-  build() { }
-
-  /**
-   * Build raw query
-   * @abstract
-   * @protected
-   * @returns {any}
-   */
-  rawQueryBuild() { }
-
-  /**
-   * Find multiple
-   * @abstract
-   * @returns {any}
-   */
-  findMany() { }
-
-  /**
-   * Find one
-   * @abstract
-   * @returns {any}
-   */
-  findOne() { }
-
-  /**
-   * Execute query
-   * @abstract
-   * @returns {any}
-   */
-  exec() { }
-
-  /**
-   * Find multiple raw query
-   * @abstract
-   * @returns {any}
-   */
-  rawFindMany() { }
-
-  /**
-   * Find one raw query
-   * @abstract
-   * @returns {any}
-   */
-  rawFindOne() { }
-
-  /**
-   * Execute raw query
-   * @abstract
-   * @returns {any}
-   */
-  rawExec() { }
+  return query
 }
