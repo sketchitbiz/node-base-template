@@ -134,7 +134,7 @@ web_modules/
 
 # vuepress v2.x temp and cache directory
 
-**/.temp
+**/.temp 
 
 # Docusaurus cache and generated files
 
