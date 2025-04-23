@@ -2,8 +2,8 @@
 
 # Logs
 
-logs
-_.log
+**logs
+*.log
 npm-debug.log_
 yarn-debug.log*
 yarn-error.log*
@@ -100,11 +100,11 @@ web_modules/
 
 # dotenv environment variable files
 
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+**/.env
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+**/.env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 
@@ -112,13 +112,13 @@ web_modules/
 
 # Next.js build output
 
-.next
-out
+**/.next
+**/out
 
 # Nuxt.js build / generate output
 
-.nuxt
-dist
+**/.nuxt
+**dist
 
 # Gatsby files
 
@@ -130,53 +130,53 @@ dist
 
 # vuepress build output
 
-.vuepress/dist
+**/.vuepress/dist
 
 # vuepress v2.x temp and cache directory
 
-.temp
+**/.temp
 
 # Docusaurus cache and generated files
 
-.docusaurus
+**/.docusaurus
 
 # Serverless directories
 
-.serverless/
+**/.serverless/
 
 # FuseBox cache
 
-.fusebox/
+**/.fusebox/
 
 # DynamoDB Local files
 
-.dynamodb/
+**/.dynamodb/
 
 # TernJS port file
 
-.tern-port
+**/.tern-port
 
 # Stores VSCode versions used for testing VSCode extensions
 
-.vscode-test
+**/.vscode-test
 
 # yarn v2
 
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
+**/.yarn/cache
+**/.yarn/unplugged
+**/.yarn/build-state.yml
+**/.yarn/install-state.gz
+**/.pnp.*
 
 # IntelliJ based IDEs
-.idea
+**/.idea
 
 # Finder (MacOS) folder config
-.DS_Store
-/log/*
+**/.DS_Store
+**log/*
 
 
 #
-prometheus/**
+**/prometheus/**
 
-*.env.*
+**/*.env.*

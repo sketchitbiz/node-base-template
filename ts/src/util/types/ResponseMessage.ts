@@ -1,0 +1,20 @@
+export enum ResponseMessage {
+  SUCCESS = 'success',
+  NO_DATA = 'no data',
+  NO_USER = 'no user',
+  TOKEN_REQUIRED = 'token is required',
+  TOKEN_INVALID = 'token is invalid',
+  PASSWORD_INCORRECT = 'password is incorrect',
+  USER_EXIST = 'user exist',
+  FAIL = 'fail',
+  CONFLICT = 'conflict',
+  NO_ADMIN = 'no admin',
+  PLATFORM_REQUIRED = 'platform is required',
+  CANNOT_CONNECT_SNS = 'cannot connect sns',
+  ADMIN_EXIST = 'admin exist',
+  NEED_MORE_INFO = 'need more info',
+  BAD_REQUEST = 'bad request',
+  FORBIDDEN = 'forbidden',
+  UNAUTHORIZED = 'unauthorized',
+  INTERNAL_SERVER_ERROR = 'internal server error'
+}

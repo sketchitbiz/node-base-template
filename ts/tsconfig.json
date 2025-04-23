@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    /* 기본 설정 */
+    "target": "es2017", /* 최신 브라우저들이 지원하는 ES2017로 설정 */
+    "module": "esnext", /* 최신 모듈 시스템 사용 */
+    /* 모듈 해석 설정 */
+    "moduleResolution": "node", /* Node.js 스타일의 모듈 해석 사용 */
+    "baseUrl": "./", /* 모듈 해석의 기준 디렉토리 설정 */
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }, /* 경로 별칭 설정 가능 */
+    /* 출력 설정 */
+    "outDir": "./dist", /* 컴파일된 파일이 생성될 디렉토리 */
+    "sourceMap": false, /* 소스맵 생성 */
+    /* 엄격한 타입 체크 */
+    "strict": true, /* 모든 엄격한 타입 체크 옵션 활성화 */
+    "noImplicitAny": true, /* any 타입 금지 */
+    "strictNullChecks": true, /* null/undefined 체크 강화 */
+    /* 추가 체크 */
+    "noUnusedLocals": true, /* 사용하지 않는 지역 변수 체크 */
+    "noUnusedParameters": false, /* 사용하지 않는 파라미터 체크 */
+    "noImplicitReturns": true, /* 함수의 모든 경로가 값을 반환하는지 체크 */
+    "noFallthroughCasesInSwitch": true, /* switch문에서 fallthrough 케이스 체크 */
+    "strictPropertyInitialization": false,
+    /* 모듈 호환성 */
+    "allowSyntheticDefaultImports": true, /* default export가 없는 모듈에서도 default import 허용 */
+    "esModuleInterop": true, /* CommonJS 모듈을 ES6 모듈처럼 사용 가능하게 함 */
+    "skipLibCheck": true, /* 선언 파일의 타입 체크 스킵 */
+    "forceConsistentCasingInFileNames": true, /* 파일 이름의 대소문자 일관성 강제 */
+    "resolveJsonModule": true, /* JSON 파일을 모듈로 임포트 가능하게 함 */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowImportingTsExtensions": false,
+    "emitDeclarationOnly": false,
+    "declaration": false
+  },
+  "include": [
+    "src/**/*"
+  ], /* 컴파일할 파일 경로 설정 */
+  "exclude": [
+    "node_modules",
+    "dist"
+  ] /* 컴파일에서 제외할 경로 설정 */
+}
