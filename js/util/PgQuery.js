@@ -1,4 +1,5 @@
 import { size } from 'es-toolkit/compat'
+
 import { camelToSnake, snakeToCamel } from './Functions.js'
 import { logger } from './Logger.js'
 import { AbstractQuery } from './types/AbstractQuery.js'
@@ -46,8 +47,8 @@ export class PgQueryBuilder extends AbstractQuery {
     // 쿼리 타입에 따라 쿼리 작성
     // create query by query type
     switch (this.query.type) {
-      case 'SELECT':
-        query = `SELECT ${this.query.selectFields.join(', ')} FROM ${this.query.table}`
+      case 'DELETE':
+        query = `DELETE FROM ${this.query.table}`
         break
 
       case 'INSERT':
@@ -75,6 +76,10 @@ export class PgQueryBuilder extends AbstractQuery {
         }
         break
 
+      case 'SELECT':
+        query = `SELECT ${this.query.selectFields.join(', ')} FROM ${this.query.table}`
+        break
+
       case 'UPDATE':
         query = `UPDATE ${this.query.table} SET `
 
@@ -88,10 +93,6 @@ export class PgQueryBuilder extends AbstractQuery {
         setEntries.forEach(([key, value]) => {
           this.query.params[key] = value
         })
-        break
-
-      case 'DELETE':
-        query = `DELETE FROM ${this.query.table}`
         break
 
       default:
@@ -162,7 +163,7 @@ export class PgQueryBuilder extends AbstractQuery {
         ),
         ...this.query.params
       }
-      logger.debug(`Query: ${this.name}`, { query, params: allParams })
+      logger.debug(`Query: ${this.name}`, { params: allParams, query })
 
       paramList.forEach(key => {
         const newSql = query.replace(new RegExp(`:${key}`, 'g'), `$${index}`)
@@ -191,6 +192,115 @@ export class PgQueryBuilder extends AbstractQuery {
     logger.debug(`Raw Query: ${this.name}`, result)
 
     return result
+  }
+
+  /**
+   * 쿼리 실행
+   * @template T
+   * @async
+   * @returns {Promise<T | null>}
+   */
+  async exec() {
+    const query = this.build()
+    const { rowCount, rows } = await this.client.query(query)
+
+    if (rowCount > 1) {
+      return snakeToCamel(rows)
+    } else if (rowCount === 1) {
+      return snakeToCamel(rows[0])
+    }
+
+    return
+  }
+
+
+  /**
+   * 많은 데이터를 조회하는 쿼리
+   * @template T
+   * @async
+   * @returns {Promise<T[] | null>}
+   */
+  async findMany() {
+    const query = this.build()
+    const { rowCount, rows } = await this.client.query(query)
+
+    if (rowCount === 0) {
+      return null
+    }
+
+    return snakeToCamel(rows)
+  }
+
+
+  /**
+   * 하나의 데이터를 조회하는 쿼리
+   * @template T
+   * @async
+   * @returns {Promise<T | null>}
+   */
+  async findOne() {
+    const query = this.build()
+    const { rowCount, rows } = await this.client.query(query)
+
+    if (rowCount === 0) {
+      return null
+    }
+
+    return snakeToCamel(rows[0])
+  }
+
+  /**
+   * 쿼리 실행
+   * @template T
+   * @async
+   * @returns {Promise<T | null>}
+   */
+  async rawExec() {
+    const query = this.rawQueryBuild()
+    const { rowCount, rows } = await this.client.query(query)
+
+    if (rowCount > 1) {
+      return snakeToCamel(rows)
+    } else if (rowCount === 1) {
+      return snakeToCamel(rows[0])
+    }
+
+    return
+  }
+
+
+  /**
+   * 많은 데이터를 조회하는 쿼리
+   * @template T
+   * @async
+   * @returns {Promise<T[] | null>}
+   */
+  async rawFindMany() {
+    const query = this.rawQueryBuild()
+    const { rowCount, rows } = await this.client.query(query)
+
+    if (rowCount === 0) {
+      return null
+    }
+
+    return snakeToCamel(rows)
+  }
+
+  /**
+   * 하나의 데이터를 조회하는 쿼리
+   * @template T
+   * @async
+   * @returns {Promise<T | null>}
+   */
+  async rawFindOne() {
+    const query = this.rawQueryBuild()
+    const { rowCount, rows } = await this.client.query(query)
+
+    if (rowCount === 0) {
+      return null
+    }
+
+    return snakeToCamel(rows[0])
   }
 
   /**
@@ -223,115 +333,6 @@ export class PgQueryBuilder extends AbstractQuery {
     logger.debug(`Raw Query: ${this.name}`, result)
 
     return result
-  }
-
-
-  /**
-   * 많은 데이터를 조회하는 쿼리
-   * @template T
-   * @async
-   * @returns {Promise<T[] | null>}
-   */
-  async findMany() {
-    const query = this.build()
-    const { rows, rowCount } = await this.client.query(query)
-
-    if (rowCount === 0) {
-      return null
-    }
-
-    return snakeToCamel(rows)
-  }
-
-
-  /**
-   * 하나의 데이터를 조회하는 쿼리
-   * @template T
-   * @async
-   * @returns {Promise<T | null>}
-   */
-  async findOne() {
-    const query = this.build()
-    const { rows, rowCount } = await this.client.query(query)
-
-    if (rowCount === 0) {
-      return null
-    }
-
-    return snakeToCamel(rows[0])
-  }
-
-  /**
-   * 쿼리 실행
-   * @template T
-   * @async
-   * @returns {Promise<T | null>}
-   */
-  async exec() {
-    const query = this.build()
-    const { rows, rowCount } = await this.client.query(query)
-
-    if (rowCount > 1) {
-      return snakeToCamel(rows)
-    } else if (rowCount === 1) {
-      return snakeToCamel(rows[0])
-    }
-
-    return
-  }
-
-
-  /**
-   * 많은 데이터를 조회하는 쿼리
-   * @template T
-   * @async
-   * @returns {Promise<T[] | null>}
-   */
-  async rawFindMany() {
-    const query = this.rawQueryBuild()
-    const { rows, rowCount } = await this.client.query(query)
-
-    if (rowCount === 0) {
-      return null
-    }
-
-    return snakeToCamel(rows)
-  }
-
-  /**
-   * 하나의 데이터를 조회하는 쿼리
-   * @template T
-   * @async
-   * @returns {Promise<T | null>}
-   */
-  async rawFindOne() {
-    const query = this.rawQueryBuild()
-    const { rows, rowCount } = await this.client.query(query)
-
-    if (rowCount === 0) {
-      return null
-    }
-
-    return snakeToCamel(rows[0])
-  }
-
-  /**
-   * 쿼리 실행
-   * @template T
-   * @async
-   * @returns {Promise<T | null>}
-   */
-  async rawExec() {
-    const query = this.rawQueryBuild()
-    const { rows, rowCount } = await this.client.query(query)
-
-    if (rowCount > 1) {
-      return snakeToCamel(rows)
-    } else if (rowCount === 1) {
-      return snakeToCamel(rows[0])
-    }
-
-    return
   }
 }
 

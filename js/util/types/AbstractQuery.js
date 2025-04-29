@@ -15,7 +15,7 @@
  *   .FROM('users')
  *   .WHERE('active = true')
  *   .AND('last_login > :lastLoginDate')
- *   .SET_PARAM('lastLoginDate', '2023-01-01')
+ *   .SET_PARAM('lastLoginDate ', '2023-01-01')
  *   .ORDER_BY({ field: 'created_at', direction: 'DESC' })
  *   .LIMIT(10);
  * 

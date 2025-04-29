@@ -1,13 +1,13 @@
+import { PgDBManager } from '@/database/DatabaseManager.js'
+import { getManager } from '@/database/TransactionContext.js'
 import type { PoolClient } from 'pg'
-import { PgDBManager } from 'src/database/DatabaseManager'
-import { getManager } from 'src/database/TransactionContext'
-import { logger } from '../Logger'
-import { PgQueryBuilder } from '../PgQuery'
-import type { AbstractQuery } from './AbstractQuery'
+import { logger } from '../Logger.js'
+import { PgQueryBuilder } from '../PgQuery.js'
+import type { AbstractQuery } from './AbstractQuery.js'
 
 export abstract class BaseMapper {
 
-  protected async exec<T>(callback: (query: AbstractQuery) => Promise<T>) {
+  protected async exec<T>(callback: (query: AbstractQuery<T>) => Promise<T | null>) {
     let manager = getManager()
     let client: PoolClient
     if (!manager) {
@@ -19,7 +19,7 @@ export abstract class BaseMapper {
 
 
     try {
-      return callback(new PgQueryBuilder(client))
+      return callback(new PgQueryBuilder<T>(client))
     } catch (error) {
       logger.error(error)
       throw error
@@ -36,7 +36,7 @@ export abstract class BaseMapper {
    * @returns 모든 데이터 개수
    */
   protected async allCnt(table: string) {
-    const result = await this.exec(q => q.setName(`${table}_allCnt`).SELECT(`CAST(COUNT(*) AS INTEGER) AS all_cnt`).FROM(table).findOne<{ allCnt: number }>())
+    const result: { allCnt: number } | null = await this.exec(q => q.setName(`${table}_allCnt`).SELECT(`CAST(COUNT(*) AS INTEGER) AS all_cnt`).FROM(table).findOne<{ allCnt: number }>())
 
     return result?.allCnt
   }
@@ -47,7 +47,7 @@ export abstract class BaseMapper {
    * @returns 조건에 따른 데이터 개수
    */
   protected async totalCnt(params: { params: Record<string, any>, table: string, where: string }) {
-    const result = await this.exec(q =>
+    const result: { totalCnt: number } | null = await this.exec(q =>
       q.setName(`${params.table}_totalCnt`)
         .SELECT(`CAST(COUNT(*) AS INTEGER) AS total_cnt`)
         .FROM(params.table)

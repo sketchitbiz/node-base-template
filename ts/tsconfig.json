@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     /* 기본 설정 */
-    "target": "es2017", /* 최신 브라우저들이 지원하는 ES2017로 설정 */
-    "module": "esnext", /* 최신 모듈 시스템 사용 */
+    "target": "ESNext", /* 최신 브라우저들이 지원하는 ES2017로 설정 */
+    "module": "ESNext", /* 최신 모듈 시스템 사용 */
     /* 모듈 해석 설정 */
-    "moduleResolution": "node", /* Node.js 스타일의 모듈 해석 사용 */
+    "moduleResolution": "bundler", /* Node.js 스타일의 모듈 해석 사용 */
     "baseUrl": "./", /* 모듈 해석의 기준 디렉토리 설정 */
     "paths": {
       "@/*": [

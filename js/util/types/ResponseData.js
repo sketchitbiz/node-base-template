@@ -1,4 +1,5 @@
 import pg from "pg"
+
 import { Metadata } from "./Common.js"
 import { BadRequestError, BaseError, ConflictError, ValidationError } from "./Error.js"
 import { ResponseMessage } from "./ResponseMessage.js"
@@ -46,20 +47,20 @@ const { DatabaseError } = pg
  */
 export class ResponseData {
 
-  /** @type {number} HTTP status code of the response */
-  statusCode
-
-  /** @type {string | ResponseMessage} Response message indicating the status */
-  message
-
   /** @type {T | T[] | null} Response data, can be single item or array */
   data
 
   /** @type {Error| null} Error information if the response contains an error */
   error
 
+  /** @type {string | ResponseMessage} Response message indicating the status */
+  message
+
   /** @type {Metadata | null} Additional metadata about the response */
   metadata
+
+  /** @type {number} HTTP status code of the response */
+  statusCode
 
   /**
    * Creates a new ResponseData instance
@@ -88,20 +89,21 @@ export class ResponseData {
   }
 
   /**
-   * Creates a successful response with no data
-   * @returns {ResponseData} Response with status code 200 and 'success' message
+   * Creates a bad request response
+   * @param {{message: string, customMessage?: string}} params Error message parameters
+   * @returns {ResponseData} Response with status code 400
    */
-  static success() {
-    return new ResponseData({ statusCode: 200, message: 'success', data: null, error: null, metadata: null })
+  static badRequest({ customMessage, message }) {
+    return ResponseData.fromError(new BadRequestError({ customMessage, message }))
   }
 
   /**
-   * Creates a response indicating no data was found
-   * @param {string|ResponseMessage} message Custom message for no data response
-   * @returns {ResponseData} Response with status code 404
+   * Creates a conflict response
+   * @param {{message: string, customMessage?: string}} params Error message parameters
+   * @returns {ResponseData} Response with status code 409
    */
-  static noData(message = ResponseMessage.noData) {
-    return new ResponseData({ statusCode: 404, message: message ?? 'no data', data: null, error: null, metadata: null })
+  static conflict({ customMessage, message }) {
+    return ResponseData.fromError(new ConflictError({ customMessage, message }))
   }
 
   /**
@@ -112,7 +114,7 @@ export class ResponseData {
    * @returns {ResponseData<T>} Response with status code 200 and the provided data
    */
   static data(data, metadata = null) {
-    return new ResponseData({ statusCode: 200, message: 'success', data, error: null, metadata })
+    return new ResponseData({ data, error: null, message: 'success', metadata, statusCode: 200 })
   }
 
   /**
@@ -125,50 +127,49 @@ export class ResponseData {
 
     if (error instanceof BaseError) {
       return new ResponseData({
-        statusCode: error.statusCode ?? 500,
-        message: error.message ?? 'fail',
         error: {
-          name: error.name,
           message: error.customMessage ?? error.message,
+          name: error.name,
           stack: error.stack
-        }
+        },
+        message: error.message ?? 'fail',
+        statusCode: error.statusCode ?? 500
       })
     } else if (error instanceof Error) {
       return new ResponseData({
-        statusCode: 500,
         data: null,
-        message: error.message,
         error: {
-          name: error.name,
           message: error.message,
+          name: error.name,
           stack: error.stack
-        }
+        },
+        message: error.message,
+        statusCode: 500
       })
     } else {
       return new ResponseData({
-        statusCode: 500,
         data: null,
+        error,
         message: 'fail',
-        error
+        statusCode: 500
       })
     }
   }
 
   /**
-   * Creates a bad request response
-   * @param {{message: string, customMessage?: string}} params Error message parameters
-   * @returns {ResponseData} Response with status code 400
+   * Creates a response indicating no data was found
+   * @param {string|ResponseMessage} message Custom message for no data response
+   * @returns {ResponseData} Response with status code 404
    */
-  static badRequest({ message, customMessage }) {
-    return ResponseData.fromError(new BadRequestError({ message, customMessage }))
+  static noData(message = ResponseMessage.noData) {
+    return new ResponseData({ data: null, error: null, message: message ?? 'no data', metadata: null, statusCode: 404 })
   }
 
   /**
-   * Creates a conflict response
-   * @param {{message: string, customMessage?: string}} params Error message parameters
-   * @returns {ResponseData} Response with status code 409
+   * Creates a successful response with no data
+   * @returns {ResponseData} Response with status code 200 and 'success' message
    */
-  static conflict({ message, customMessage }) {
-    return ResponseData.fromError(new ConflictError({ message, customMessage }))
+  static success() {
+    return new ResponseData({ data: null, error: null, message: 'success', metadata: null, statusCode: 200 })
   }
 }

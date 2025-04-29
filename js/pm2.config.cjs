@@ -4,17 +4,17 @@ module.exports = {
   apps: [
     {
       cwd: "./",
-      name: "heredot",
-      script: "app.js",
-      instances: "1",
-      exec_mode: "cluster",
-      watch: ["app.js", "database", "util", "modules"],
-      ignore_watch: ["node_modules", "public", "images", "logs", "log",],
-      max_memory_restart: "1G",
-      log_file: "logs/heredot/heredot.log",
       error_file: "logs/heredot/heredot-error.log",
-      out_file: "logs/heredot/heredot-out.log",
+      exec_mode: "cluster",
+      ignore_watch: ["node_modules", "public", "images", "logs", "log",],
+      instances: "1",
+      log_file: "logs/heredot/heredot.log",
+      max_memory_restart: "1G",
       merge_logs: true,
+      name: "heredot",
+      out_file: "logs/heredot/heredot-out.log",
+      script: "app.js",
+      watch: ["app.js", "database", "util", "modules"],
       // log_date_format : "YYYY-MM-DD HH:mm:ss Z",
     }
   ]

@@ -35,6 +35,33 @@ export function snakeToCamel(data: any): any {
 }
 
 /**
+ * Convert camelCase to snake_case
+ * @param data Object or Array to convert
+ * @returns Converted data in snake_case
+ */
+export function camelToSnake(data: any): any {
+  if (data === null || data === undefined) {
+    return data
+  }
+
+  if (Array.isArray(data)) {
+    return data.map((item) => camelToSnake(item))
+  }
+
+  if (typeof data === 'object') {
+    const snakeCaseData: Record<string, any> = {}
+    for (const key in data) {
+      const value = data[key]
+      const snakeCaseKey = key.replace(/([A-Z])/g, '_$1').toLowerCase()
+      snakeCaseData[snakeCaseKey] = camelToSnake(value)
+    }
+    return snakeCaseData
+  }
+
+  return data
+}
+
+/**
  * Send response
  * @param res Express Response object
  * @param result Server response data

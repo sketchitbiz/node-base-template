@@ -49,7 +49,7 @@ export async function transaction<U>(tx: PgDBManager, callback: (tx: PgDBManager
 export class PgDBManager extends AbstractDBManager<pg.PoolClient> {
 
 
-  client: pg.PoolClient
+  declare client: pg.PoolClient
   pool: pg.Pool
 
   constructor() {

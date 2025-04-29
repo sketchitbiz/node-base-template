@@ -1,5 +1,3 @@
-
-
 interface FileQuery {
   fileType: string
   contentsNo?: number
@@ -18,12 +16,9 @@ export interface FromToDate {
   toDate: string
 }
 
-
 export interface KeywordParam {
   keyword: string[]
 }
-
-
 
 /**
  * @description file count 쿼리 추가
@@ -127,24 +122,27 @@ export function addRowNoQuery(sort: string): string {
   return `row_number() over(${sort}) as no`
 }
 
-interface Query {
-  name: string // 쿼리 이름
-  type: 'SELECT' | 'UPDATE' | 'DELETE' | 'INSERT' | null // 쿼리 타입
-  table: string // 테이블 이름
-  selectFields: string[] // select할 필드들
-  insertFields: string[]
+// 배열의 요소 타입을 추출하는 타입
+type ElementType<T> = T extends (infer U)[] ? U : T
+
+interface Query<T> {
+  name: string
+  type: 'SELECT' | 'UPDATE' | 'DELETE' | 'INSERT' | null
+  table: string
+  selectFields: (keyof ElementType<T>)[] | ['*'] | string[] // ElementType을 사용하여 배열의 요소 타입의 키만 선택
+  insertFields: (keyof ElementType<T>)[]
   values: any[]
   params: Record<string, any>
-  updateSets: Record<string, any>
-  returning: boolean // 반환 여부
-  joins: Join[] // 조인 조건
-  where: string[] // 조건절
-  groupBy: string[] // 그룹핑 조건
-  having: string[] // 그룹핑 조건
-  orderBy: OrderBy[] // 정렬 조건
+  updateSets: Record<keyof ElementType<T>, any>
+  returning: boolean
+  joins: Join[]
+  where: string[]
+  groupBy: string[]
+  having: string[]
+  orderBy: OrderBy[]
   returningFields: string[]
-  limit: number | null // 제한 조건
-  offset: number | null // 오프셋 조건
+  limit: number | null
+  offset: number | null
 }
 
 type JoinType = 'INNER' | 'LEFT' | 'RIGHT' | 'FULL' | 'CROSS' | 'NATURAL' | 'FULL OUTER' | 'LEFT OUTER' | 'RIGHT OUTER' | 'NATURAL OUTER'
@@ -170,10 +168,10 @@ export function addDateTrunc(field: string) {
   return `(date_trunc('day', ${field}::timestamp) BETWEEN date_trunc('day', :fromDate::timestamp) AND date_trunc('day', :toDate::timestamp))`
 }
 
-export abstract class AbstractQuery {
+export abstract class AbstractQuery<T> {
 
   protected name: string
-  protected query: Query
+  protected query: Query<T>
   protected _rawQuery: string
 
   constructor() {
@@ -185,8 +183,8 @@ export abstract class AbstractQuery {
       selectFields: [],
       insertFields: [],
       values: [],
-      params: {},
-      updateSets: {},
+      params: {} as Record<string, any>,
+      updateSets: {} as Record<keyof ElementType<T>, any>,
       returning: false,
       joins: [],
       where: [],
@@ -218,7 +216,7 @@ export abstract class AbstractQuery {
     return this
   }
 
-  SELECT(...fields: string[]): this {
+  SELECT(...fields: (keyof ElementType<T>)[] | ['*'] | string[]): this {
     this.query.type = 'SELECT'
     this.query.selectFields = fields.length > 0 ? fields : ['*']
     return this
@@ -230,12 +228,12 @@ export abstract class AbstractQuery {
     return this
   }
 
-  INSERT_FIELDS(...fields: string[]): this {
+  INSERT_FIELDS(...fields: (keyof ElementType<T>)[]): this {
     this.query.insertFields = fields
     return this
   }
 
-  INSERT_VALUES(...values: string[] | string[][]): this {
+  INSERT_VALUES(...values: any[] | any[][]): this {
     this.query.values = values
     return this
   }
@@ -246,8 +244,8 @@ export abstract class AbstractQuery {
     return this
   }
 
-  UPDATE_FIELDS(sets: Record<string, any>): this {
-    this.query.updateSets = sets
+  UPDATE_FIELDS(sets: Partial<Record<keyof ElementType<T>, any>>): this {
+    this.query.updateSets = sets as Record<keyof ElementType<T>, any>
     return this
   }
 

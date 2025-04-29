@@ -1,10 +1,10 @@
+import { size } from 'es-toolkit/compat'
 import type { PoolClient, QueryConfig } from 'pg'
-import { snakeToCamel } from './Functions'
-import { logger } from './Logger'
-import { AbstractQuery } from './types/AbstractQuery'
+import { camelToSnake, snakeToCamel } from './Functions.js'
+import { logger } from './Logger.js'
+import { AbstractQuery } from './types/AbstractQuery.js'
 
-
-export class PgQueryBuilder extends AbstractQuery {
+export class PgQueryBuilder<T> extends AbstractQuery<T> {
 
 
   private _client: PoolClient
@@ -33,16 +33,31 @@ export class PgQueryBuilder extends AbstractQuery {
     // 쿼리 타입에 따라 쿼리 작성
     switch (this.query.type) {
       case 'SELECT':
-        query = `SELECT ${this.query.selectFields.join(', ')} FROM ${this.query.table}`
+        query = `SELECT ${Array.isArray(this.query.selectFields) ? this.query.selectFields.map(v => camelToSnake(v)).join(', ') : this.query.selectFields} FROM ${this.query.table}`
         break
       case 'INSERT':
-        let values: string
-        if (Array.isArray(this.query.values[0])) {
-          values = this.query.values.map((row: string[]) => `(${row.join(', ')})`).join(', ')
+        if (Array.isArray(this.query.values) && Array.isArray(this.query.values[0])) {
+          // 다중 행 INSERT
+          const paramCount = this.query.insertFields.length
+          const rowCount = this.query.values.flat().length
+
+          // $1, $2, $3 형식의 파라미터 그룹 생성
+          const paramGroups = []
+          const params = [...this.query.values.flat().flat()]
+
+          for (let i = 0; i < rowCount; i++) {
+            const start = i * paramCount + 1
+            paramGroups.push(`(${Array.from({ length: paramCount }, (_, j) => `$${start + j}`).join(', ')})`)
+          }
+
+          query = `INSERT INTO ${this.query.table} (${this.query.insertFields.join(', ')}) VALUES ${paramGroups.join(', ')}`
+          this.query.values = params
         } else {
-          values = `(${this.query.values.join(', ')})`
+          // 단일 행 INSERT
+          const paramNames = this.query.values.map((_, idx) => `$${idx + 1}`)
+          query = `INSERT INTO ${this.query.table} (${this.query.insertFields.join(', ')}) VALUES (${paramNames.join(', ')})`
+          this.query.values = this.query.values
         }
-        query = `INSERT INTO ${this.query.table} (${this.query.insertFields.join(', ')}) VALUES ${values}`
         break
       case 'UPDATE':
         query = `UPDATE ${this.query.table} SET ${Object.entries(this.query.updateSets).map(([key, value]) => `${key} = ${value}`).join(', ')}`
@@ -97,21 +112,37 @@ export class PgQueryBuilder extends AbstractQuery {
 
     query += `;`
 
-    const values: any[] = []
-    const paramList = Object.keys(this.query.params).sort((a, b) => b.length -
-      a.length)
-    let index = 1
+    let values: any[] = []
+    if (size(this.query.params) > 0) {
+      const paramList = Object.keys(this.query.params).sort((a, b) => b.length - a.length)
+      let index = this.query.values ? this.query.values.length + 1 : 1
 
-    logger.debug(`Query: ${this.name}`, { query, params: this.query.params })
-    paramList.forEach(key => {
-      const newSql = query.replace(new RegExp(`:${key}`, 'g'), `$${index}`)
-
-      if (newSql !== query) {
-        query = newSql
-        values.push(this.query.params[key])
-        index++
+      // UPDATE SET 값들과 WHERE 파라미터를 모두 포함하여 로깅
+      const allParams = {
+        ...Object.fromEntries(
+          Object.entries(this.query.updateSets || {}).map(([key, value]) => [`${key}`, value])
+        ),
+        ...this.query.params
       }
-    })
+      logger.debug(`Query: ${this.name}`, { params: allParams, query })
+
+      paramList.forEach(key => {
+        const newSql = query.replace(new RegExp(`:${key}`, 'g'), `$${index}`)
+
+        if (newSql !== query) {
+          query = newSql
+          values.push(this.query.params[key])
+          index++
+        }
+      })
+
+      // values 배열에 UPDATE SET 값들을 먼저 추가
+      if (this.query.values) {
+        values = [...this.query.values, ...values]
+      }
+    } else {
+      values = this.query.values || []
+    }
 
 
     const result: QueryConfig = {
